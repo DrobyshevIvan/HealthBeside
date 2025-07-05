@@ -189,11 +189,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\HealthBeside.csproj",
-      "projectName": "HealthBeside",
-      "projectPath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\HealthBeside.csproj",
+      "projectUniqueName": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.API\\HealthBeside.API.csproj",
+      "projectName": "HealthBeside.API",
+      "projectPath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.API\\HealthBeside.API.csproj",
       "packagesPath": "C:\\Users\\olegm\\.nuget\\packages\\",
-      "outputPath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\obj\\",
+      "outputPath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.API\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

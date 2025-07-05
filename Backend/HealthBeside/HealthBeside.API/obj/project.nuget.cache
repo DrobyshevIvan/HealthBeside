@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "VNBrRxf/ev4=",
+  "dgSpecHash": "RGq3X8FXovg=",
   "success": true,
-  "projectFilePath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\HealthBeside.csproj",
+  "projectFilePath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.API\\HealthBeside.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\olegm\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.3\\microsoft.aspnetcore.openapi.9.0.3.nupkg.sha512",
     "C:\\Users\\olegm\\.nuget\\packages\\microsoft.openapi\\1.6.23\\microsoft.openapi.1.6.23.nupkg.sha512",

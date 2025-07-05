@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthBeside", "HealthBeside\HealthBeside.csproj", "{4F848F51-E0DB-4421-B83E-4F18F6DE9D6D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthBeside.API", "HealthBeside.API\HealthBeside.API.csproj", "{4F848F51-E0DB-4421-B83E-4F18F6DE9D6D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthBeside.Domain", "HealthBeside.Domain\HealthBeside.Domain.csproj", "{7C942F47-DCA1-4725-86A8-D1E0D0AF6955}"
 EndProject

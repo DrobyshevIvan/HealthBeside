@@ -1,6 +1,6 @@
 using Microsoft.OpenApi.Models;
 
-namespace HealthBeside;
+namespace HealthBeside.API;
 
 public class Program
 {
@@ -12,7 +12,7 @@ public class Program
         {
             options.SwaggerDoc("v1", new OpenApiInfo
             {
-                Title = "HealthBeside API",
+                Title = "HealthBeside.API API",
                 Version = "v1"
             });
         });
