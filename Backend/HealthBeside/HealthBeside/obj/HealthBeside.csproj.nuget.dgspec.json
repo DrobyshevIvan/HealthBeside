@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\HealthBeside.csproj": {}
+    "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\HealthBeside.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\HealthBeside.csproj": {
+    "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\HealthBeside.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\HealthBeside.csproj",
+        "projectUniqueName": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\HealthBeside.csproj",
         "projectName": "HealthBeside",
-        "projectPath": "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\HealthBeside.csproj",
-        "packagesPath": "C:\\Users\\Ivan\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\obj\\",
+        "projectPath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\HealthBeside.csproj",
+        "packagesPath": "C:\\Users\\olegm\\.nuget\\packages\\",
+        "outputPath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Ivan\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\olegm\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -45,7 +45,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.200"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net9.0": {
@@ -54,6 +54,18 @@
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[9.0.3, )"
+            },
+            "Swashbuckle.AspNetCore.Swagger": {
+              "target": "Package",
+              "version": "[9.0.1, )"
+            },
+            "Swashbuckle.AspNetCore.SwaggerGen": {
+              "target": "Package",
+              "version": "[9.0.1, )"
+            },
+            "Swashbuckle.AspNetCore.SwaggerUI": {
+              "target": "Package",
+              "version": "[9.0.1, )"
             }
           },
           "imports": [
@@ -75,7 +87,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
