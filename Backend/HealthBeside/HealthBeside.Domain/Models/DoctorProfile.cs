@@ -1,4 +1,4 @@
-﻿namespace HealthBeside.Domain.Models.Users;
+﻿namespace HealthBeside.Domain.Models;
 
 public class DoctorProfile
 {
