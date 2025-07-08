@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
-namespace HealthBeside.Domain.Models;
+namespace HealthBeside.Domain.Models.Users;
 
 public class ApplicationUser : IdentityUser
 {

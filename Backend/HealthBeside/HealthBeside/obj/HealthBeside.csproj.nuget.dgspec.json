@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj": {}
+    "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\HealthBeside.csproj": {}
   },
   "projects": {
-    "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj": {
+    "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\HealthBeside.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj",
-        "projectName": "HealthBeside.Domain",
-        "projectPath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj",
+        "projectUniqueName": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\HealthBeside.csproj",
+        "projectName": "HealthBeside",
+        "projectPath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\HealthBeside.csproj",
         "packagesPath": "C:\\Users\\olegm\\.nuget\\packages\\",
-        "outputPath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\obj\\",
+        "outputPath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -51,17 +51,21 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
-            "Microsoft.AspNet.Identity.Core": {
+            "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
-              "version": "[2.2.4, )"
+              "version": "[9.0.3, )"
             },
-            "Microsoft.AspNetCore.Identity": {
+            "Swashbuckle.AspNetCore.Swagger": {
               "target": "Package",
-              "version": "[2.3.1, )"
+              "version": "[9.0.1, )"
             },
-            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+            "Swashbuckle.AspNetCore.SwaggerGen": {
               "target": "Package",
-              "version": "[9.0.6, )"
+              "version": "[9.0.1, )"
+            },
+            "Swashbuckle.AspNetCore.SwaggerUI": {
+              "target": "Package",
+              "version": "[9.0.1, )"
             }
           },
           "imports": [
@@ -76,6 +80,9 @@
           "assetTargetFallback": true,
           "warn": true,
           "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }

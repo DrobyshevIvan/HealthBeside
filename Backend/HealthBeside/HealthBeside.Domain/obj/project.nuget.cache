@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "yb4SjaG6KLw=",
+  "dgSpecHash": "3p372yyJ9Cs=",
   "success": true,
   "projectFilePath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\olegm\\.nuget\\packages\\microsoft.aspnet.identity.core\\2.2.4\\microsoft.aspnet.identity.core.2.2.4.nupkg.sha512",
     "C:\\Users\\olegm\\.nuget\\packages\\microsoft.aspnetcore.authentication\\2.3.0\\microsoft.aspnetcore.authentication.2.3.0.nupkg.sha512",
     "C:\\Users\\olegm\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.3.0\\microsoft.aspnetcore.authentication.abstractions.2.3.0.nupkg.sha512",
     "C:\\Users\\olegm\\.nuget\\packages\\microsoft.aspnetcore.authentication.cookies\\2.3.0\\microsoft.aspnetcore.authentication.cookies.2.3.0.nupkg.sha512",
@@ -51,5 +52,18 @@
     "C:\\Users\\olegm\\.nuget\\packages\\system.security.principal.windows\\5.0.0\\system.security.principal.windows.5.0.0.nupkg.sha512",
     "C:\\Users\\olegm\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "message": "Package 'Microsoft.AspNet.Identity.Core 2.2.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net9.0'. This package may not be fully compatible with your project.",
+      "projectPath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj",
+      "warningLevel": 1,
+      "filePath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj",
+      "libraryId": "Microsoft.AspNet.Identity.Core",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    }
+  ]
 }
