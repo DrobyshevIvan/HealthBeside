@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using HealthBeside.Domain.Models.Forum;
 using Microsoft.AspNetCore.Identity;
 
 namespace HealthBeside.Domain.Models.Users;
@@ -8,14 +9,16 @@ public class ApplicationUser : IdentityUser
     public string FirstName { get; private set; }
     public string LastName { get; private set; }
     public DateTime RegistrationDate { get; private set; }
-    
+
     // Navigation properties for related profiles
     public DoctorProfile DoctorProfile { get; private set; }
     public PatientProfile PatientProfile { get; private set; }
 
     //Зробити ще навігаційні властивості форуму, замовлення, коментарів на форумі і наче все 
-    
-    private ApplicationUser() { }
+    public ICollection<ForumPost> ForumPosts { get; private set; }
+    public ICollection<ForumComment> ForumComments { get; private set; }
+
+private ApplicationUser() { }
     
     public static (string? Error, ApplicationUser ApplicationUser) Create(
         string firstName,

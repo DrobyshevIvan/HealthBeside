@@ -5,21 +5,23 @@ namespace HealthBeside.Domain.Models.Forum;
 public class ForumComment
 {
     public Guid Id { get; private set; }
-    public Guid PostId { get; private set; }
-    public string AuthorId { get; private set; }
-    public Guid ParentCommentId { get; private set; } 
     public string Content { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public int Likes { get; private set; } = 0;
     public int Dislikes { get; private set; } = 0;
     public bool IsAnswer { get; private set; } = false;
     
+    public Guid PostId { get; private set; }
     public ForumPost Post { get; private set; }
+    public string AuthorId { get; private set; }
     public ApplicationUser Author { get; private set; }
+    
+    public ICollection<ForumComment> Replies { get; private set; }
+    public Guid? ParentCommentId { get; private set; } 
     public ForumComment ParentComment { get; private set; }
     
-    private readonly List<ForumComment> _replies = new List<ForumComment>();
-    private IReadOnlyCollection<ForumComment> _repliesReadOnly => _replies.AsReadOnly();
+    // private readonly List<ForumComment> _replies = new List<ForumComment>();
+    // private IReadOnlyCollection<ForumComment> _repliesReadOnly => _replies.AsReadOnly();
     
     private ForumComment() { }
 

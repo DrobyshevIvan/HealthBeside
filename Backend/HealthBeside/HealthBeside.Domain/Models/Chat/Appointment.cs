@@ -12,16 +12,17 @@ public enum AppointmentStatus
 public class Appointment
 {
     public Guid Id { get; private set; }
-    public Guid PatientProfileId { get; private set; }
-    public Guid DoctorProfileId { get; private set; }
-    public Guid DoctorAvailabilityId { get; private set; }
     public DateTime AppointmentTime { get; private set; }
     public AppointmentStatus Status { get; private set; }
     public string ReasonForVisit { get; private set; }
 
+    public Guid PatientProfileId { get; private set; }
     public PatientProfile PatientProfile { get; private set; }
+    public Guid DoctorProfileId { get; private set; }
     public DoctorProfile DoctorProfile { get; private set; }
+    public Guid DoctorAvailabilityId { get; private set; }
     public DoctorAvailability DoctorAvailability { get; private set; }
+    
     public Consultation Consultation { get; private set; }
     
     private Appointment() { }
