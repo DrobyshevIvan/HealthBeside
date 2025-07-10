@@ -1,5 +1,8 @@
+using HealthBeside.Domain.Models.Forum;
+using HealthBeside.Domain.Models.Shared;
 using HealthBeside.Domain.Models.Users;
 using HealthBeside.Infrastructure;
+using HealthBeside.Infrastructure.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -45,6 +48,10 @@ public class Program
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
+        
+        builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        builder.Services.AddScoped<IForumCommentRepository, ForumCommentRepository>();
+        builder.Services.AddScoped<IForumPostRepository, ForumPostRepository>();
 
         var app = builder.Build();
 
