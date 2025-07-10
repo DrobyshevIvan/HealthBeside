@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Infrastructure\\HealthBeside.Infrastructure.csproj": {}
+    "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Infrastructure\\HealthBeside.Infrastructure.csproj": {}
   },
   "projects": {
-    "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj": {
+    "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj",
+        "projectUniqueName": "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj",
         "projectName": "HealthBeside.Domain",
-        "projectPath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj",
-        "packagesPath": "C:\\Users\\olegm\\.nuget\\packages\\",
-        "outputPath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\obj\\",
+        "projectPath": "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj",
+        "packagesPath": "C:\\Users\\Ivan\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\olegm\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Ivan\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -45,7 +45,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net9.0": {
@@ -80,24 +80,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Infrastructure\\HealthBeside.Infrastructure.csproj": {
+    "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Infrastructure\\HealthBeside.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Infrastructure\\HealthBeside.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Infrastructure\\HealthBeside.Infrastructure.csproj",
         "projectName": "HealthBeside.Infrastructure",
-        "projectPath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Infrastructure\\HealthBeside.Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\olegm\\.nuget\\packages\\",
-        "outputPath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Infrastructure\\obj\\",
+        "projectPath": "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Infrastructure\\HealthBeside.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\Ivan\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\olegm\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Ivan\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -113,8 +113,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj": {
-                "projectPath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj"
+              "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj": {
+                "projectPath": "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj"
               }
             }
           }
@@ -129,7 +129,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net9.0": {
@@ -142,6 +142,30 @@
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[9.0.6, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.6, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.6, )"
+            },
+            "Microsoft.Extensions.Configuration": {
+              "target": "Package",
+              "version": "[10.0.0-preview.5.25277.114, )"
+            },
+            "Microsoft.Extensions.Configuration.Json": {
+              "target": "Package",
+              "version": "[10.0.0-preview.5.25277.114, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[9.0.4, )"
             }
           },
           "imports": [
@@ -160,7 +184,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

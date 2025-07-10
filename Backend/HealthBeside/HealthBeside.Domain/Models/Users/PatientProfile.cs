@@ -3,12 +3,12 @@
 public class PatientProfile
 {
     public Guid Id { get; private set; }
-    public string ApplicationUserId { get; private set; }
     public DateTime DateOfBirth { get; private set; }
     public string Address { get; private set; }
     public string PhoneNumber { get; private set; }
     public string MedicalHistorySummary { get; private set; }
-
+    
+    public string ApplicationUserId { get; private set; }
     public ApplicationUser ApplicationUser { get; private set; }
 
     private PatientProfile()

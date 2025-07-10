@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "faosgsxMEymfEN4UJhwvxgq2UbvPW+TuW1CafyGjGpc=",
+  "Source": "HealthBeside.API",
+  "BasePath": "_content/HealthBeside.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

@@ -3,7 +3,6 @@
 public class DoctorProfile
 {
     public Guid Id { get; private set; }
-    public string ApplicationUserId { get; private set; }
     public string Specialization { get; private set; }
     public string MedicalLicenseNumber { get; private set; }
     public string ClinicAffiliation { get; private set; }
@@ -12,6 +11,7 @@ public class DoctorProfile
     public string Biography { get; private set; }
     public double Rating { get; private set; }
     
+    public string ApplicationUserId { get; private set; }
     public ApplicationUser ApplicationUser { get; private set; }
     
     private DoctorProfile() {}
