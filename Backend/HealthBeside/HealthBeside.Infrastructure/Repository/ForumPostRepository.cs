@@ -1,4 +1,5 @@
-﻿using HealthBeside.Domain.Models.Forum;
+﻿using HealthBeside.Domain.Interfaces;
+using HealthBeside.Domain.Models.Forum;
 
 namespace HealthBeside.Infrastructure.Repository;
 

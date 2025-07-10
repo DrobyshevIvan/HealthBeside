@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj": {}
+    "D:\\repos\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj": {
+    "D:\\repos\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj",
+        "projectUniqueName": "D:\\repos\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj",
         "projectName": "HealthBeside.Domain",
-        "projectPath": "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj",
-        "packagesPath": "C:\\Users\\Ivan\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Ivan\\Documents\\GitHub\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\obj\\",
+        "projectPath": "D:\\repos\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\HealthBeside.Domain.csproj",
+        "packagesPath": "C:\\Users\\olegm\\.nuget\\packages\\",
+        "outputPath": "D:\\repos\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Ivan\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\olegm\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -45,7 +45,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.200"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net9.0": {
@@ -54,6 +54,10 @@
             "Microsoft.AspNet.Identity.Core": {
               "target": "Package",
               "version": "[2.2.4, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[9.0.7, )"
             },
             "Microsoft.AspNetCore.Identity": {
               "target": "Package",
@@ -80,7 +84,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

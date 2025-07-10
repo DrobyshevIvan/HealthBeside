@@ -11,3 +11,16 @@ C:\Users\Ivan\Documents\GitHub\HealthBeside\Backend\HealthBeside\HealthBeside.Do
 C:\Users\Ivan\Documents\GitHub\HealthBeside\Backend\HealthBeside\HealthBeside.Domain\obj\Debug\net9.0\refint\HealthBeside.Domain.dll
 C:\Users\Ivan\Documents\GitHub\HealthBeside\Backend\HealthBeside\HealthBeside.Domain\obj\Debug\net9.0\HealthBeside.Domain.pdb
 C:\Users\Ivan\Documents\GitHub\HealthBeside\Backend\HealthBeside\HealthBeside.Domain\obj\Debug\net9.0\ref\HealthBeside.Domain.dll
+D:\repos\HealthBeside\Backend\HealthBeside\HealthBeside.Domain\bin\Debug\net9.0\HealthBeside.Domain.deps.json
+D:\repos\HealthBeside\Backend\HealthBeside\HealthBeside.Domain\bin\Debug\net9.0\HealthBeside.Domain.dll
+D:\repos\HealthBeside\Backend\HealthBeside\HealthBeside.Domain\bin\Debug\net9.0\HealthBeside.Domain.pdb
+D:\repos\HealthBeside\Backend\HealthBeside\HealthBeside.Domain\obj\Debug\net9.0\HealthBeside.Domain.csproj.AssemblyReference.cache
+D:\repos\HealthBeside\Backend\HealthBeside\HealthBeside.Domain\obj\Debug\net9.0\HealthBeside.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\repos\HealthBeside\Backend\HealthBeside\HealthBeside.Domain\obj\Debug\net9.0\HealthBeside.Domain.AssemblyInfoInputs.cache
+D:\repos\HealthBeside\Backend\HealthBeside\HealthBeside.Domain\obj\Debug\net9.0\HealthBeside.Domain.AssemblyInfo.cs
+D:\repos\HealthBeside\Backend\HealthBeside\HealthBeside.Domain\obj\Debug\net9.0\HealthBeside.Domain.csproj.CoreCompileInputs.cache
+D:\repos\HealthBeside\Backend\HealthBeside\HealthBeside.Domain\obj\Debug\net9.0\HealthBeside.Domain.sourcelink.json
+D:\repos\HealthBeside\Backend\HealthBeside\HealthBeside.Domain\obj\Debug\net9.0\HealthBeside.Domain.dll
+D:\repos\HealthBeside\Backend\HealthBeside\HealthBeside.Domain\obj\Debug\net9.0\refint\HealthBeside.Domain.dll
+D:\repos\HealthBeside\Backend\HealthBeside\HealthBeside.Domain\obj\Debug\net9.0\HealthBeside.Domain.pdb
+D:\repos\HealthBeside\Backend\HealthBeside\HealthBeside.Domain\obj\Debug\net9.0\ref\HealthBeside.Domain.dll
