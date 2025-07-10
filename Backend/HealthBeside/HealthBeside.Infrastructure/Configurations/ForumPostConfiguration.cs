@@ -14,14 +14,12 @@ public class ForumPostConfiguration : IEntityTypeConfiguration<ForumPost>
             .OnDelete(DeleteBehavior.Restrict); // Prevents deletion of the author if they have related forum posts
         
         builder.Property(p => p.CreatedAt)
-            .HasDefaultValueSql("GETDATE()");
+            .HasDefaultValueSql("NOW()");
         
         builder.Property(p => p.Likes)
             .HasDefaultValue(0);
         
         builder.Property(p => p.Dislikes)
             .HasDefaultValue(0);
-        
-        
     }
 }

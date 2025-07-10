@@ -24,7 +24,7 @@ public class ForumCommentConfiguration : IEntityTypeConfiguration<ForumComment>
             .OnDelete(DeleteBehavior.Restrict); // Prevents deletion of the parent comment if it has replies
         
         builder.Property(c => c.CreatedAt)
-            .HasDefaultValueSql("GETDATE()"); // Sets the default value for CreatedAt to the current date and time
+            .HasDefaultValueSql("NOW()"); // Sets the default value for CreatedAt to the current date and time
         
         builder.Property(c => c.Likes).HasDefaultValue(0);
         

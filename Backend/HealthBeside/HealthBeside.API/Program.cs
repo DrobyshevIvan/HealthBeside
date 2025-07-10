@@ -11,7 +11,7 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        
+
         builder.Services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc("v1", new OpenApiInfo
@@ -26,7 +26,7 @@ public class Program
                 builder.Configuration.GetConnectionString("HealthBesideDbConnectionString")
             )
         );
-        
+
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.Password.RequireDigit = true;
@@ -39,7 +39,7 @@ public class Program
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
-        
+
         // Add services to the container.
         builder.Services.AddAuthorization();
 
@@ -56,18 +56,18 @@ public class Program
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "HealthBeside.API v1");
-                c.RoutePrefix = string.Empty; 
+                c.RoutePrefix = string.Empty;
             });
         }
 
         app.UseHttpsRedirection();
-        
+
         app.UseAuthentication();
-        
+
         app.UseAuthorization();
-        
+
         app.MapControllers();
-        
+
         app.Run();
     }
 }

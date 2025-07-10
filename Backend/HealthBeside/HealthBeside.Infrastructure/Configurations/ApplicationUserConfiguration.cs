@@ -9,6 +9,6 @@ public class ApplicationUserConfiguration : IEntityTypeConfiguration<Application
     public void Configure(EntityTypeBuilder<ApplicationUser> builder)
     {
         builder.Property(u => u.RegistrationDate)
-            .HasDefaultValueSql("GETDATE()");
+            .HasDefaultValueSql("NOW()");
     }
 }

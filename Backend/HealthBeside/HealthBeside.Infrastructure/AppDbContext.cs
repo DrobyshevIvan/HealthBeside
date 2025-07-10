@@ -13,12 +13,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
-    
+
     public DbSet<DoctorProfile> DoctorProfiles { get; set; }
     public DbSet<PatientProfile> PatientProfiles { get; set; }
     public DbSet<ForumPost> ForumPosts { get; set; }
     public DbSet<ForumComment> ForumComments { get; set; }
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -38,7 +38,7 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
-        
+
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
         var conn = config.GetConnectionString("HealthBesideDbConnectionString");
         optionsBuilder.UseNpgsql(conn);
