@@ -1,10 +1,14 @@
+using System.Text;
+using HealthBeside.Domain.Interfaces;
 using HealthBeside.Domain.Models.Forum;
 using HealthBeside.Domain.Models.Shared;
 using HealthBeside.Domain.Models.Users;
 using HealthBeside.Infrastructure;
 using HealthBeside.Infrastructure.Repository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace HealthBeside.API;
@@ -14,6 +18,8 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        
+        builder.Services.AddControllers();
 
         builder.Services.AddSwaggerGen(options =>
         {
@@ -42,6 +48,37 @@ public class Program
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
+        
+        /*var jwt = builder.Configuration.GetSection("JwtSettings");
+        
+        var secretKey = builder.Configuration.GetValue<string>("JwtSettings:SecretKey");
+
+        builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwt["Issuer"],
+                    ValidAudience = jwt["Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                };
+            });
+        
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+            options.AddPolicy("Doctor", policy => policy.RequireRole("Doctor"));
+            options.AddPolicy("Patient", policy => policy.RequireRole("Patient"));
+        });*/
+        
 
         // Add services to the container.
         builder.Services.AddAuthorization();
@@ -60,11 +97,7 @@ public class Program
         {
             app.MapOpenApi();
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "HealthBeside.API v1");
-                c.RoutePrefix = string.Empty;
-            });
+            app.UseSwaggerUI();
         }
 
         app.UseHttpsRedirection();
