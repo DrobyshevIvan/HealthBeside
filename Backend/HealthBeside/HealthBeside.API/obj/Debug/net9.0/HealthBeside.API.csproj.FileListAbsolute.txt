@@ -307,3 +307,11 @@ D:\repos\HealthBeside\Backend\HealthBeside\HealthBeside.API\obj\Debug\net9.0\ref
 D:\repos\HealthBeside\Backend\HealthBeside\HealthBeside.API\obj\Debug\net9.0\HealthBeside.API.pdb
 D:\repos\HealthBeside\Backend\HealthBeside\HealthBeside.API\obj\Debug\net9.0\HealthBeside.API.genruntimeconfig.cache
 D:\repos\HealthBeside\Backend\HealthBeside\HealthBeside.API\obj\Debug\net9.0\ref\HealthBeside.API.dll
+C:\Users\Ivan\Documents\GitHub\HealthBeside\Backend\HealthBeside\HealthBeside.API\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\Ivan\Documents\GitHub\HealthBeside\Backend\HealthBeside\HealthBeside.API\bin\Debug\net9.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\Ivan\Documents\GitHub\HealthBeside\Backend\HealthBeside\HealthBeside.API\bin\Debug\net9.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\Ivan\Documents\GitHub\HealthBeside\Backend\HealthBeside\HealthBeside.API\bin\Debug\net9.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\Ivan\Documents\GitHub\HealthBeside\Backend\HealthBeside\HealthBeside.API\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\Ivan\Documents\GitHub\HealthBeside\Backend\HealthBeside\HealthBeside.API\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\Ivan\Documents\GitHub\HealthBeside\Backend\HealthBeside\HealthBeside.API\bin\Debug\net9.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\Ivan\Documents\GitHub\HealthBeside\Backend\HealthBeside\HealthBeside.API\bin\Debug\net9.0\System.IdentityModel.Tokens.Jwt.dll

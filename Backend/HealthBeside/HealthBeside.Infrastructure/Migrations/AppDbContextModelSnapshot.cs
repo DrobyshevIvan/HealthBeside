@@ -113,6 +113,213 @@ namespace HealthBeside.Infrastructure.Migrations
                     b.ToTable("ForumPosts");
                 });
 
+            modelBuilder.Entity("HealthBeside.Domain.Models.Marketplace.MarketCart", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("MarketCart");
+                });
+
+            modelBuilder.Entity("HealthBeside.Domain.Models.Marketplace.MarketCartItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CartId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MarketCartId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MarketProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MarketCartId");
+
+                    b.HasIndex("MarketProductId");
+
+                    b.ToTable("MarketCartItem");
+                });
+
+            modelBuilder.Entity("HealthBeside.Domain.Models.Marketplace.MarketCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MarketCategory");
+                });
+
+            modelBuilder.Entity("HealthBeside.Domain.Models.Marketplace.MarketOrder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ShippingAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("MarketOrder");
+                });
+
+            modelBuilder.Entity("HealthBeside.Domain.Models.Marketplace.MarketOrderItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MarketOrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MarketProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MarketOrderId");
+
+                    b.HasIndex("MarketProductId");
+
+                    b.ToTable("MarketOrderItem");
+                });
+
+            modelBuilder.Entity("HealthBeside.Domain.Models.Marketplace.MarketProduct", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SKU")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("MarketProduct");
+                });
+
+            modelBuilder.Entity("HealthBeside.Domain.Models.Marketplace.MarketReview", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("MarketProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MarketProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("MarketReview");
+                });
+
             modelBuilder.Entity("HealthBeside.Domain.Models.Users.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -436,6 +643,96 @@ namespace HealthBeside.Infrastructure.Migrations
                     b.Navigation("Author");
                 });
 
+            modelBuilder.Entity("HealthBeside.Domain.Models.Marketplace.MarketCart", b =>
+                {
+                    b.HasOne("HealthBeside.Domain.Models.Users.ApplicationUser", "User")
+                        .WithOne("MarketCart")
+                        .HasForeignKey("HealthBeside.Domain.Models.Marketplace.MarketCart", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("HealthBeside.Domain.Models.Marketplace.MarketCartItem", b =>
+                {
+                    b.HasOne("HealthBeside.Domain.Models.Marketplace.MarketCart", "MarketCart")
+                        .WithMany("CartItems")
+                        .HasForeignKey("MarketCartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HealthBeside.Domain.Models.Marketplace.MarketProduct", "MarketProduct")
+                        .WithMany("CartItems")
+                        .HasForeignKey("MarketProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MarketCart");
+
+                    b.Navigation("MarketProduct");
+                });
+
+            modelBuilder.Entity("HealthBeside.Domain.Models.Marketplace.MarketOrder", b =>
+                {
+                    b.HasOne("HealthBeside.Domain.Models.Users.ApplicationUser", "User")
+                        .WithMany("MarketOrders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("HealthBeside.Domain.Models.Marketplace.MarketOrderItem", b =>
+                {
+                    b.HasOne("HealthBeside.Domain.Models.Marketplace.MarketOrder", "MarketOrder")
+                        .WithMany("MarketOrderItems")
+                        .HasForeignKey("MarketOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HealthBeside.Domain.Models.Marketplace.MarketProduct", "MarketProduct")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("MarketProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MarketOrder");
+
+                    b.Navigation("MarketProduct");
+                });
+
+            modelBuilder.Entity("HealthBeside.Domain.Models.Marketplace.MarketProduct", b =>
+                {
+                    b.HasOne("HealthBeside.Domain.Models.Marketplace.MarketCategory", "Category")
+                        .WithMany("MarketProducts")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("HealthBeside.Domain.Models.Marketplace.MarketReview", b =>
+                {
+                    b.HasOne("HealthBeside.Domain.Models.Marketplace.MarketProduct", "MarketProduct")
+                        .WithMany("Reviews")
+                        .HasForeignKey("MarketProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HealthBeside.Domain.Models.Users.ApplicationUser", "User")
+                        .WithMany("MarketReviews")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MarketProduct");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("HealthBeside.Domain.Models.Users.DoctorProfile", b =>
                 {
                     b.HasOne("HealthBeside.Domain.Models.Users.ApplicationUser", "ApplicationUser")
@@ -519,6 +816,30 @@ namespace HealthBeside.Infrastructure.Migrations
                     b.Navigation("Comments");
                 });
 
+            modelBuilder.Entity("HealthBeside.Domain.Models.Marketplace.MarketCart", b =>
+                {
+                    b.Navigation("CartItems");
+                });
+
+            modelBuilder.Entity("HealthBeside.Domain.Models.Marketplace.MarketCategory", b =>
+                {
+                    b.Navigation("MarketProducts");
+                });
+
+            modelBuilder.Entity("HealthBeside.Domain.Models.Marketplace.MarketOrder", b =>
+                {
+                    b.Navigation("MarketOrderItems");
+                });
+
+            modelBuilder.Entity("HealthBeside.Domain.Models.Marketplace.MarketProduct", b =>
+                {
+                    b.Navigation("CartItems");
+
+                    b.Navigation("OrderItems");
+
+                    b.Navigation("Reviews");
+                });
+
             modelBuilder.Entity("HealthBeside.Domain.Models.Users.ApplicationUser", b =>
                 {
                     b.Navigation("DoctorProfile")
@@ -527,6 +848,12 @@ namespace HealthBeside.Infrastructure.Migrations
                     b.Navigation("ForumComments");
 
                     b.Navigation("ForumPosts");
+
+                    b.Navigation("MarketCart");
+
+                    b.Navigation("MarketOrders");
+
+                    b.Navigation("MarketReviews");
 
                     b.Navigation("PatientProfile")
                         .IsRequired();
