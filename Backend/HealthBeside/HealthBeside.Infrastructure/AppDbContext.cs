@@ -1,6 +1,8 @@
 ﻿using HealthBeside.Domain.Models.Forum;
+using HealthBeside.Domain.Models.Marketplace;
 using HealthBeside.Domain.Models.Users;
 using HealthBeside.Infrastructure.Configurations;
+using HealthBeside.Infrastructure.Configurations.MarketConfiguration;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -18,6 +20,14 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<PatientProfile> PatientProfiles { get; set; }
     public DbSet<ForumPost> ForumPosts { get; set; }
     public DbSet<ForumComment> ForumComments { get; set; }
+    public DbSet<MarketCart> MarketCarts { get; set; }
+    public DbSet<MarketCartItem> MarketCartItems { get; set; }
+    public DbSet<MarketCategory> MarketCategories { get; set; }
+    public DbSet<MarketOrder> MarketOrders { get; set; }
+    public DbSet<MarketOrderItem> MarketOrderItems { get; set; }
+    public DbSet<MarketProduct> MarketProducts { get; set; }
+    public DbSet<MarketReview> MarketReviews { get; set; }
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -27,6 +37,13 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.ApplyConfiguration(new ForumCommentConfiguration());
         modelBuilder.ApplyConfiguration(new ForumPostConfiguration());
         modelBuilder.ApplyConfiguration(new PatientProfileConfiguration());
+        modelBuilder.ApplyConfiguration(new MarketCartConfiguration());
+        modelBuilder.ApplyConfiguration(new MarketCartItemConfiguration());
+        modelBuilder.ApplyConfiguration(new MarketProductConfiguration());
+        modelBuilder.ApplyConfiguration(new MarketReviewConfiguration());
+        modelBuilder.ApplyConfiguration(new MarketOrderConfiguration());
+        modelBuilder.ApplyConfiguration(new MarketOrderItemConfiguration());
+        modelBuilder.ApplyConfiguration(new MarketProductConfiguration());  
     }
 }
 
