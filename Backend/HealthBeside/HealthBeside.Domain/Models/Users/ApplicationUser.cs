@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using HealthBeside.Domain.Models.Forum;
+using HealthBeside.Domain.Models.Marketplace;
 using Microsoft.AspNetCore.Identity;
 
 namespace HealthBeside.Domain.Models.Users;
@@ -17,8 +18,11 @@ public class ApplicationUser : IdentityUser
     //Зробити ще навігаційні властивості форуму, замовлення, коментарів на форумі і наче все 
     public ICollection<ForumPost> ForumPosts { get; private set; }
     public ICollection<ForumComment> ForumComments { get; private set; }
+    public ICollection<MarketReview> MarketReviews { get; private set; }
+    public MarketCart? MarketCart { get; private set; }
+    public ICollection<MarketOrder> MarketOrders { get; private set; }
 
-private ApplicationUser() { }
+    private ApplicationUser() { }
     
     public static (string? Error, ApplicationUser ApplicationUser) Create(
         string firstName,

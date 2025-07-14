@@ -6,10 +6,22 @@ public class MarketProduct
     public string Name { get; private set; }
     public string Description { get; private set; }
     public decimal Price { get; private set; }
+    public int Quantity { get; private set; }
+    public string SKU { get; private set; }
+    
+    public string ImageUrl { get; private set; }
+    
+    public Guid CategoryId { get; private set; }
+    public MarketCategory Category { get; private set; }
+    
+    public ICollection<MarketOrderItem> OrderItems { get; private set; }
+    public ICollection<MarketCartItem> CartItems { get; private set; }
+    public ICollection<MarketReview> Reviews { get; private set; }
     
     private MarketProduct() { }
 
-    public static (string? Error, MarketProduct MarketProduct) Create(string name, string description, decimal price)
+    public static (string? Error, MarketProduct MarketProduct) Create(string name, string description, decimal price, 
+        int quantity, string sku, string imageUrl, Guid categoryId)
     {
         var errors = new List<string>();
         
@@ -22,6 +34,15 @@ public class MarketProduct
         if(price <= 0)
             errors.Add("Price must be greater than zero.");
         
+        if(quantity <= 0)
+            errors.Add("Quantity must be greater than zero.");
+        
+        if(string.IsNullOrWhiteSpace(sku))
+            errors.Add("SKU cannot be empty.");
+        
+        if(categoryId.Equals(Guid.Empty))
+            errors.Add("Category ID cannot be empty.");
+        
         if(errors.Any())
             return (string.Join("; ", errors), null);
         
@@ -30,7 +51,11 @@ public class MarketProduct
             Id = Guid.NewGuid(),
             Name = name,
             Description = description,
-            Price = price
+            Price = price,
+            Quantity = quantity,
+            SKU = sku,
+            ImageUrl = imageUrl,
+            CategoryId = categoryId
         };
         
         return (null, marketProduct);

@@ -6,8 +6,7 @@ public class MarketCategory
     public string Name { get; private set; }
     public string Description { get; private set; }
     
-    private readonly List<MarketProduct> _products = new List<MarketProduct>();
-    public IReadOnlyCollection<MarketProduct> Products => _products.AsReadOnly();
+    public ICollection<MarketProduct> MarketProducts { get; private set; }
     
     private MarketCategory() { }
 

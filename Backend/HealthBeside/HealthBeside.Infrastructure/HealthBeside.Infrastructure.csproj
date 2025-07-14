@@ -27,4 +27,8 @@
       <ProjectReference Include="..\HealthBeside.Domain\HealthBeside.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Configurations\ChatConfiguration\" />
+    </ItemGroup>
+
 </Project>
