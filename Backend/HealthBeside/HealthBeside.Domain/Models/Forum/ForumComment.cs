@@ -13,7 +13,7 @@ public class ForumComment
     
     public Guid PostId { get; private set; }
     public ForumPost Post { get; private set; }
-    public string AuthorId { get; private set; }
+    public Guid AuthorId { get; private set; }
     public ApplicationUser Author { get; private set; }
     
     public ICollection<ForumComment> Replies { get; private set; }
@@ -25,7 +25,7 @@ public class ForumComment
     
     private ForumComment() { }
 
-    public static (string? Error, ForumComment? ForumComment) Create(string authorId, string content, Guid postId,
+    public static (string? Error, ForumComment? ForumComment) Create(Guid authorId, string content, Guid postId,
         Guid? parentCommentId)
     {
         var errors = new List<string>();
@@ -33,8 +33,8 @@ public class ForumComment
         if(postId == Guid.Empty)
             errors.Add("Post ID cannot be empty.");
         
-        if(string.IsNullOrWhiteSpace(authorId))
-            errors.Add("Author ID cannot be null.");
+        if(authorId == Guid.Empty)
+            errors.Add("Author ID cannot be empty.");
         
         if(string.IsNullOrWhiteSpace(content))
           errors.Add("Content cannot be empty.");
@@ -57,7 +57,7 @@ public class ForumComment
         return (null, forumComment);
     }
     
-    public static (string? Error, ForumComment? ForumComment) CreateReply(string authorId, string content, Guid postId,
+    public static (string? Error, ForumComment? ForumComment) CreateReply(Guid authorId, string content, Guid postId,
         Guid parentCommentId)
     {
         var errors = new List<string>();
@@ -65,8 +65,8 @@ public class ForumComment
         if(postId == Guid.Empty)
             errors.Add("Post ID cannot be empty.");
         
-        if(string.IsNullOrWhiteSpace(authorId))
-            errors.Add("Author ID cannot be null.");
+        if(authorId == Guid.Empty)
+            errors.Add("Author ID cannot be empty.");
         
         if(string.IsNullOrWhiteSpace(content))
             errors.Add("Content cannot be empty.");

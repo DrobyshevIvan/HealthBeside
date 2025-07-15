@@ -12,14 +12,14 @@ public class MarketReview
     public Guid ProductId { get; private set; }
     public MarketProduct MarketProduct { get; private set; }
     
-    public string UserId { get; private set; }
+    public Guid UserId { get; private set; }
     public ApplicationUser User { get; private set; }
     
     private MarketReview() { }
 
     public static (string? Error, MarketReview? MarketReview) Create(string description, int rating,
         DateTime createdOn, Guid productId,
-        string userId)
+        Guid userId)
     {
         var errors = new List<string>();
 
@@ -33,7 +33,7 @@ public class MarketReview
             errors.Add("Product ID cannot be empty.");
         }
 
-        if (string.IsNullOrWhiteSpace(userId))
+        if (userId == Guid.Empty)
         {
             errors.Add("User ID cannot be empty.");
         }

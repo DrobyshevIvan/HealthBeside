@@ -11,7 +11,7 @@ public class ForumPost
     public int Likes { get; private set; } = 0;
     public int Dislikes { get; private set; } = 0;
     
-    public string AuthorId { get; private set; }
+    public Guid AuthorId { get; private set; }
     public ApplicationUser Author { get; private set; }
     
     public ICollection<ForumComment> Comments { get; private set; }
@@ -20,12 +20,12 @@ public class ForumPost
     
     private ForumPost() {}
     
-    public static (string? Error, ForumPost? ForumPost) Create(string authorId, string title, string content)
+    public static (string? Error, ForumPost? ForumPost) Create(Guid authorId, string title, string content)
     {
         var errors = new List<string>();
         
-        if(authorId == null) 
-            errors.Add("Author ID cannot be null.");
+        if(authorId == Guid.Empty) 
+            errors.Add("Author ID cannot be empty.");
         
         if(string.IsNullOrWhiteSpace(title))
             errors.Add("Title cannot be empty.");

@@ -8,21 +8,21 @@ public class PatientProfile
     public string PhoneNumber { get; private set; }
     public string MedicalHistorySummary { get; private set; }
     
-    public string ApplicationUserId { get; private set; }
+    public Guid ApplicationUserId { get; private set; }
     public ApplicationUser ApplicationUser { get; private set; }
 
     private PatientProfile()
     {
     }
 
-    public static (string? Error, PatientProfile? PatientProfile) Create(string applicationUserId, DateTime dateOfBirth,
+    public static (string? Error, PatientProfile? PatientProfile) Create(Guid applicationUserId, DateTime dateOfBirth,
         string address, string phoneNumber, string medicalHistorySummary)
     {
         var errors = new List<string>();
 
-        if (string.IsNullOrWhiteSpace(applicationUserId))
+        if (applicationUserId == Guid.Empty)
             errors.Add("Application user ID cannot be empty.");
-
+        
         if (dateOfBirth == default)
             errors.Add("Date of birth is required.");
 

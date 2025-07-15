@@ -1,7 +1,7 @@
 ﻿using HealthBeside.Domain.Interfaces;
 using HealthBeside.Domain.Models.Forum;
 
-namespace HealthBeside.Infrastructure.Repository;
+namespace HealthBeside.Infrastructure.Repositories;
 
 public class ForumPostRepository : GenericRepository<ForumPost>, IForumPostRepository
 {

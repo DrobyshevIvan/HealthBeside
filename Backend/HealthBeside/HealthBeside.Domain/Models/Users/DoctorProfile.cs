@@ -11,13 +11,13 @@ public class DoctorProfile
     public string Biography { get; private set; }
     public double Rating { get; private set; }
     
-    public string ApplicationUserId { get; private set; }
+    public Guid ApplicationUserId { get; private set; }
     public ApplicationUser ApplicationUser { get; private set; }
     
     private DoctorProfile() {}
     
     public static (string? Error, DoctorProfile? DoctorProfile) Create(
-        string applicationUserId,
+        Guid applicationUserId,
         string specialization,
         string medicalLicenseNumber,
         string clinicAffiliation,
@@ -28,9 +28,9 @@ public class DoctorProfile
     {
         var errors = new List<string>();
 
-        if (string.IsNullOrWhiteSpace(applicationUserId))
+        if (applicationUserId == Guid.Empty)
             errors.Add("Application user ID cannot be empty.");
-
+        
         if (string.IsNullOrWhiteSpace(specialization))
             errors.Add("Specialization cannot be empty.");
 

@@ -3,6 +3,7 @@ using HealthBeside.Domain.Models.Marketplace;
 using HealthBeside.Domain.Models.Users;
 using HealthBeside.Infrastructure.Configurations;
 using HealthBeside.Infrastructure.Configurations.MarketConfiguration;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -10,12 +11,13 @@ using Microsoft.Extensions.Configuration;
 
 namespace HealthBeside.Infrastructure;
 
-public class AppDbContext : IdentityDbContext<ApplicationUser>
+public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
 
+    public DbSet<ApplicationUser> Users { get; set; }
     public DbSet<DoctorProfile> DoctorProfiles { get; set; }
     public DbSet<PatientProfile> PatientProfiles { get; set; }
     public DbSet<ForumPost> ForumPosts { get; set; }

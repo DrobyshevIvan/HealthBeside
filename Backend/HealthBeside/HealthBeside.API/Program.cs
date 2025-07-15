@@ -1,15 +1,20 @@
 using System.Text;
+using HealthBeside.API.Handlers;
+using HealthBeside.Application.Services;
 using HealthBeside.Domain.Interfaces;
 using HealthBeside.Domain.Models.Forum;
 using HealthBeside.Domain.Models.Shared;
 using HealthBeside.Domain.Models.Users;
 using HealthBeside.Infrastructure;
-using HealthBeside.Infrastructure.Repository;
+using HealthBeside.Infrastructure.Options;
+using HealthBeside.Infrastructure.Processors;
+using HealthBeside.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Scalar.AspNetCore;
 
 namespace HealthBeside.API;
 
@@ -18,6 +23,9 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.Configure<JwtOptions>(
+            builder.Configuration.GetSection(JwtOptions.JwtOptionsKey));
         
         builder.Services.AddControllers();
 
@@ -35,8 +43,20 @@ public class Program
                 builder.Configuration.GetConnectionString("HealthBesideDbConnectionString")
             )
         );
+        
+        // Processors containers
+        builder.Services.AddScoped<IAuthTokenProcessor, AuthTokenProcessor>();
+        
+        // Repositories containers
+        builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        builder.Services.AddScoped<IForumCommentRepository, ForumCommentRepository>();
+        builder.Services.AddScoped<IForumPostRepository, ForumPostRepository>();
+        builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
 
-        builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+        // Services containers
+        builder.Services.AddScoped<IAccountService, AccountService>();
+
+        builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
             {
                 options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
@@ -44,62 +64,75 @@ public class Program
                 options.Password.RequireNonAlphanumeric = true;
                 options.Password.RequiredLength = 6;
                 options.User.RequireUniqueEmail = true;
-                options.SignIn.RequireConfirmedEmail = false;
             })
-            .AddEntityFrameworkStores<AppDbContext>()
-            .AddDefaultTokenProviders();
+            .AddEntityFrameworkStores<AppDbContext>();
         
-        /*var jwt = builder.Configuration.GetSection("JwtSettings");
+        var jwt = builder.Configuration.GetSection("JwtOptions");
         
-        var secretKey = builder.Configuration.GetValue<string>("JwtSettings:SecretKey");
+        var secretKey = builder.Configuration.GetValue<string>("JwtOptions:Secret");
 
         builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwt["Issuer"],
-                    ValidAudience = jwt["Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
-                };
-            });
-        
-        builder.Services.AddAuthorization(options =>
         {
-            options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
-            options.AddPolicy("Doctor", policy => policy.RequireRole("Doctor"));
-            options.AddPolicy("Patient", policy => policy.RequireRole("Patient"));
-        });*/
-        
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            var jwtOptions = builder.Configuration.GetSection(JwtOptions.JwtOptionsKey)
+                .Get<JwtOptions>() ?? throw new ArgumentException(nameof(JwtOptions));
+
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtOptions.Issuer,
+                ValidAudience = jwtOptions.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret))
+            };
+
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    context.Token = context.Request.Cookies["ACCESS_TOKEN"];
+                    return Task.CompletedTask;
+                }
+            };
+
+        });
 
         // Add services to the container.
-        builder.Services.AddAuthorization();
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
         
-        builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-        builder.Services.AddScoped<IForumCommentRepository, ForumCommentRepository>();
-        builder.Services.AddScoped<IForumPostRepository, ForumPostRepository>();
-
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+        
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            app.MapScalarApiReference(options =>
+            {
+                options.WithTitle("JWT Authentication API");
+            });
+            app.MapGet("/", context =>
+            {
+                context.Response.Redirect("/scalar/", permanent: false);
+                return Task.CompletedTask;
+            });
         }
-
+        
+        builder.Services.AddAuthorization();
+        
+        builder.Services.AddHttpContextAccessor();
+        
+        app.UseExceptionHandler("/Error");
+        
         app.UseHttpsRedirection();
 
         app.UseAuthentication();

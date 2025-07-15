@@ -8,17 +8,17 @@ public class MarketCart
     
     public ICollection<MarketCartItem> CartItems { get; private set; }
     
-    public string UserId { get; private set; }
+    public Guid UserId { get; private set; }
     public ApplicationUser User { get; private set; }
     
     private MarketCart() { }
 
     public static (string? Error, MarketCart? MarketCartItem) Create(
-        string userId)
+        Guid userId)
     {
         var errors = new List<string>();
         
-        if (string.IsNullOrEmpty(userId))
+        if (userId == Guid.Empty)
             errors.Add("User ID cannot be null or empty");
         
         if(errors.Any())
