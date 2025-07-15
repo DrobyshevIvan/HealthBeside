@@ -2,7 +2,6 @@ using System.Text;
 using HealthBeside.API.Handlers;
 using HealthBeside.Application.Services;
 using HealthBeside.Domain.Interfaces;
-using HealthBeside.Domain.Models.Forum;
 using HealthBeside.Domain.Models.Shared;
 using HealthBeside.Domain.Models.Users;
 using HealthBeside.Infrastructure;
@@ -28,16 +27,7 @@ public class Program
             builder.Configuration.GetSection(JwtOptions.JwtOptionsKey));
         
         builder.Services.AddControllers();
-
-        builder.Services.AddSwaggerGen(options =>
-        {
-            options.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Title = "HealthBeside.API API",
-                Version = "v1"
-            });
-        });
-
+        
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(
                 builder.Configuration.GetConnectionString("HealthBesideDbConnectionString")
