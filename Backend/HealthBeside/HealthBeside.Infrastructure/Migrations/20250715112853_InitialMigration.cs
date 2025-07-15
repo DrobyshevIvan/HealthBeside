@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HealthBeside.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace HealthBeside.Infrastructure.Migrations
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
@@ -30,10 +30,12 @@ namespace HealthBeside.Infrastructure.Migrations
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    FirstName = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    FirstName = table.Column<string>(type: "character varying(55)", maxLength: 55, nullable: false),
+                    LastName = table.Column<string>(type: "character varying(55)", maxLength: 55, nullable: false),
                     RegistrationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    RefreshToken = table.Column<string>(type: "text", nullable: true),
+                    RefreshTokenExpiresAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -55,12 +57,25 @@ namespace HealthBeside.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MarketCategories",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MarketCategories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RoleId = table.Column<string>(type: "text", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: false),
                     ClaimType = table.Column<string>(type: "text", nullable: true),
                     ClaimValue = table.Column<string>(type: "text", nullable: true)
                 },
@@ -81,7 +96,7 @@ namespace HealthBeside.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     ClaimType = table.Column<string>(type: "text", nullable: true),
                     ClaimValue = table.Column<string>(type: "text", nullable: true)
                 },
@@ -103,7 +118,7 @@ namespace HealthBeside.Infrastructure.Migrations
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
                     ProviderKey = table.Column<string>(type: "text", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<string>(type: "text", nullable: false)
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -120,8 +135,8 @@ namespace HealthBeside.Infrastructure.Migrations
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    RoleId = table.Column<string>(type: "text", nullable: false)
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -144,7 +159,7 @@ namespace HealthBeside.Infrastructure.Migrations
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Value = table.Column<string>(type: "text", nullable: true)
@@ -172,7 +187,7 @@ namespace HealthBeside.Infrastructure.Migrations
                     Education = table.Column<string>(type: "text", nullable: false),
                     Biography = table.Column<string>(type: "text", nullable: false),
                     Rating = table.Column<double>(type: "double precision", nullable: false),
-                    ApplicationUserId = table.Column<string>(type: "text", nullable: false)
+                    ApplicationUserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -195,7 +210,7 @@ namespace HealthBeside.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
                     Likes = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
                     Dislikes = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
-                    AuthorId = table.Column<string>(type: "text", nullable: false)
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -203,6 +218,46 @@ namespace HealthBeside.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_ForumPosts_AspNetUsers_AuthorId",
                         column: x => x.AuthorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MarketCarts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MarketCarts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MarketCarts_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MarketOrders",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    OrderDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "numeric", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    ShippingAddress = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MarketOrders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MarketOrders_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -217,7 +272,7 @@ namespace HealthBeside.Infrastructure.Migrations
                     Address = table.Column<string>(type: "text", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: false),
                     MedicalHistorySummary = table.Column<string>(type: "text", nullable: false),
-                    ApplicationUserId = table.Column<string>(type: "text", nullable: false)
+                    ApplicationUserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -226,6 +281,30 @@ namespace HealthBeside.Infrastructure.Migrations
                         name: "FK_PatientProfiles_AspNetUsers_ApplicationUserId",
                         column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MarketProducts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    SKU = table.Column<string>(type: "text", nullable: false),
+                    ImageUrl = table.Column<string>(type: "text", nullable: false),
+                    CategoryId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MarketProducts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MarketProducts_MarketCategories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "MarketCategories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -241,7 +320,7 @@ namespace HealthBeside.Infrastructure.Migrations
                     Dislikes = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
                     IsAnswer = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AuthorId = table.Column<string>(type: "text", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
                     ParentCommentId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
@@ -265,6 +344,88 @@ namespace HealthBeside.Infrastructure.Migrations
                         principalTable: "ForumPosts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MarketCartItems",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CartId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MarketCartItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MarketCartItems_MarketCarts_CartId",
+                        column: x => x.CartId,
+                        principalTable: "MarketCarts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MarketCartItems_MarketProducts_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "MarketProducts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MarketOrderItems",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "numeric", nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "numeric", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OrderId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MarketOrderItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MarketOrderItems_MarketOrders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "MarketOrders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_MarketOrderItems_MarketProducts_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "MarketProducts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MarketReviews",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    Rating = table.Column<int>(type: "integer", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MarketReviews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MarketReviews_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_MarketReviews_MarketProducts_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "MarketProducts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -331,6 +492,52 @@ namespace HealthBeside.Infrastructure.Migrations
                 column: "AuthorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MarketCartItems_CartId",
+                table: "MarketCartItems",
+                column: "CartId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MarketCartItems_ProductId",
+                table: "MarketCartItems",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MarketCarts_UserId",
+                table: "MarketCarts",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MarketOrderItems_OrderId",
+                table: "MarketOrderItems",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MarketOrderItems_ProductId",
+                table: "MarketOrderItems",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MarketOrders_UserId",
+                table: "MarketOrders",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MarketProducts_CategoryId",
+                table: "MarketProducts",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MarketReviews_ProductId",
+                table: "MarketReviews",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MarketReviews_UserId",
+                table: "MarketReviews",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PatientProfiles_ApplicationUserId",
                 table: "PatientProfiles",
                 column: "ApplicationUserId",
@@ -362,6 +569,15 @@ namespace HealthBeside.Infrastructure.Migrations
                 name: "ForumComments");
 
             migrationBuilder.DropTable(
+                name: "MarketCartItems");
+
+            migrationBuilder.DropTable(
+                name: "MarketOrderItems");
+
+            migrationBuilder.DropTable(
+                name: "MarketReviews");
+
+            migrationBuilder.DropTable(
                 name: "PatientProfiles");
 
             migrationBuilder.DropTable(
@@ -371,7 +587,19 @@ namespace HealthBeside.Infrastructure.Migrations
                 name: "ForumPosts");
 
             migrationBuilder.DropTable(
+                name: "MarketCarts");
+
+            migrationBuilder.DropTable(
+                name: "MarketOrders");
+
+            migrationBuilder.DropTable(
+                name: "MarketProducts");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "MarketCategories");
         }
     }
 }

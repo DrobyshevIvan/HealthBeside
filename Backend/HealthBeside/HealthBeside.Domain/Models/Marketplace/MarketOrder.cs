@@ -18,19 +18,19 @@ public class MarketOrder
     public string Status { get; private set; }
     public string ShippingAddress { get; private set; }
     
-    public string UserId { get; private set; }
+    public Guid UserId { get; private set; }
     public ApplicationUser User { get; private set; }
     
     public ICollection<MarketOrderItem> MarketOrderItems { get; private set; }
     
     private MarketOrder() { }
     
-    public static (string? Error, MarketOrder MarketOrder) Create(string userId,
+    public static (string? Error, MarketOrder MarketOrder) Create(Guid userId,
         decimal totalPrice, string shippingAddress)
     {
         var errors = new List<string>();
         
-        if(string.IsNullOrEmpty(userId))
+        if(userId == Guid.Empty)
             errors.Add("User ID cannot be empty.");
         
         if(totalPrice <= 0)

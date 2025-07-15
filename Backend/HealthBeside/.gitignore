@@ -5,3 +5,6 @@ obj/
 *.cache
 *.log
 *.vs/
+
+appsettings.json
+appsettings.*.json

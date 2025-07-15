@@ -1,7 +1,7 @@
 ﻿using HealthBeside.Domain.Models.Shared;
 using Microsoft.EntityFrameworkCore;
 
-namespace HealthBeside.Infrastructure.Repository;
+namespace HealthBeside.Infrastructure.Repositories;
 
 public class GenericRepository<T> : IGenericRepository<T> where T: class
 {

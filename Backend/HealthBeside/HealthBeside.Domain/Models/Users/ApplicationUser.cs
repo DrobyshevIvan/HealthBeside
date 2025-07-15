@@ -5,15 +5,18 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HealthBeside.Domain.Models.Users;
 
-public class ApplicationUser : IdentityUser
+public class ApplicationUser : IdentityUser<Guid>
 {
     public string FirstName { get; private set; }
     public string LastName { get; private set; }
     public DateTime RegistrationDate { get; private set; }
+    
+    public string? RefreshToken { get; set; }
+    public DateTime? RefreshTokenExpiresAtUtc { get; set; }
 
     // Navigation properties for related profiles
-    public DoctorProfile DoctorProfile { get; private set; }
-    public PatientProfile PatientProfile { get; private set; }
+    public DoctorProfile DoctorProfile { get; set; }
+    public PatientProfile PatientProfile { get; set; }
 
     //Зробити ще навігаційні властивості форуму, замовлення, коментарів на форумі і наче все 
     public ICollection<ForumPost> ForumPosts { get; private set; }
@@ -23,12 +26,16 @@ public class ApplicationUser : IdentityUser
     public ICollection<MarketOrder> MarketOrders { get; private set; }
 
     private ApplicationUser() { }
+
+    public override string ToString()
+    {
+        return FirstName + " " + LastName;
+    }
     
     public static (string? Error, ApplicationUser ApplicationUser) Create(
         string firstName,
         string lastName,
-        string email,
-        string password)
+        string email)
     {
         var errors = new List<string>();
 
@@ -41,15 +48,11 @@ public class ApplicationUser : IdentityUser
         if (string.IsNullOrWhiteSpace(email) || !new EmailAddressAttribute().IsValid(email))
             errors.Add("Invalid email address.");
 
-        if (string.IsNullOrWhiteSpace(password) || password.Length < 6)
-            errors.Add("Password must be at least 6 characters long.");
-
         if (errors.Any())
             return (string.Join("; ", errors), null);
 
         var applicationUser = new ApplicationUser
         {
-            Id = Guid.NewGuid().ToString(),
             FirstName = firstName,
             LastName = lastName,
             Email = email,

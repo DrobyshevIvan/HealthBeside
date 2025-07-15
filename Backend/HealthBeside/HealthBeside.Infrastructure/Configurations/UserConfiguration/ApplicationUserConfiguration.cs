@@ -10,5 +10,11 @@ public class ApplicationUserConfiguration : IEntityTypeConfiguration<Application
     {
         builder.Property(u => u.RegistrationDate)
             .HasDefaultValueSql("NOW()");
+        
+        builder.Property(u => u.FirstName)
+            .HasMaxLength(55);
+        
+        builder.Property(u => u.LastName)
+            .HasMaxLength(55);
     }
 }
