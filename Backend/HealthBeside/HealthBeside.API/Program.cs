@@ -1,5 +1,6 @@
 using System.Text;
 using HealthBeside.API.Handlers;
+using HealthBeside.Application.Interfaces;
 using HealthBeside.Application.Services;
 using HealthBeside.Domain.Interfaces;
 using HealthBeside.Domain.Models.Shared;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;
 
@@ -42,6 +44,7 @@ public class Program
         builder.Services.AddScoped<IForumCommentRepository, ForumCommentRepository>();
         builder.Services.AddScoped<IForumPostRepository, ForumPostRepository>();
         builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+        builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
         // Services containers
         builder.Services.AddScoped<IAccountService, AccountService>();
@@ -55,6 +58,7 @@ public class Program
                 options.Password.RequiredLength = 6;
                 options.User.RequireUniqueEmail = true;
             })
+            .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<AppDbContext>();
         
         var jwt = builder.Configuration.GetSection("JwtOptions");
@@ -92,7 +96,7 @@ public class Program
             };
 
         });
-
+        
         // Add services to the container.
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

@@ -1,4 +1,4 @@
-﻿namespace HealthBeside.Domain.Contracts;
+﻿namespace HealthBeside.Application.Contracts;
 
 public class RegisterRequest
 {

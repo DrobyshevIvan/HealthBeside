@@ -22,7 +22,7 @@ public class AuthTokenProcessor : IAuthTokenProcessor
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public (string jwtToken, DateTime expiresAtUtc) GenerateJwtToken(ApplicationUser user)
+    public (string jwtToken, DateTime expiresAtUtc) GenerateJwtToken(ApplicationUser user, List<Claim> roleClaims, IList<Claim> userClaims)
     {
         var signingKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_jwtOptions.Secret));
@@ -36,7 +36,7 @@ public class AuthTokenProcessor : IAuthTokenProcessor
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(ClaimTypes.NameIdentifier, user.ToString())
-        };
+        }.Union(userClaims).Union(roleClaims);
         
         var expires = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpirationTimeInMinutes);
         

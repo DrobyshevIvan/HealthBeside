@@ -353,12 +353,6 @@ namespace HealthBeside.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("RefreshToken")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("RefreshTokenExpiresAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<DateTime>("RegistrationDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
@@ -461,6 +455,29 @@ namespace HealthBeside.Infrastructure.Migrations
                     b.ToTable("PatientProfiles");
                 });
 
+            modelBuilder.Entity("HealthBeside.Domain.Models.Users.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ExpiresOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
                     b.Property<Guid>("Id")
@@ -486,6 +503,32 @@ namespace HealthBeside.Infrastructure.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("aeec2a74-61cd-41eb-8ac7-251c365da8c5"),
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = new Guid("098f240f-01cf-4925-ba10-4983724f73c3"),
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = new Guid("665c40a7-46ec-4564-a679-755f77c90472"),
+                            Name = "Doctor",
+                            NormalizedName = "DOCTOR"
+                        },
+                        new
+                        {
+                            Id = new Guid("c1167d0e-ff05-4df7-bfb5-69baf52c174f"),
+                            Name = "Patient",
+                            NormalizedName = "PATIENT"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -740,6 +783,17 @@ namespace HealthBeside.Infrastructure.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
+            modelBuilder.Entity("HealthBeside.Domain.Models.Users.RefreshToken", b =>
+                {
+                    b.HasOne("HealthBeside.Domain.Models.Users.ApplicationUser", "User")
+                        .WithMany("RefreshToken")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
@@ -842,6 +896,8 @@ namespace HealthBeside.Infrastructure.Migrations
 
                     b.Navigation("PatientProfile")
                         .IsRequired();
+
+                    b.Navigation("RefreshToken");
                 });
 #pragma warning restore 612, 618
         }
