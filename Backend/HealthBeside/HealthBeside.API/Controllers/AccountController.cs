@@ -1,4 +1,6 @@
-﻿using HealthBeside.Domain.Contracts;
+﻿using HealthBeside.Application.Contracts;
+using HealthBeside.Application.Interfaces;
+using HealthBeside.Domain.Exceptions;
 using HealthBeside.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,8 +34,9 @@ public class AccountController : ControllerBase
     
 
     [HttpPost("refresh-token")]
-    public async Task<IActionResult> RefreshTokenAsync(HttpContext httpContext)
+    public async Task<IActionResult> RefreshTokenAsync()
     {
+        HttpContext httpContext = HttpContext;
         var refreshToken = httpContext.Request.Cookies["REFRESH_TOKEN"];
         await _accountService.RefreshTokenAsync(refreshToken);
         
@@ -44,6 +47,16 @@ public class AccountController : ControllerBase
     [Authorize]
     public async Task<IActionResult> LogoutAsync()
     {
+        var refreshToken = HttpContext.Request.Cookies["REFRESH_TOKEN"];
+
+        if (refreshToken is null)
+            throw new RefreshTokenException("Refresh token was not found in cookies");
+        
+        await _accountService.LogoutAsync(refreshToken);
+        
+        Response.Cookies.Delete("ACCESS_TOKEN");
+        Response.Cookies.Delete("REFRESH_TOKEN");
+        
         return Ok("Logged out successfully.");
     }
 
@@ -53,5 +66,4 @@ public class AccountController : ControllerBase
     {
         return Ok("User information retrieved successfully.");
     }
-    
 }

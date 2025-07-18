@@ -1,5 +1,6 @@
 using System.Text;
 using HealthBeside.API.Handlers;
+using HealthBeside.Application.Interfaces;
 using HealthBeside.Application.Services;
 using HealthBeside.Domain.Interfaces;
 using HealthBeside.Domain.Models.Shared;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;
 
@@ -25,23 +27,26 @@ public class Program
 
         builder.Services.Configure<JwtOptions>(
             builder.Configuration.GetSection(JwtOptions.JwtOptionsKey));
-        
+
         builder.Services.AddControllers();
         
+        
+
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(
                 builder.Configuration.GetConnectionString("HealthBesideDbConnectionString")
             )
         );
-        
+
         // Processors containers
         builder.Services.AddScoped<IAuthTokenProcessor, AuthTokenProcessor>();
-        
+
         // Repositories containers
         builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         builder.Services.AddScoped<IForumCommentRepository, ForumCommentRepository>();
         builder.Services.AddScoped<IForumPostRepository, ForumPostRepository>();
         builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+        builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
         // Services containers
         builder.Services.AddScoped<IAccountService, AccountService>();
@@ -55,10 +60,11 @@ public class Program
                 options.Password.RequiredLength = 6;
                 options.User.RequireUniqueEmail = true;
             })
+            .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<AppDbContext>();
-        
+
         var jwt = builder.Configuration.GetSection("JwtOptions");
-        
+
         var secretKey = builder.Configuration.GetValue<string>("JwtOptions:Secret");
 
         builder.Services.AddAuthentication(options =>
@@ -97,9 +103,9 @@ public class Program
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
-        
+
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-        
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -116,13 +122,13 @@ public class Program
                 return Task.CompletedTask;
             });
         }
-        
+
         builder.Services.AddAuthorization();
-        
+
         builder.Services.AddHttpContextAccessor();
-        
+
         app.UseExceptionHandler("/Error");
-        
+
         app.UseHttpsRedirection();
 
         app.UseAuthentication();

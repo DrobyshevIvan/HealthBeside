@@ -10,9 +10,6 @@ public class ApplicationUser : IdentityUser<Guid>
     public string FirstName { get; private set; }
     public string LastName { get; private set; }
     public DateTime RegistrationDate { get; private set; }
-    
-    public string? RefreshToken { get; set; }
-    public DateTime? RefreshTokenExpiresAtUtc { get; set; }
 
     // Navigation properties for related profiles
     public DoctorProfile DoctorProfile { get; set; }
@@ -24,6 +21,7 @@ public class ApplicationUser : IdentityUser<Guid>
     public ICollection<MarketReview> MarketReviews { get; private set; }
     public MarketCart? MarketCart { get; private set; }
     public ICollection<MarketOrder> MarketOrders { get; private set; }
+    public ICollection<RefreshToken> RefreshToken { get; private set; }
 
     private ApplicationUser() { }
 

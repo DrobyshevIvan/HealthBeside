@@ -1,5 +1,6 @@
 ﻿using HealthBeside.Domain.Interfaces;
 using HealthBeside.Domain.Models.Users;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace HealthBeside.Infrastructure.Repositories;
@@ -15,7 +16,14 @@ public class ApplicationUserRepository : IApplicationUserRepository
     
     public async Task<ApplicationUser?> GetUserByRefreshTokenAsync(string refreshToken)
     {
-        return await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+        var userToken = await _context.Set<RefreshToken>()
+            .FirstOrDefaultAsync(t => t.Token == refreshToken);
+
+        if (userToken == null)
+            return null;
+        
+        var user = await _context.Set<ApplicationUser>().FirstOrDefaultAsync(u => u.Id == userToken.UserId);
+        return user;
     }
     
     //TODO: Implement other methods as needed, such as GetUserByIdAsync, CreateUserAsync, etc.

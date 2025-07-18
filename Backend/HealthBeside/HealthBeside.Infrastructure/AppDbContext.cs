@@ -1,8 +1,9 @@
 ﻿using HealthBeside.Domain.Models.Forum;
 using HealthBeside.Domain.Models.Marketplace;
 using HealthBeside.Domain.Models.Users;
-using HealthBeside.Infrastructure.Configurations;
+using HealthBeside.Infrastructure.Configurations.ForumConfiguration;
 using HealthBeside.Infrastructure.Configurations.MarketConfiguration;
+using HealthBeside.Infrastructure.Configurations.UserConfiguration;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     public DbSet<MarketOrderItem> MarketOrderItems { get; set; }
     public DbSet<MarketProduct> MarketProducts { get; set; }
     public DbSet<MarketReview> MarketReviews { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
     
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -45,7 +47,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
         modelBuilder.ApplyConfiguration(new MarketReviewConfiguration());
         modelBuilder.ApplyConfiguration(new MarketOrderConfiguration());
         modelBuilder.ApplyConfiguration(new MarketOrderItemConfiguration());
-        modelBuilder.ApplyConfiguration(new MarketProductConfiguration());  
+        modelBuilder.ApplyConfiguration(new MarketProductConfiguration());
+        modelBuilder.ApplyConfiguration(new RoleConfiguration());
+        modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
     }
 }
 

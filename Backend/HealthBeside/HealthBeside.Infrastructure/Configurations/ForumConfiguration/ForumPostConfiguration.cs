@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace HealthBeside.Infrastructure.Configurations;
+namespace HealthBeside.Infrastructure.Configurations.ForumConfiguration;
 
 public class ForumPostConfiguration : IEntityTypeConfiguration<ForumPost>
 {
