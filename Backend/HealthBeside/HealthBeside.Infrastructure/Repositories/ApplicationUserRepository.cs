@@ -9,9 +9,6 @@ public class ApplicationUserRepository : IApplicationUserRepository
 {
     private readonly AppDbContext _context;
 
-    private const string LoginProvider = "HealthBesideApi";
-    private const string RefreshToken = "RefreshToken";
-    
     public ApplicationUserRepository(AppDbContext context)
     {
         _context = context;

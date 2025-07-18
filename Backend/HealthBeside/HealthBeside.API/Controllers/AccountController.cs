@@ -47,8 +47,7 @@ public class AccountController : ControllerBase
     [Authorize]
     public async Task<IActionResult> LogoutAsync()
     {
-        HttpContext httpContext = HttpContext;
-        var refreshToken = httpContext.Request.Cookies["REFRESH_TOKEN"];
+        var refreshToken = HttpContext.Request.Cookies["REFRESH_TOKEN"];
 
         if (refreshToken is null)
             throw new RefreshTokenException("Refresh token was not found in cookies");

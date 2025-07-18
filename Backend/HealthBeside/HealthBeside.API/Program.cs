@@ -27,18 +27,20 @@ public class Program
 
         builder.Services.Configure<JwtOptions>(
             builder.Configuration.GetSection(JwtOptions.JwtOptionsKey));
-        
+
         builder.Services.AddControllers();
         
+        
+
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(
                 builder.Configuration.GetConnectionString("HealthBesideDbConnectionString")
             )
         );
-        
+
         // Processors containers
         builder.Services.AddScoped<IAuthTokenProcessor, AuthTokenProcessor>();
-        
+
         // Repositories containers
         builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         builder.Services.AddScoped<IForumCommentRepository, ForumCommentRepository>();
@@ -60,9 +62,9 @@ public class Program
             })
             .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<AppDbContext>();
-        
+
         var jwt = builder.Configuration.GetSection("JwtOptions");
-        
+
         var secretKey = builder.Configuration.GetValue<string>("JwtOptions:Secret");
 
         builder.Services.AddAuthentication(options =>
@@ -96,14 +98,14 @@ public class Program
             };
 
         });
-        
+
         // Add services to the container.
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
-        
+
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-        
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -120,13 +122,13 @@ public class Program
                 return Task.CompletedTask;
             });
         }
-        
+
         builder.Services.AddAuthorization();
-        
+
         builder.Services.AddHttpContextAccessor();
-        
+
         app.UseExceptionHandler("/Error");
-        
+
         app.UseHttpsRedirection();
 
         app.UseAuthentication();

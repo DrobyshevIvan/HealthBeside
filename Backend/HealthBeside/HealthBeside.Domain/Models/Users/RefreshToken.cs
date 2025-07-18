@@ -11,7 +11,7 @@ public class RefreshToken
     
     private RefreshToken() { }  
 
-    public static (string? Error, RefreshToken refreshToken) Create(string token,
+    public static (string? Error, RefreshToken? refreshToken) Create(string token,
         DateTime expiresOnUtc,
         Guid userId)
     {
