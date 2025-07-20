@@ -12,7 +12,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T: class
         _context = context;
     }
     
-    public async Task<T> GetAsync(Guid? id)
+    public async Task<T?> GetAsync(Guid? id)
     {
         if (id is null)
         {

@@ -50,6 +50,7 @@ public class Program
 
         // Services containers
         builder.Services.AddScoped<IAccountService, AccountService>();
+        builder.Services.AddScoped<IForumPostService, ForumPostService>();
 
         builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
             {
