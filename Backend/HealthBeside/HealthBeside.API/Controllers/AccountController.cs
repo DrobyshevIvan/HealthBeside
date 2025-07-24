@@ -2,7 +2,11 @@
 using HealthBeside.Application.Interfaces;
 using HealthBeside.Domain.Exceptions;
 using HealthBeside.Domain.Interfaces;
+using HealthBeside.Domain.Models.Users;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HealthBeside.API.Controllers;
@@ -12,10 +16,12 @@ namespace HealthBeside.API.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly IAccountService _accountService;
+    private readonly ILogger<AccountController> _logger;
 
-    public AccountController(IAccountService accountService)
+    public AccountController(IAccountService accountService, ILogger<AccountController> logger)
     {
         _accountService = accountService;
+        _logger = logger;
     }
     
     [HttpPost("register")]
@@ -42,6 +48,43 @@ public class AccountController : ControllerBase
         
         return Ok("Refresh token processed successfully.");
     }
+
+    [HttpGet("login/google")]
+    public IActionResult GoogleLogin([FromQuery] string returnUrl,
+        LinkGenerator linkGenerator,
+        SignInManager<ApplicationUser> signInManager,
+        HttpContext httpContext)
+    {
+        var callbackUrl = linkGenerator.GetPathByName(httpContext, "GoogleLoginCallback");
+        if (string.IsNullOrWhiteSpace(callbackUrl))
+            return BadRequest("Callback route is not configured properly.");
+
+        var properties = signInManager.ConfigureExternalAuthenticationProperties("Google", 
+            $"{callbackUrl}?returnUrl={Uri.EscapeDataString(returnUrl)}");
+
+        return Challenge(properties, ["Google"]);
+    }
+
+    [HttpGet("login/google/callback", Name = "GoogleLoginCallback")]
+    public async Task<IActionResult> GoogleCallbackAsync([FromQuery] string returnUrl, HttpContext httpContext,
+        IAccountService accountService)
+    {
+        var result = await httpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+
+        if (!result.Succeeded)
+        {
+            _logger.LogWarning("Google authentication failed.");
+            return Unauthorized();
+        }
+
+        await accountService.LoginWithGoogleAsync(result.Principal);
+
+        if (!Url.IsLocalUrl(returnUrl))
+            return Redirect("~/");
+
+        return Redirect(returnUrl);
+    }
+
 
     [HttpPost("logout")]
     [Authorize]

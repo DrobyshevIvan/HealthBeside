@@ -9,6 +9,7 @@ using HealthBeside.Infrastructure;
 using HealthBeside.Infrastructure.Options;
 using HealthBeside.Infrastructure.Processors;
 using HealthBeside.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -28,9 +29,18 @@ public class Program
         builder.Services.Configure<JwtOptions>(
             builder.Configuration.GetSection(JwtOptions.JwtOptionsKey));
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("CorsPolicy", opts =>
+            {
+                opts.AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials()
+                    .WithOrigins("http://localhost:5180");
+            });
+        });
+
         builder.Services.AddControllers();
-        
-        
 
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(
@@ -73,6 +83,19 @@ public class Program
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddCookie().AddGoogle(options =>
+        {
+            var clientId = builder.Configuration["Authentication:Google:ClientId"];
+            if (clientId == null)
+                throw new ArgumentNullException(nameof(clientId));
+            
+            var clientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+            if (clientSecret == null)
+                throw new ArgumentNullException(nameof(clientId));
+            
+            options.ClientId = clientId;
+            options.ClientSecret = clientSecret;
+            options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         }).AddJwtBearer(options =>
         {
             var jwtOptions = builder.Configuration.GetSection(JwtOptions.JwtOptionsKey)
@@ -123,6 +146,8 @@ public class Program
                 return Task.CompletedTask;
             });
         }
+        
+        app.UseCors("CorsPolicy");
 
         builder.Services.AddAuthorization();
 

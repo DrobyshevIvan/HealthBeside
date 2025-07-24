@@ -1,4 +1,5 @@
-﻿using HealthBeside.Application.Contracts;
+﻿using System.Runtime.InteropServices;
+using HealthBeside.Application.Contracts;
 using HealthBeside.Application.Extensions.Mapping.User;
 using HealthBeside.Application.Interfaces;
 using HealthBeside.Domain.Exceptions;
@@ -124,6 +125,53 @@ public class AccountService : IAccountService
         await GenerateNewTokensAsync(user);
         
         _logger.LogInformation("Successfully refreshed tokens for user: {UserId}", user.Id);
+    }
+
+    public async Task LoginWithGoogleAsync(ClaimsPrincipal? claimsPrincipal)
+    {
+        if (claimsPrincipal == null)
+            throw new ExternalLoginProviderException("Google", "ClaimsPrincipal is null.");
+
+        var email = claimsPrincipal.FindFirstValue(ClaimTypes.Email);
+        if (string.IsNullOrWhiteSpace(email))
+            throw new ExternalLoginProviderException("Google", "Email claim is missing.");
+
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user == null)
+        {
+            var (error, newUser) = ApplicationUser.Create(
+                claimsPrincipal.FindFirstValue(ClaimTypes.GivenName) ?? "Unknown",
+                claimsPrincipal.FindFirstValue(ClaimTypes.Surname) ?? "Unknown",
+                email
+            );
+
+            if (error != null || newUser == null)
+                throw new ExternalLoginProviderException("Google", $"User creation failed: {error}");
+
+            var result = await _userManager.CreateAsync(newUser);
+            if (!result.Succeeded)
+                throw new ExternalLoginProviderException("Google",
+                    $"Unable to create user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+
+            user = newUser;
+        }
+
+        var loginInfo = new UserLoginInfo("Google", email, "Google");
+        var loginResult = await _userManager.AddLoginAsync(user, loginInfo);
+
+        if (!loginResult.Succeeded)
+        {
+            var existingLogins = await _userManager.GetLoginsAsync(user);
+            var alreadyLinked = existingLogins.Any(x => x.LoginProvider == "Google");
+            if (!alreadyLinked)
+            {
+                throw new ExternalLoginProviderException("Google",
+                    $"Unable to link Google account: {string.Join(", ", loginResult.Errors.Select(e => e.Description))}");
+            }
+        }
+
+        await GenerateNewTokensAsync(user);
     }
 
     public async Task LogoutAsync(string refreshToken)

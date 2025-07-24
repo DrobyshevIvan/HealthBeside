@@ -22,8 +22,9 @@ public class ApplicationUser : IdentityUser<Guid>
     public MarketCart? MarketCart { get; private set; }
     public ICollection<MarketOrder> MarketOrders { get; private set; }
     public ICollection<RefreshToken> RefreshToken { get; private set; }
+    public DateTime? RefreshTokenExpiresAtUtc { get; private set; }
 
-    private ApplicationUser() { }
+    public ApplicationUser() { }
 
     public override string ToString()
     {
