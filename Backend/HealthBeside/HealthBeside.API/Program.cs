@@ -1,5 +1,6 @@
 using System.Text;
 using HealthBeside.API.Handlers;
+using HealthBeside.Application.Extensions;
 using HealthBeside.Application.Interfaces;
 using HealthBeside.Application.Services;
 using HealthBeside.Domain.Interfaces;
@@ -48,19 +49,8 @@ public class Program
             )
         );
 
-        // Processors containers
-        builder.Services.AddScoped<IAuthTokenProcessor, AuthTokenProcessor>();
-
-        // Repositories containers
-        builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-        builder.Services.AddScoped<IForumCommentRepository, ForumCommentRepository>();
-        builder.Services.AddScoped<IForumPostRepository, ForumPostRepository>();
-        builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
-        builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-
-        // Services containers
-        builder.Services.AddScoped<IAccountService, AccountService>();
-        builder.Services.AddScoped<IForumPostService, ForumPostService>();
+        //instead of other DI containers, we implement method from class, that include all of containers
+        builder.Services.AddProjectServices();
 
         builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
             {
