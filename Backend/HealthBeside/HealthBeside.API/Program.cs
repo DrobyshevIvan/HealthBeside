@@ -1,22 +1,14 @@
 using System.Text;
 using HealthBeside.API.Handlers;
 using HealthBeside.Application.Extensions;
-using HealthBeside.Application.Interfaces;
-using HealthBeside.Application.Services;
-using HealthBeside.Domain.Interfaces;
-using HealthBeside.Domain.Models.Shared;
 using HealthBeside.Domain.Models.Users;
 using HealthBeside.Infrastructure;
 using HealthBeside.Infrastructure.Options;
-using HealthBeside.Infrastructure.Processors;
-using HealthBeside.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;
 
 namespace HealthBeside.API;
@@ -67,6 +59,10 @@ public class Program
         var jwt = builder.Configuration.GetSection("JwtOptions");
 
         var secretKey = builder.Configuration.GetValue<string>("JwtOptions:Secret");
+        
+        if(secretKey == null)
+            throw new ArgumentNullException(nameof(secretKey));
+            
 
         builder.Services.AddAuthentication(options =>
         {
@@ -112,6 +108,10 @@ public class Program
             };
 
         });
+        
+        builder.Services.AddAuthorization();
+
+        builder.Services.AddHttpContextAccessor();
 
         // Add services to the container.
 
@@ -136,16 +136,14 @@ public class Program
                 return Task.CompletedTask;
             });
         }
-        
-        app.UseCors("CorsPolicy");
-
-        builder.Services.AddAuthorization();
-
-        builder.Services.AddHttpContextAccessor();
 
         app.UseExceptionHandler("/Error");
 
         app.UseHttpsRedirection();
+        
+        app.UseCors("CorsPolicy");
+        
+        app.UseRouting();  
 
         app.UseAuthentication();
 
