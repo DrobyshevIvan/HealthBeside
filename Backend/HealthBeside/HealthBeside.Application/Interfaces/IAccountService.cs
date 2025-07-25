@@ -1,6 +1,4 @@
-﻿
-
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using HealthBeside.Application.Contracts;
 
 namespace HealthBeside.Application.Interfaces;

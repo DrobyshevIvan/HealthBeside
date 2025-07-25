@@ -69,7 +69,7 @@ public class Program
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddCookie().AddGoogle(options =>
+        })/*.AddCookie().AddGoogle(options =>
         {
             var clientId = builder.Configuration["Authentication:Google:ClientId"];
             if (clientId == null)
@@ -82,7 +82,7 @@ public class Program
             options.ClientId = clientId;
             options.ClientSecret = clientSecret;
             options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        }).AddJwtBearer(options =>
+        })*/.AddJwtBearer(options =>
         {
             var jwtOptions = builder.Configuration.GetSection(JwtOptions.JwtOptionsKey)
                 .Get<JwtOptions>() ?? throw new ArgumentException(nameof(JwtOptions));

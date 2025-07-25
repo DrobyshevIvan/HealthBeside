@@ -34,7 +34,7 @@ public class ForumPostService : IForumPostService
 
     public async Task<GetDetailedForumPostDto> Create(CreateForumPostDto forumPostDto, Guid authorId)
     {
-        (string? error, ForumPost? forumPost) = forumPostDto.ToForumPost(authorId);
+        (string? error, ForumPost? forumPost) = ForumPost.Create(authorId, forumPostDto.Title, forumPostDto.Content);
 
         if (error != null)
         {
@@ -58,7 +58,21 @@ public class ForumPostService : IForumPostService
 
     public async Task<bool> Update(Guid id, UpdateForumPostDto updateForumPostDto)
     {
-        throw new NotImplementedException();
+        var post = await _forumPostRepository.GetAsync(id);
+
+        if (post is null)
+            return false;
+    
+        (string? error, ForumPost? updatedPost) = post.Update(updateForumPostDto.Title, updateForumPostDto.Content);
+
+        if (error != null)
+        {
+            throw new ArgumentException(error);
+        }
+    
+        await _forumPostRepository.UpdateAsync(post);
+    
+        return true;
     }
 
     public async Task<bool> Delete(Guid id)
