@@ -40,6 +40,7 @@ public class AccountController : ControllerBase
     
 
     [HttpPost("refresh-token")]
+    [Authorize]
     public async Task<IActionResult> RefreshTokenAsync()
     {
         HttpContext httpContext = HttpContext;
