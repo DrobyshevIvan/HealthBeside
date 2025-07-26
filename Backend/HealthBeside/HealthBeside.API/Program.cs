@@ -69,7 +69,11 @@ public class Program
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        })/*.AddCookie().AddGoogle(options =>
+        })
+            
+        //NOTE: Я закоментував поки гугл аутентифікацію, бо тут треба налаштувати cliентId та clientSecret
+        
+            /*.AddCookie().AddGoogle(options =>
         {
             var clientId = builder.Configuration["Authentication:Google:ClientId"];
             if (clientId == null)

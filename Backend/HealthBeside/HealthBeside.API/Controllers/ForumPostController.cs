@@ -24,40 +24,47 @@ namespace HealthBeside.API.Controllers
         [HttpGet("get-posts")]
         public async Task<ActionResult<IEnumerable<GetForumPostDto>>> GetForumPosts()
         {
-            return Ok(await _forumPostService.GetAll());
+            return Ok(await _forumPostService.GetAllAsync());
         }
 
         [HttpGet("get-by-id/{id}")]
         public async Task<ActionResult<GetDetailedForumPostDto>> GetForumPost(Guid id)
         {
-            return  Ok(await _forumPostService.GetById(id));
+            return  Ok(await _forumPostService.GetByIdAsync(id));
         }
 
         [HttpPut("update-post/{id}")]
-         public async Task<IActionResult> UpdateForumPost(Guid id, [FromBody] UpdateForumPostDto updateDto)
-         {
-             var success = await _forumPostService.Update(id, updateDto);
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateForumPostDto dto)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
+                return Unauthorized("Invalid or missing user identifier.");
 
-             if (!success)
-             {
-                 return NotFound("Post with the specified ID was not found.");
-             }
-    
-             return Ok("Forum post updated successfully.");
-         }
+            var result = await _forumPostService.UpdateAsync(id, dto);
+
+            if (!result)
+                return NotFound($"Post with id {id} not found.");
+
+            return NoContent();
+        }
 
          //TODO Fix this method
         [HttpPost("publish-post")]
         [Authorize]
         public async Task<ActionResult<GetDetailedForumPostDto>> PublishForumPost([FromBody] CreateForumPostDto createDto)
         {
-            throw new NotImplementedException("This method is not implemented yet.");
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
+                return Unauthorized("Invalid or missing user identifier.");
+
+            var createdPost = await _forumPostService.CreateAsync(createDto, userId);
+            return CreatedAtAction(nameof(GetForumPost), new { id = createdPost.Id }, createdPost);
         }
 
         [HttpDelete("delete-post/{id}")]
         public async Task<IActionResult> DeleteForumPost(Guid id)
         {
-            var result = await _forumPostService.Delete(id);
+            var result = await _forumPostService.DeleteAsync(id);
             if (result == false)
             {
                 return NotFound();
@@ -67,9 +74,9 @@ namespace HealthBeside.API.Controllers
         }
         
         [HttpGet("is-post-exits/{id}")]
-        private bool ForumPostExists(Guid id)
+        private async Task<bool> ForumPostExists(Guid id)
         {
-            return _context.ForumPosts.Any(e => e.Id == id);
+            return await _forumPostService.Exists(id);
         }
     }
 }

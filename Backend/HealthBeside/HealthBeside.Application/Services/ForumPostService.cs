@@ -16,13 +16,13 @@ public class ForumPostService : IForumPostService
         _forumPostRepository = forumPostRepository;
     }
 
-    public async Task<IEnumerable<GetForumPostDto>> GetAll()
+    public async Task<IEnumerable<GetForumPostDto>> GetAllAsync()
     {
         var posts = await _forumPostRepository.GetAllAsync();
         return posts.Select(post => post.ToGetForumPostDto());
     }
 
-    public async Task<GetDetailedForumPostDto> GetById(Guid id)
+    public async Task<GetDetailedForumPostDto> GetByIdAsync(Guid id)
     {
         var post = await _forumPostRepository.GetByIdWithAuthorAsync(id);
         
@@ -32,7 +32,7 @@ public class ForumPostService : IForumPostService
         return post.ToGetDetailedForumPostDto();
     }
 
-    public async Task<GetDetailedForumPostDto> Create(CreateForumPostDto forumPostDto, Guid authorId)
+    public async Task<GetDetailedForumPostDto> CreateAsync(CreateForumPostDto forumPostDto, Guid authorId)
     {
         (string? error, ForumPost? forumPost) = ForumPost.Create(authorId, forumPostDto.Title, forumPostDto.Content);
 
@@ -56,26 +56,25 @@ public class ForumPostService : IForumPostService
         return postWithAuthor.ToGetDetailedForumPostDto();
     }
 
-    public async Task<bool> Update(Guid id, UpdateForumPostDto updateForumPostDto)
+    public async Task<bool> UpdateAsync(Guid id, UpdateForumPostDto dto)
     {
         var post = await _forumPostRepository.GetAsync(id);
 
         if (post is null)
             return false;
-    
-        (string? error, ForumPost? updatedPost) = post.Update(updateForumPostDto.Title, updateForumPostDto.Content);
 
-        if (error != null)
-        {
+        var error = post.Update(dto.Title, dto.Content);
+
+        if (error is not null)
             throw new ArgumentException(error);
-        }
-    
+
         await _forumPostRepository.UpdateAsync(post);
-    
+
         return true;
     }
 
-    public async Task<bool> Delete(Guid id)
+
+    public async Task<bool> DeleteAsync(Guid id)
     {
         var post = await _forumPostRepository.GetAsync(id);
         if (post is null)
@@ -87,6 +86,11 @@ public class ForumPostService : IForumPostService
 
     public async Task<bool> Exists(Guid id)
     {
-        throw new NotImplementedException();
+        var post = await _forumPostRepository.GetAsync(id);
+        
+        if(post is null)
+           return false;
+        
+        return true;
     }
 }
