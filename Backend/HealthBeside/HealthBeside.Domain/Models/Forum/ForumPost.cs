@@ -50,23 +50,24 @@ public class ForumPost
         return (null, forumPost);
     }
     
-    public (string? Error, ForumPost? ForumPost) Update(string title, string content)   
+    public string? Update(string title, string content)
     {
         var errors = new List<string>();
 
         if (string.IsNullOrWhiteSpace(title))
             errors.Add("Title cannot be empty.");
 
-        if (string.IsNullOrEmpty(content))
+        if (string.IsNullOrWhiteSpace(content))
             errors.Add("Content cannot be empty.");
 
         if (errors.Any())
-            return (string.Join("; ", errors), null);
+            return string.Join("; ", errors);
 
-        this.Title = title;
-        this.Content = content;
+        Title = title;
+        Content = content;
 
-        return (null, this);
+        return null;
     }
+
 
 }
