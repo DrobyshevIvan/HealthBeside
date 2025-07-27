@@ -25,6 +25,7 @@ public static class ServiceCollectionExtensions
         // Services
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IForumPostService, ForumPostService>();
+        services.AddScoped<IForumCommentService, ForumCommentService>();
 
         return services;
     }

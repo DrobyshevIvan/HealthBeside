@@ -25,8 +25,7 @@ public class ForumComment
     
     private ForumComment() { }
 
-    public static (string? Error, ForumComment? ForumComment) Create(Guid authorId, string content, Guid postId,
-        Guid? parentCommentId)
+    public static (string? Error, ForumComment? ForumComment) Create(Guid authorId, string content, Guid postId)
     {
         var errors = new List<string>();
         
@@ -91,7 +90,15 @@ public class ForumComment
         };
 
         return (null, forumComment);
+    }
+    
+    public string? Update(string content, bool isAnswer)
+    {
+        if (string.IsNullOrWhiteSpace(content))
+            return "Content cannot be empty.";
         
-     
+        Content = content;
+        IsAnswer = isAnswer;
+        return null;
     }
 }
