@@ -1,10 +1,11 @@
 ﻿using HealthBeside.Application.Contracts.Forum.ForumCommentDto;
 using HealthBeside.Application.Interfaces;
 using HealthBeside.Domain.Interfaces;
+using HealthBeside.Domain.Models.Forum;
 
 namespace HealthBeside.Application.Services;
 
-//TODO implement this service
+//TODO implement this service and add custom exceptions for better error handling
 public class ForumCommentService : IForumCommentService
 {
     private readonly IForumCommentRepository _forumCommentRepository;
@@ -15,33 +16,105 @@ public class ForumCommentService : IForumCommentService
     }
 
 
-    public Task<IEnumerable<GetForumCommentDto>> GetAll()
+    public async Task<IEnumerable<GetForumCommentDto>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        var comments = await _forumCommentRepository.GetAllAsync();
+        return comments.Select(comment => new GetForumCommentDto
+        {
+            Id = comment.Id,
+            Content = comment.Content,
+            CreatedAt = comment.CreatedAt,
+            Likes = comment.Likes,
+            Dislikes = comment.Dislikes,
+            IsAnswer = comment.IsAnswer
+        });
     }
 
-    public Task<GetDetailedForumCommentDto> GetById(Guid id)
+    public async Task<GetForumCommentDto> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var comment = await _forumCommentRepository.GetAsync(id);
+    
+        if (comment is null)
+            throw new KeyNotFoundException($"Comment with ID {id} not found.");
+
+        return new GetForumCommentDto
+        {
+            Id = comment.Id,
+            Content = comment.Content,
+            CreatedAt = comment.CreatedAt,
+            Likes = comment.Likes,
+            Dislikes = comment.Dislikes,
+            IsAnswer = comment.IsAnswer
+        };
     }
 
-    public Task<CreateForumCommentDto> Create(CreateForumCommentDto forumCommentDto, Guid authorId)
+    public async Task<GetDetailedForumCommentDto> CreateAsync(CreateForumCommentDto forumCommentDto, Guid authorId)
     {
-        throw new NotImplementedException();
+        (string? error, ForumComment? forumComment) = ForumComment.Create(
+            authorId,
+            forumCommentDto.Content,
+            forumCommentDto.PostId);
+
+        if (error != null)
+            throw new ArgumentException(error, nameof(forumCommentDto));
+
+        if (forumComment is null)
+            throw new InvalidOperationException("Unknown error: ForumComment is null.");
+
+        var addedComment = await _forumCommentRepository.AddAsync(forumComment);
+
+        if (addedComment is null)
+            throw new InvalidOperationException("Unknown error: ForumComment could not be added.");
+
+        return new GetDetailedForumCommentDto
+        {
+            Id = addedComment.Id,
+            Content = addedComment.Content,
+            CreatedAt = addedComment.CreatedAt,
+            Likes = addedComment.Likes,
+            Dislikes = addedComment.Dislikes,
+            IsAnswer = addedComment.IsAnswer,
+            AuthorId = addedComment.AuthorId,
+            PostId = addedComment.PostId
+        };
     }
 
-    public Task<bool> Update(Guid id, UpdateForumCommentDto updateForumCommentDto)
+    public async Task<bool> UpdateAsync(UpdateForumCommentDto updateForumCommentDto) 
     {
-        throw new NotImplementedException();
+        var comment = await _forumCommentRepository.GetAsync(updateForumCommentDto.CommentId);
+        
+        if(comment is null)
+            throw new KeyNotFoundException($"Comment with ID {updateForumCommentDto.CommentId} not found.");
+        
+        var error = comment.Update(
+            updateForumCommentDto.Content,
+            updateForumCommentDto.IsAnswer);
+        if (error != null)
+            throw new ArgumentException(error);
+        
+        await _forumCommentRepository.UpdateAsync(comment);
+        
+        return true;
     }
 
-    public Task<bool> Delete(Guid id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var comment = await _forumCommentRepository.GetAsync(id);
+
+        if (comment is null)
+            return false;
+        
+        await _forumCommentRepository.DeleteAsync(id);
+        return true;
     }
 
-    public Task<bool> Exists(Guid id)
+    public async Task<bool> Exists(Guid id)
     {
-        throw new NotImplementedException();
+        var comment = await _forumCommentRepository.GetAsync(id);
+
+        if (comment is null)
+            return false;
+
+        return true;
     }
 }
