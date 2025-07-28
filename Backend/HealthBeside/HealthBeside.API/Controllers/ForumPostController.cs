@@ -33,17 +33,17 @@ namespace HealthBeside.API.Controllers
             return  Ok(await _forumPostService.GetByIdAsync(id));
         }
 
-        [HttpPut("update-post/{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateForumPostDto dto)
+        [HttpPut("update-post")]
+        public async Task<IActionResult> Update([FromBody] UpdateForumPostDto request)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
                 return Unauthorized("Invalid or missing user identifier.");
 
-            var result = await _forumPostService.UpdateAsync(id, dto);
+            var result = await _forumPostService.UpdateAsync(request);
 
             if (!result)
-                return NotFound($"Post with id {id} not found.");
+                return NotFound($"Post not found.");
 
             return NoContent();
         }

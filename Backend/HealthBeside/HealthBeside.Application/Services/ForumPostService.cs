@@ -56,9 +56,9 @@ public class ForumPostService : IForumPostService
         return postWithAuthor.ToGetDetailedForumPostDto();
     }
 
-    public async Task<bool> UpdateAsync(Guid id, UpdateForumPostDto dto)
+    public async Task<bool> UpdateAsync(UpdateForumPostDto dto)
     {
-        var post = await _forumPostRepository.GetAsync(id);
+        var post = await _forumPostRepository.GetAsync(dto.PostId);
 
         if (post is null)
             return false;

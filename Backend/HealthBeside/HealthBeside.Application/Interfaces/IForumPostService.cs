@@ -7,7 +7,7 @@ public interface IForumPostService
     Task<IEnumerable<GetForumPostDto>> GetAllAsync();
     Task<GetDetailedForumPostDto> GetByIdAsync(Guid id);
     Task<GetDetailedForumPostDto> CreateAsync(CreateForumPostDto forumPostDto, Guid authorId);
-    Task<bool> UpdateAsync(Guid id, UpdateForumPostDto updateForumPostDto);
+    Task<bool> UpdateAsync(UpdateForumPostDto updateForumPostDto);
     Task<bool> DeleteAsync(Guid id);
     Task<bool> Exists(Guid id);
 }

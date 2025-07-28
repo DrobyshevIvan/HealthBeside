@@ -2,6 +2,7 @@
 
 public class UpdateForumPostDto
 {
-    public string Title { get; set; } 
-    public string Content { get; set; } 
+    public Guid PostId { get; init; }
+    public string Title { get; init; } 
+    public string Content { get; init; } 
 }
