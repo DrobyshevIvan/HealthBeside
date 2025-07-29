@@ -1,5 +1,5 @@
-﻿using HealthBeside.Domain.Models.Shared;
-using HealthBeside.Domain.Models.Users;
+﻿using HealthBeside.Domain.Models.Users;
+using HealthBeside.Domain.Shared;
 
 namespace HealthBeside.Domain.Interfaces;
 

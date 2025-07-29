@@ -26,6 +26,10 @@ public class ForumCommentConfiguration : IEntityTypeConfiguration<ForumComment>
         builder.Property(c => c.CreatedAt)
             .HasDefaultValueSql("NOW()"); // Sets the default value for CreatedAt to the current date and time
         
+        builder.Property(p => p.UpdatedAt)
+            .HasDefaultValueSql("NOW()")
+            .ValueGeneratedOnAddOrUpdate(); // Automatically updates the timestamp on modification
+        
         builder.Property(c => c.Likes).HasDefaultValue(0);
         
         builder.Property(c => c.Dislikes).HasDefaultValue(0);

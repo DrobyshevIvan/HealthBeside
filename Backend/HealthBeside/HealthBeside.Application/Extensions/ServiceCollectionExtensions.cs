@@ -1,7 +1,7 @@
 ﻿using HealthBeside.Application.Interfaces;
 using HealthBeside.Application.Services;
 using HealthBeside.Domain.Interfaces;
-using HealthBeside.Domain.Models.Shared;
+using HealthBeside.Domain.Shared;
 using HealthBeside.Infrastructure.Processors;
 using HealthBeside.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;

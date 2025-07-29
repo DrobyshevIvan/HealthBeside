@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using HealthBeside.API.Handlers;
 using HealthBeside.Application.Extensions;
@@ -123,7 +124,7 @@ public class Program
         builder.Services.AddOpenApi();
 
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-
+        
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.

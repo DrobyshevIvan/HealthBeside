@@ -1,4 +1,4 @@
-﻿using HealthBeside.Domain.Models.Shared;
+﻿using HealthBeside.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace HealthBeside.Infrastructure.Repositories;

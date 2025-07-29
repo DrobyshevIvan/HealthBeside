@@ -10,4 +10,6 @@ public interface IForumCommentService
     Task<bool> UpdateAsync(UpdateForumCommentDto updateForumCommentDto);
     Task<bool> DeleteAsync(Guid id);
     Task<bool> Exists(Guid id);
+    
+    // TODO Add methods for pagination, filtering, and sorting 
 }

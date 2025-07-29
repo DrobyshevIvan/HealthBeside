@@ -7,6 +7,7 @@ public class ForumComment
     public Guid Id { get; private set; }
     public string Content { get; private set; }
     public DateTime CreatedAt { get; private set; }
+    public DateTime UpdatedAt { get; private set; } 
     public int Likes { get; private set; } = 0;
     public int Dislikes { get; private set; } = 0;
     public bool IsAnswer { get; private set; } = false;
@@ -99,6 +100,7 @@ public class ForumComment
         
         Content = content;
         IsAnswer = isAnswer;
+        UpdatedAt = DateTime.UtcNow;
         return null;
     }
 }

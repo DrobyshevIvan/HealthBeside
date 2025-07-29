@@ -27,7 +27,7 @@ public class ForumPostService : IForumPostService
         var post = await _forumPostRepository.GetByIdWithAuthorAsync(id);
         
         if (post is null)
-            throw new ForumPostCreationException("Unknown error: ForumPost with Author ID not found.");
+            throw new ForumPostFindingException("Unknown error: ForumPost with Author ID not found.");
         
         return post.ToGetDetailedForumPostDto();
     }
@@ -56,29 +56,34 @@ public class ForumPostService : IForumPostService
         return postWithAuthor.ToGetDetailedForumPostDto();
     }
 
-    public async Task<bool> UpdateAsync(UpdateForumPostDto dto)
+    public async Task<bool> UpdateAsync(UpdateForumPostDto dto, Guid userId)
     {
         var post = await _forumPostRepository.GetAsync(dto.PostId);
 
         if (post is null)
             return false;
+        
+        if(post.AuthorId != userId)
+            throw new UnauthorizedAccessException("You are not authorized to update this post.");
 
         var error = post.Update(dto.Title, dto.Content);
 
         if (error is not null)
             throw new ArgumentException(error);
-
+        
         await _forumPostRepository.UpdateAsync(post);
 
         return true;
     }
 
-
-    public async Task<bool> DeleteAsync(Guid id)
+    public async Task<bool> DeleteAsync(Guid id, Guid userId)
     {
         var post = await _forumPostRepository.GetAsync(id);
         if (post is null)
             return false;
+        
+        if(post.AuthorId != userId)
+            throw new UnauthorizedAccessException("You are not authorized to delete this post.");
 
         await _forumPostRepository.DeleteAsync(id);
         return true;

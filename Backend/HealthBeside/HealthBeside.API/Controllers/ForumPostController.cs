@@ -11,13 +11,10 @@ namespace HealthBeside.API.Controllers
     [ApiController]
     public class ForumPostController : ControllerBase
     {
-        private readonly AppDbContext _context;
         private readonly IForumPostService _forumPostService;
 
-        public ForumPostController(AppDbContext context,
-            IForumPostService forumPostService)
+        public ForumPostController(IForumPostService forumPostService)
         {
-            _context = context;
             _forumPostService = forumPostService;
         }
 
@@ -27,10 +24,10 @@ namespace HealthBeside.API.Controllers
             return Ok(await _forumPostService.GetAllAsync());
         }
 
-        [HttpGet("get-by-id/{id}")]
+        [HttpGet("get-by-id")]
         public async Task<ActionResult<GetDetailedForumPostDto>> GetForumPost(Guid id)
         {
-            return  Ok(await _forumPostService.GetByIdAsync(id));
+            return Ok(await _forumPostService.GetByIdAsync(id));
         }
 
         [HttpPut("update-post")]
@@ -39,16 +36,26 @@ namespace HealthBeside.API.Controllers
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
                 return Unauthorized("Invalid or missing user identifier.");
+          
+            try
+            {
+                var result = await _forumPostService.UpdateAsync(request, userId);
 
-            var result = await _forumPostService.UpdateAsync(request);
+                if (!result)
+                    return NotFound("Post not found.");
 
-            if (!result)
-                return NotFound($"Post not found.");
-
-            return NoContent();
+                return NoContent();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return StatusCode(403, "You are not allowed to edit this post.");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-         //TODO Fix this method
         [HttpPost("publish-post")]
         [Authorize]
         public async Task<ActionResult<GetDetailedForumPostDto>> PublishForumPost([FromBody] CreateForumPostDto createDto)
@@ -61,19 +68,34 @@ namespace HealthBeside.API.Controllers
             return CreatedAtAction(nameof(GetForumPost), new { id = createdPost.Id }, createdPost);
         }
 
-        [HttpDelete("delete-post/{id}")]
+        [HttpDelete("delete-post}")]
         public async Task<IActionResult> DeleteForumPost(Guid id)
         {
-            var result = await _forumPostService.DeleteAsync(id);
-            if (result == false)
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if(userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
+                return Unauthorized("Invalid or missing user identifier.");
+            
+            var post = await _forumPostService.GetByIdAsync(id);
+            
+            if(post == null)
+                return NotFound(new { Message = $"Post with id {id} not found." });
+            
+            try
             {
-                return NotFound();
+                var result = await _forumPostService.DeleteAsync(id, userId);
+
+                if (!result)
+                    return NotFound($"Post with id {id} not found.");
+
+                return NoContent();
             }
-        
-            return NoContent();
+            catch (UnauthorizedAccessException)
+            {
+                return StatusCode(403, "You are not authorized to delete this post.");
+            }
         }
         
-        [HttpGet("is-post-exits/{id}")]
+        [HttpGet("is-post-exits")]
         private async Task<bool> ForumPostExists(Guid id)
         {
             return await _forumPostService.Exists(id);
