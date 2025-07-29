@@ -1,4 +1,4 @@
-﻿namespace HealthBeside.Domain.Models.Shared;
+﻿namespace HealthBeside.Domain.Shared;
 
 public interface IGenericRepository<T> where T: class
 {

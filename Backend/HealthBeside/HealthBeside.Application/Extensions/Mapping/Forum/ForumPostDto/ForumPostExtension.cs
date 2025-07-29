@@ -14,6 +14,7 @@ public static class ForumPostExtension
             Content = post.Content,
             Title = post.Title,
             CreatedAt = post.CreatedAt,
+            UpdatedAt = post.UpdatedAt,
             Dislikes = post.Dislikes,
             Likes = post.Likes
         };
@@ -27,6 +28,7 @@ public static class ForumPostExtension
             Content = post.Content,
             Title = post.Title,
             CreatedAt = post.CreatedAt,
+            UpdatedAt = post.UpdatedAt,
             Dislikes = post.Dislikes,
             Likes = post.Likes,
             Author = post.Author.ToGetUserDto()

@@ -8,6 +8,7 @@ public class ForumPost
     public string Title { get; private set; } 
     public string Content { get; private set; } 
     public DateTime CreatedAt { get; private set; }
+    public DateTime UpdatedAt { get; private set; } 
     public int Likes { get; private set; } = 0;
     public int Dislikes { get; private set; } = 0;
     
@@ -65,6 +66,7 @@ public class ForumPost
 
         Title = title;
         Content = content;
+        UpdatedAt = DateTime.UtcNow;
 
         return null;
     }

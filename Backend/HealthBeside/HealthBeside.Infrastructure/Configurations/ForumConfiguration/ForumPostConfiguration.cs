@@ -16,6 +16,10 @@ public class ForumPostConfiguration : IEntityTypeConfiguration<ForumPost>
         builder.Property(p => p.CreatedAt)
             .HasDefaultValueSql("NOW()");
         
+        builder.Property(p => p.UpdatedAt)
+            .HasDefaultValueSql("NOW()")
+            .ValueGeneratedOnAddOrUpdate(); // Automatically updates the timestamp on modification
+        
         builder.Property(p => p.Likes)
             .HasDefaultValue(0);
         
