@@ -9,7 +9,7 @@ public class MarketProduct
     public int Quantity { get; private set; }
     public string SKU { get; private set; }
     
-    public string ImageUrl { get; private set; }
+    public string? ImageUrl { get; private set; }
     
     public Guid CategoryId { get; private set; }
     public MarketCategory Category { get; private set; }
@@ -59,5 +59,67 @@ public class MarketProduct
         };
         
         return (null, marketProduct);
+    }
+
+    public string? Update(string? name, string? description, decimal? price, int? quantity, string? sku, string? imageUrl,
+        Guid? categoryId)
+    {
+        var errors = new List<string>();
+
+        if (name != null)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                errors.Add("Name cannot be empty.");
+            else
+                Name = name;
+        }
+
+        if (description != null)
+        {
+            if (string.IsNullOrWhiteSpace(description))
+                errors.Add("Description cannot be empty.");
+            else
+                Description = description;
+        }
+
+        if (price.HasValue)
+        {
+            if (price.Value < 0)
+                errors.Add("Price must be greater than zero.");
+            else
+                Price = price.Value;
+        }
+
+        if (quantity.HasValue)
+        {
+            if (quantity.Value < 0)
+                errors.Add("Quantity must be greater than zero.");
+            else
+                Quantity = quantity.Value;
+        }
+
+        if (sku != null)
+        {
+            if (string.IsNullOrWhiteSpace(sku))
+                errors.Add("SKU cannot be empty.");
+            else 
+                SKU = sku;
+        }
+
+        if (categoryId.HasValue)
+        {
+            if (categoryId.Value == Guid.Empty)
+                errors.Add("Category ID cannot be empty.");
+            else
+                CategoryId = categoryId.Value;
+        }
+        
+        if (imageUrl != null)
+            ImageUrl = imageUrl;
+
+        if (errors.Any())
+            return string.Join("; ", errors);
+        
+        return null;
     }
 }

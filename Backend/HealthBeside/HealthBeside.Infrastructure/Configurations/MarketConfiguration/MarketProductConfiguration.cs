@@ -12,5 +12,8 @@ public class MarketProductConfiguration : IEntityTypeConfiguration<MarketProduct
             .WithMany(c => c.MarketProducts)
             .HasForeignKey(o => o.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.Property(p => p.ImageUrl)
+            .IsRequired(false);
     }
 }
