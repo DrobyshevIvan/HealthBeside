@@ -56,12 +56,12 @@ public class ForumPostService : IForumPostService
         return postWithAuthor.ToGetDetailedForumPostDto();
     }
 
-    public async Task<bool> UpdateAsync(UpdateForumPostDto dto, Guid userId)
+    public async Task<GetUpdatedForumPostDto> UpdateAsync(UpdateForumPostDto dto, Guid userId)
     {
         var post = await _forumPostRepository.GetAsync(dto.PostId);
 
         if (post is null)
-            return false;
+            throw new KeyNotFoundException("Forum post not found.");
         
         if(post.AuthorId != userId)
             throw new UnauthorizedAccessException("You are not authorized to update this post.");
@@ -71,9 +71,11 @@ public class ForumPostService : IForumPostService
         if (error is not null)
             throw new ArgumentException(error);
         
+        post.Touch();
+        
         await _forumPostRepository.UpdateAsync(post);
 
-        return true;
+        return post.ToGetUpdatedForumPostDto();
     }
 
     public async Task<bool> DeleteAsync(Guid id, Guid userId)

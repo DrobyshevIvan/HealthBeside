@@ -19,6 +19,19 @@ public static class ForumPostExtension
             Likes = post.Likes
         };
     }
+    
+    public static GetUpdatedForumPostDto ToGetUpdatedForumPostDto(this ForumPost post)
+    {
+        return new GetUpdatedForumPostDto
+        {
+            Id = post.Id,
+            Content = post.Content,
+            Title = post.Title,
+            UpdatedAt = post.UpdatedAt,
+            Dislikes = post.Dislikes,
+            Likes = post.Likes
+        };
+    }
 
     public static GetDetailedForumPostDto ToGetDetailedForumPostDto(this ForumPost post)
     {
