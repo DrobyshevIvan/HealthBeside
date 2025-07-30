@@ -41,10 +41,10 @@ namespace HealthBeside.API.Controllers
             {
                 var result = await _forumPostService.UpdateAsync(request, userId);
 
-                if (!result)
+                if (result is null)
                     return NotFound("Post not found.");
 
-                return NoContent();
+                return Ok(result);
             }
             catch (UnauthorizedAccessException)
             {
@@ -68,7 +68,7 @@ namespace HealthBeside.API.Controllers
             return CreatedAtAction(nameof(GetForumPost), new { id = createdPost.Id }, createdPost);
         }
 
-        [HttpDelete("delete-post}")]
+        [HttpDelete("delete-post")]
         public async Task<IActionResult> DeleteForumPost(Guid id)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

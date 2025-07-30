@@ -51,25 +51,33 @@ public class ForumPost
         return (null, forumPost);
     }
     
-    public string? Update(string title, string content)
+    public string? Update(string? title, string? content)
     {
+        bool hasChanges = false;
         var errors = new List<string>();
 
-        if (string.IsNullOrWhiteSpace(title))
-            errors.Add("Title cannot be empty.");
+        if (!string.IsNullOrWhiteSpace(title) && title != Title)
+        {
+            Title = title;
+            hasChanges = true;
+        }
 
-        if (string.IsNullOrWhiteSpace(content))
-            errors.Add("Content cannot be empty.");
+        if (!string.IsNullOrWhiteSpace(content) && content != Content)
+        {
+            Content = content;
+            hasChanges = true;
+        }
 
-        if (errors.Any())
-            return string.Join("; ", errors);
+        if (!hasChanges)
+            return "No valid changes provided.";
 
-        Title = title;
-        Content = content;
         UpdatedAt = DateTime.UtcNow;
-
         return null;
     }
-
+    
+    public void Touch()
+    {
+        UpdatedAt = DateTime.UtcNow;
+    }
 
 }
