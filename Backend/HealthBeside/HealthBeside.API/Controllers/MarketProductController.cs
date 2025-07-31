@@ -1,5 +1,8 @@
 ﻿using HealthBeside.Application.Contracts.MarketPlace.MarketProductDto;
+using HealthBeside.Application.Filters;
 using HealthBeside.Application.Interfaces;
+using HealthBeside.Application.Pagination;
+using HealthBeside.Application.Sorting;
 using HealthBeside.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +24,11 @@ public class MarketProductController : ControllerBase
     }
 
     [HttpGet("get-products")]
-    public async Task<ActionResult<IEnumerable<GetMarketProductDto>>> GetMarketProducts()
+    public async Task<ActionResult<IEnumerable<GetMarketProductDto>>> GetMarketProducts([FromQuery] MarketProductFilter marketProductFilter,
+        [FromQuery] SortParams sortParams,
+        [FromQuery] PageParams pageParams)
     {
-        return Ok(await _marketProductService.GetAllAsync());
+        return Ok(await _marketProductService.GetAllAsync(marketProductFilter, sortParams, pageParams));
     }
 
     [HttpGet("get-product/{id}")]

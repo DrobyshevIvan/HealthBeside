@@ -1,9 +1,13 @@
 ﻿using HealthBeside.Application.Contracts.MarketPlace.MarketProductDto;
 using HealthBeside.Application.Extensions.Mapping.Marketplace.MarketProductDto;
+using HealthBeside.Application.Filters;
 using HealthBeside.Application.Interfaces;
+using HealthBeside.Application.Pagination;
+using HealthBeside.Application.Sorting;
 using HealthBeside.Domain.Exceptions;
 using HealthBeside.Domain.Interfaces;
 using HealthBeside.Domain.Models.Marketplace;
+using Microsoft.EntityFrameworkCore;
 
 namespace HealthBeside.Application.Services;
 
@@ -16,9 +20,23 @@ public class MarketProductService : IMarketProductService
         _marketProductRepository = marketProductRepository;
     }
 
-    public async Task<IEnumerable<GetMarketProductDto>> GetAllAsync()
+    public async Task<IEnumerable<GetMarketProductDto>> GetAllAsync(MarketProductFilter? marketProductFilter,
+        SortParams? sortParams,
+        PageParams? pageParams)
     {
-        var products = await _marketProductRepository.GetAllAsync();
+        var query = _marketProductRepository.GetQueryable();
+        
+        if (marketProductFilter != null) 
+            query = query.Filter(marketProductFilter);
+        
+        if (sortParams != null)
+            query = query.Sort(sortParams);
+        
+        if (pageParams != null)
+            query = query.Page(pageParams);
+
+        var products = await query.ToListAsync();
+        
         return products.Select(p => new GetMarketProductDto
         {
             Id = p.Id,

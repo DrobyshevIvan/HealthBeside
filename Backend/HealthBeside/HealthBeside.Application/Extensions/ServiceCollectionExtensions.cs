@@ -23,6 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IMarketProductRepository, MarketProductRepository>();
         services.AddScoped<IMarketCategoryRepository, MarketCategoryRepository>();
+        services.AddScoped<IMarketReviewRepository, MarketReviewRepository>();
 
         // Services
         services.AddScoped<IAccountService, AccountService>();
@@ -30,6 +31,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IForumCommentService, ForumCommentService>();
         services.AddScoped<IMarketProductService, MarketProductService>();
         services.AddScoped<IMarketCategoryService, MarketCategoryService>();
+        services.AddScoped<IMarketReviewService, MarketReviewService>();
 
         return services;
     }

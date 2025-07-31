@@ -12,6 +12,11 @@ public class MarketProductRepository : GenericRepository<MarketProduct>, IMarket
     {
         _context = context;
     }
+
+    public IQueryable<MarketProduct> GetQueryable()
+    {
+        return _context.MarketProducts;
+    }
     
     public async Task<MarketProduct?> GetByIdWithCategoryAsync(Guid id)
     {
