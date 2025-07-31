@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HealthBeside.Infrastructure.Repositories;
 
-public class ApplicationUserRepository : IApplicationUserRepository
+public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IApplicationUserRepository
 {
     private readonly AppDbContext _context;
 
-    public ApplicationUserRepository(AppDbContext context)
+    public ApplicationUserRepository(AppDbContext context) : base(context)
     {
         _context = context;
     }

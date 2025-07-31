@@ -21,11 +21,17 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IForumPostRepository, ForumPostRepository>();
         services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IMarketProductRepository, MarketProductRepository>();
+        services.AddScoped<IMarketCategoryRepository, MarketCategoryRepository>();
+        services.AddScoped<IMarketReviewRepository, MarketReviewRepository>();
 
         // Services
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IForumPostService, ForumPostService>();
         services.AddScoped<IForumCommentService, ForumCommentService>();
+        services.AddScoped<IMarketProductService, MarketProductService>();
+        services.AddScoped<IMarketCategoryService, MarketCategoryService>();
+        services.AddScoped<IMarketReviewService, MarketReviewService>();
 
         return services;
     }

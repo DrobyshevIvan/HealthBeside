@@ -32,4 +32,30 @@ public class MarketCategory
         
         return (null, marketCategory);
     }
+
+    public string? Update(string? name, string? description)
+    {
+        var errors = new List<string>();
+
+        if (name is not null)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                errors.Add("Name cannot be empty.");
+            else
+                Name = name;
+        }
+
+        if (description is not null)
+        {
+            if (string.IsNullOrWhiteSpace(description))
+                errors.Add("Description cannot be empty.");
+            else 
+                Description = description;
+        }
+        
+        if (errors.Any())
+            return string.Join("; ", errors);
+
+        return null;
+    }
 }

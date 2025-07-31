@@ -17,4 +17,8 @@
       <ProjectReference Include="..\HealthBeside.Infrastructure\HealthBeside.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Query\" />
+    </ItemGroup>
+
 </Project>
