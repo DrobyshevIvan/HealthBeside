@@ -8,6 +8,10 @@ public class ForumCommentConfiguration : IEntityTypeConfiguration<ForumComment>
 {
     public void Configure(EntityTypeBuilder<ForumComment> builder)
     {
+        builder.Property(c => c.Content)
+            .HasMaxLength(1000)
+            .IsRequired();
+        
         builder.HasOne(c => c.Author)
             .WithMany(a => a.ForumComments)
             .HasForeignKey(c => c.AuthorId)
