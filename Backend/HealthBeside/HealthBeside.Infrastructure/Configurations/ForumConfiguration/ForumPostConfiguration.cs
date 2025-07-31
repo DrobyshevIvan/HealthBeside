@@ -8,6 +8,14 @@ public class ForumPostConfiguration : IEntityTypeConfiguration<ForumPost>
 {
     public void Configure(EntityTypeBuilder<ForumPost> builder)
     {
+        builder.Property(t => t.Title)
+            .HasMaxLength(255)
+            .IsRequired();
+        
+        builder.Property(t => t.Content)
+            .HasMaxLength(10000)
+            .IsRequired();
+        
         builder.HasOne(p => p.Author)
             .WithMany(a => a.ForumPosts)
             .HasForeignKey(p => p.AuthorId)
