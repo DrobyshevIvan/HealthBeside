@@ -1,4 +1,5 @@
-﻿using HealthBeside.Domain.Interfaces;
+﻿using System.Runtime.CompilerServices;
+using HealthBeside.Domain.Interfaces;
 using HealthBeside.Domain.Models.Forum;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,10 +14,11 @@ public class ForumPostRepository : GenericRepository<ForumPost>, IForumPostRepos
         _context = context;
     }
 
-    public async Task<ForumPost?> GetByIdWithAuthorAsync(Guid id)
+    public async Task<ForumPost?> GetByIdWithAuthorAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.ForumPosts
             .Include(p => p.Author)
-            .FirstOrDefaultAsync(p => p.Id == id);
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
+    
 }

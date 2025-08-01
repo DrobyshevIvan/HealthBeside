@@ -5,5 +5,5 @@ namespace HealthBeside.Domain.Interfaces;
 
 public interface IApplicationUserRepository : IGenericRepository<ApplicationUser>
 {
-    Task<ApplicationUser?> GetUserByRefreshTokenAsync(string refreshToken);
+    Task<ApplicationUser?> GetUserByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default);
 }

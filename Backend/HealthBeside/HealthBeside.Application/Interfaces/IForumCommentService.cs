@@ -4,12 +4,12 @@ namespace HealthBeside.Application.Interfaces;
 
 public interface IForumCommentService
 {
-    Task<IEnumerable<GetForumCommentDto>> GetAllAsync();
-    Task<GetForumCommentDto> GetByIdAsync(Guid id);
-    Task<GetDetailedForumCommentDto> CreateAsync(CreateForumCommentDto forumCommentDto, Guid authorId);
-    Task<bool> UpdateAsync(UpdateForumCommentDto updateForumCommentDto);
-    Task<bool> DeleteAsync(Guid id);
-    Task<bool> Exists(Guid id);
+    Task<IEnumerable<GetForumCommentDto>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<GetForumCommentDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<GetDetailedForumCommentDto> CreateAsync(CreateForumCommentDto forumCommentDto, Guid authorId, CancellationToken cancellationToken = default);
+    Task<GetUpdatedForumCommentDto> UpdateAsync(UpdateForumCommentDto updateForumCommentDto, Guid userId, CancellationToken cancellationToken = default);
+    Task<bool> DeleteAsync(Guid id, Guid userId, CancellationToken cancellationToken = default);
+    Task<bool> Exists(Guid id, CancellationToken cancellationToken = default);
     
     // TODO Add methods for pagination, filtering, and sorting 
 }

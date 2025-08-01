@@ -9,6 +9,7 @@ public class GetUpdatedForumCommentDto
     public string Content { get; set; } 
     [JsonConverter(typeof(DateTimeLocalJsonConverter))]
     public DateTime UpdatedAt { get; set; }
+    public bool IsAnswer { get; set; } = false;
     public int Likes { get; set; }
     public int Dislikes { get; set; }
 }
