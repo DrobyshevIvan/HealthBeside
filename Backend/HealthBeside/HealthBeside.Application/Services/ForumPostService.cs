@@ -4,11 +4,12 @@ using HealthBeside.Application.Interfaces;
 using HealthBeside.Domain.Exceptions;
 using HealthBeside.Domain.Interfaces;
 using HealthBeside.Domain.Models.Forum;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.Extensions.Logging;
 
 namespace HealthBeside.Application.Services;
 
-//TODO ADD CANCELLATION TOKENS TO ALL ASYNC METHODS, Валідація в DTO / FluentValidation
+//TODO ADD CANCELLATION TOKENS TO ALL ASYNC METHODS
 public class ForumPostService : IForumPostService
 {
     private readonly IForumPostRepository _forumPostRepository;
@@ -26,17 +27,17 @@ public class ForumPostService : IForumPostService
             throw new UnauthorizedAccessException("You are not authorized to perform this action.");
     }
 
-    public async Task<IEnumerable<GetForumPostDto>> GetAllAsync()
+    public async Task<IEnumerable<GetForumPostDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Retrieving all forum posts.");
-        var posts = await _forumPostRepository.GetAllAsync();
+        var posts = await _forumPostRepository.GetAllAsync(cancellationToken);
         return posts.Select(post => post.ToGetForumPostDto());
     }
-
-    public async Task<GetDetailedForumPostDto> GetByIdAsync(Guid id)
+    
+    public async Task<GetDetailedForumPostDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Getting forum post by ID: {PostId}", id);
-        var post = await _forumPostRepository.GetByIdWithAuthorAsync(id);
+        var post = await _forumPostRepository.GetByIdWithAuthorAsync(id, cancellationToken);
 
         if (post is null)
         {
@@ -47,7 +48,7 @@ public class ForumPostService : IForumPostService
         return post.ToGetDetailedForumPostDto();
     }
 
-    public async Task<GetDetailedForumPostDto> CreateAsync(CreateForumPostDto forumPostDto, Guid authorId)
+    public async Task<GetDetailedForumPostDto> CreateAsync(CreateForumPostDto forumPostDto, Guid authorId, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Creating forum post by user {UserId}", authorId);
         (string? error, ForumPost? forumPost) = ForumPost.Create(authorId, forumPostDto.Title, forumPostDto.Content);
@@ -64,8 +65,8 @@ public class ForumPostService : IForumPostService
             throw new ForumPostCreationException("Unknown error: ForumPost is null.");
         }
 
-        var addedPost = await _forumPostRepository.AddAsync(forumPost);
-        var postWithAuthor = await _forumPostRepository.GetByIdWithAuthorAsync(addedPost.Id);
+        var addedPost = await _forumPostRepository.AddAsync(forumPost, cancellationToken);
+        var postWithAuthor = await _forumPostRepository.GetByIdWithAuthorAsync(addedPost.Id, cancellationToken);
 
         if (postWithAuthor is null)
         {
@@ -77,11 +78,11 @@ public class ForumPostService : IForumPostService
         return postWithAuthor.ToGetDetailedForumPostDto();
     }
 
-    public async Task<GetUpdatedForumPostDto> UpdateAsync(UpdateForumPostDto dto, Guid userId)
+    public async Task<GetUpdatedForumPostDto> UpdateAsync(UpdateForumPostDto dto, Guid userId, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("User {UserId} is updating forum post {PostId}", userId, dto.PostId);
 
-        var post = await _forumPostRepository.GetAsync(dto.PostId);
+        var post = await _forumPostRepository.GetAsync(dto.PostId, cancellationToken);
 
         if (post is null)
         {
@@ -99,16 +100,16 @@ public class ForumPostService : IForumPostService
         }
 
         post.Touch();
-        await _forumPostRepository.UpdateAsync(post);
+        await _forumPostRepository.UpdateAsync(post, cancellationToken);
 
         _logger.LogInformation("Forum post {PostId} updated successfully.", dto.PostId);
         return post.ToGetUpdatedForumPostDto();
     }
 
-    public async Task<bool> DeleteAsync(Guid id, Guid userId)
+    public async Task<bool> DeleteAsync(Guid id, Guid userId, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("User {UserId} is attempting to delete forum post {PostId}", userId, id);
-        var post = await _forumPostRepository.GetAsync(id);
+        var post = await _forumPostRepository.GetAsync(id, cancellationToken);
 
         if (post is null)
         {
@@ -117,15 +118,15 @@ public class ForumPostService : IForumPostService
         }
 
         EnsureOwnership(post, userId);
-        await _forumPostRepository.DeleteAsync(id);
+        await _forumPostRepository.DeleteAsync(id, cancellationToken);
 
         _logger.LogInformation("Forum post {PostId} deleted successfully.", id);
         return true;
     }
 
-    public async Task<bool> Exists(Guid id)
+    public async Task<bool> Exists(Guid id, CancellationToken cancellationToken = default)
     {
-        var post = await _forumPostRepository.GetAsync(id);
+        var post = await _forumPostRepository.GetAsync(id, cancellationToken);
         bool exists = post is not null;
         _logger.LogDebug("Forum post {PostId} exists: {Exists}", id, exists);
         return exists;
