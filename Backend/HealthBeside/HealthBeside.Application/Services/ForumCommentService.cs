@@ -1,4 +1,5 @@
-﻿using HealthBeside.Application.Contracts.Forum.ForumCommentDto;
+﻿using HealthBeside.Application.Contracts;
+using HealthBeside.Application.Contracts.Forum.ForumCommentDto;
 using HealthBeside.Application.Interfaces;
 using HealthBeside.Domain.Interfaces;
 using HealthBeside.Domain.Models.Forum;
@@ -74,7 +75,13 @@ public class ForumCommentService : IForumCommentService
             Likes = addedComment.Likes,
             Dislikes = addedComment.Dislikes,
             IsAnswer = addedComment.IsAnswer,
-            AuthorId = addedComment.AuthorId,
+            Author = addedComment.Author != null
+                ? new GetUserDto 
+                { 
+                    FirstName = addedComment.Author.FirstName, 
+                    LastName = addedComment.Author.LastName 
+                } 
+                : null,
             PostId = addedComment.PostId
         };
     }
