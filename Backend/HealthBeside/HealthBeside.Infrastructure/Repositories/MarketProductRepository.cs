@@ -18,10 +18,10 @@ public class MarketProductRepository : GenericRepository<MarketProduct>, IMarket
         return _context.MarketProducts;
     }
     
-    public async Task<MarketProduct?> GetByIdWithCategoryAsync(Guid id)
+    public async Task<MarketProduct?> GetByIdWithCategoryAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.MarketProducts
             .Include(p => p.Category)
-            .FirstOrDefaultAsync(p => p.Id == id);
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken); 
     }
 }

@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using HealthBeside.API.Handlers;
+using HealthBeside.API.Middlewares;
 using HealthBeside.Application.Extensions;
 using HealthBeside.Domain.Models.Users;
 using HealthBeside.Infrastructure;
@@ -142,14 +143,16 @@ public class Program
             });
         }
 
-        app.UseExceptionHandler("/Error");
+        app.UseExceptionHandler("/error");
 
         app.UseHttpsRedirection();
         
         app.UseCors("CorsPolicy");
         
+        //app.UseMiddleware<TaskCancellationHandlingMiddleware>(); //TODO fix the middleware to handle task cancellation properly
+        
         app.UseRouting();  
-
+        
         app.UseAuthentication();
 
         app.UseAuthorization();

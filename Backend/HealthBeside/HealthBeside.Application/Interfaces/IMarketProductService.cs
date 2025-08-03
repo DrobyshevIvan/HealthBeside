@@ -7,10 +7,11 @@ namespace HealthBeside.Application.Interfaces;
 
 public interface IMarketProductService
 {
-    Task<IEnumerable<GetMarketProductDto>> GetAllAsync(MarketProductFilter? marketProductFilter, SortParams? sortParams, PageParams? pageParams);
-    Task<GetDetailedMarketProductDto> GetByIdAsync(Guid id);
-    Task<GetDetailedMarketProductDto> CreateAsync(CreateMarketProductDto createDto);
-    Task<bool> UpdateAsync(Guid id, UpdateMarketProductDto updateMarketProductDto);
-    Task<bool> DeleteAsync(Guid id);
-    Task<bool> ExistsAsync(Guid id);
+    Task<IEnumerable<GetMarketProductDto>> GetAllAsync(
+        MarketProductFilter? marketProductFilter, SortParams? sortParams, PageParams? pageParams, CancellationToken cancellationToken = default);
+    Task<GetDetailedMarketProductDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<GetDetailedMarketProductDto> CreateAsync(CreateMarketProductDto createDto, CancellationToken cancellationToken = default);
+    Task<bool> UpdateAsync(Guid id, UpdateMarketProductDto updateMarketProductDto, CancellationToken cancellationToken = default);
+    Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default);
 }
