@@ -5,6 +5,6 @@ namespace HealthBeside.Domain.Interfaces;
 
 public interface IMarketProductRepository : IGenericRepository<MarketProduct>
 {
-    Task<MarketProduct?> GetByIdWithCategoryAsync(Guid id);
     IQueryable<MarketProduct> GetQueryable();
+    Task<MarketProduct?> GetByIdWithCategoryAsync(Guid id, CancellationToken cancellationToken = default);
 }
