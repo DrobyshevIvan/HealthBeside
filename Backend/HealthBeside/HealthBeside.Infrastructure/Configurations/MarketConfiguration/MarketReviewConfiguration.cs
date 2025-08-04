@@ -8,6 +8,10 @@ public class MarketReviewConfiguration : IEntityTypeConfiguration<MarketReview>
 {
     public void Configure(EntityTypeBuilder<MarketReview> builder)
     {
+        builder.Property(n => n.Description)
+            .IsRequired()
+            .HasMaxLength(1000);
+        
         builder.HasOne(r => r.User)
             .WithMany(u => u.MarketReviews)
             .HasForeignKey(r => r.UserId)
