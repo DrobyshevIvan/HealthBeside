@@ -170,8 +170,14 @@ public class AccountService : IAccountService
                     $"Unable to link Google account: {string.Join(", ", loginResult.Errors.Select(e => e.Description))}");
             }
         }
-
-        await GenerateNewTokensAsync(user);
+        try
+        {
+            await GenerateNewTokensAsync(user);
+        }
+        catch (Exception ex)
+        {
+            throw new ExternalLoginProviderException("Google", $"Token generation failed: {ex.Message}");
+        }
     }
 
     public async Task LogoutAsync(string refreshToken)

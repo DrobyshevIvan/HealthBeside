@@ -4,6 +4,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>healthbeside-api-4f19a9e5</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
