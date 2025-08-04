@@ -8,9 +8,13 @@ namespace HealthBeside.Application.Interfaces;
 
 public interface IMarketReviewService
 {
-    Task<IEnumerable<GetMarketReviewDto>> GetAllAsync(MarketReviewFilter? marketReviewFilter, SortParams? sortParams, PageParams? pageParams);
-    Task<GetMarketReviewDto> GetByIdAsync(Guid id);
-    Task<GetMarketReviewDto> CreateAsync(CreateMarketReviewDto dto);
-    Task<bool> UpdateAsync(Guid id, UpdateMarketReviewDto dto);
-    Task<bool> DeleteAsync(Guid id);
+    Task<IEnumerable<GetMarketReviewDto>> GetAllAsync(
+        MarketReviewFilter? marketReviewFilter, 
+        SortParams? sortParams, 
+        PageParams? pageParams,
+        CancellationToken cancellationToken = default);
+    Task<GetMarketReviewDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<GetMarketReviewDto> CreateAsync(CreateMarketReviewDto dto, CancellationToken cancellationToken = default);
+    Task<bool> UpdateAsync(Guid id, UpdateMarketReviewDto dto, CancellationToken cancellationToken = default);
+    Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 }

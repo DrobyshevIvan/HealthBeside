@@ -19,17 +19,19 @@ public class MarketReviewRepository : GenericRepository<MarketReview>, IMarketRe
             .Include(r => r.User);
     }
     
-    public async Task<MarketReview?> GetByIdWithAuthorAsync(Guid id)
+    public async Task<MarketReview?> GetByIdWithAuthorAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.MarketReviews
             .Include(r => r.User)
-            .FirstOrDefaultAsync(r => r.Id == id);
+            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
     }
 
-    // public async Task<IEnumerable<MarketReview?>> GetAllWithAuthorsAsync()
-    // {
-    //     return await _context.MarketReviews
-    //         .Include(r => r.User)
-    //         .ToListAsync();
-    // }
+    public async Task<IEnumerable<MarketReview>> GetAllWithAuthorsAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.MarketReviews
+            .AsNoTracking()
+            .Include(r => r.User)
+            .ToListAsync(cancellationToken);
+    }
+
 }

@@ -12,7 +12,10 @@ public interface IAccountService
         CancellationToken cancellationToken = default);
     Task RegisterAsync(RegisterRequest request);
     Task LoginAsync(LoginRequest request);
-    Task LoginWithGoogleAsync(ClaimsPrincipal? claimsPrincipal);
-    Task RefreshTokenAsync(string? refreshToken);
-    Task LogoutAsync(string refreshToken);
+    Task LoginWithGoogleAsync(ClaimsPrincipal? claimsPrincipal,
+        CancellationToken cancellationToken = default);
+    Task RefreshTokenAsync(string? refreshToken,
+        CancellationToken cancellationToken = default);
+    Task LogoutAsync(string refreshToken,
+        CancellationToken cancellationToken = default);
 }

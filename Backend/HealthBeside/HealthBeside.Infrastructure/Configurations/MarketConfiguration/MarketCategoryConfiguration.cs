@@ -8,6 +8,16 @@ public class MarketCategoryConfiguration : IEntityTypeConfiguration<MarketCatego
 {
     public void Configure(EntityTypeBuilder<MarketCategory> builder)
     {
+        builder.Property(n => n.Name)
+            .IsRequired()
+            .HasMaxLength(100);
         
+        builder.Property(d => d.Description)
+            .IsRequired()
+            .HasMaxLength(500);
+
+        builder.Property(c => c.Description)
+            .HasMaxLength(500)
+            .IsRequired();
     }    
 }

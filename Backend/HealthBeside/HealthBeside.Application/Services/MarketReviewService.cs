@@ -9,6 +9,7 @@ using HealthBeside.Domain.Exceptions;
 using HealthBeside.Domain.Interfaces;
 using HealthBeside.Domain.Models.Marketplace;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HealthBeside.Application.Services;
 
@@ -17,39 +18,52 @@ public class MarketReviewService : IMarketReviewService
     private readonly IMarketReviewRepository _marketReviewRepository;
     private readonly IMarketProductRepository _marketProductRepository;
     private readonly IApplicationUserRepository _userRepository;
+    private readonly ILogger<MarketReviewService> _logger;
 
     public MarketReviewService(IMarketReviewRepository  marketReviewRepository,
         IMarketProductRepository marketProductRepository,
-        IApplicationUserRepository userRepository)
+        IApplicationUserRepository userRepository,
+        ILogger<MarketReviewService> logger)
     {
         _marketReviewRepository = marketReviewRepository;
         _marketProductRepository = marketProductRepository;
         _userRepository = userRepository;
+        _logger = logger;
     }
     
-    public async Task<IEnumerable<GetMarketReviewDto>> GetAllAsync(MarketReviewFilter? marketReviewFilter,
+    public async Task<IEnumerable<GetMarketReviewDto>> GetAllAsync(
+        MarketReviewFilter? marketReviewFilter,
         SortParams? sortParams,
-        PageParams? pageParams)
+        PageParams? pageParams,
+        CancellationToken cancellationToken = default)
     {
-        var queryable = _marketReviewRepository.GetQueryable();
-        
-        if(marketReviewFilter != null)
+        var queryable = _marketReviewRepository
+            .GetQueryable();
+
+        if (marketReviewFilter != null)
             queryable = queryable.Filter(marketReviewFilter);
-        
-        if(sortParams != null)
+
+        if (sortParams != null)
             queryable = queryable.Sort(sortParams);
-        
-        if(pageParams != null)
+
+        if (pageParams != null)
             queryable = queryable.Page(pageParams);
-        
-        var marketReviews = await queryable.ToListAsync(); 
-        
-        return marketReviews.Select(r => r.ToGetMarketReviewDto());
+
+        var result = await queryable
+            .AsNoTracking()
+            .Include(r => r.User)
+            .ToListAsync(cancellationToken);
+
+        if (!result.Any())
+            _logger.LogInformation("No market reviews found with current filters.");
+
+        return result.Select(r => r.ToGetMarketReviewDto());
     }
 
-    public async Task<GetMarketReviewDto> GetByIdAsync(Guid id)
+
+    public async Task<GetMarketReviewDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var marketReview = await _marketReviewRepository.GetByIdWithAuthorAsync(id);
+        var marketReview = await _marketReviewRepository.GetByIdWithAuthorAsync(id, cancellationToken);
 
         if(marketReview == null)
             throw new MarketReviewException("Market review not found");
@@ -57,14 +71,14 @@ public class MarketReviewService : IMarketReviewService
         return marketReview.ToGetMarketReviewDto();
     }
 
-    public async Task<GetMarketReviewDto> CreateAsync(CreateMarketReviewDto dto)
+    public async Task<GetMarketReviewDto> CreateAsync(CreateMarketReviewDto dto, CancellationToken cancellationToken = default)
     {
-        var user = await _userRepository.GetAsync(dto.UserId);
+        var user = await _userRepository.GetAsync(dto.UserId, cancellationToken);
         
         if (user is null)
             throw new MarketReviewException($"User with id {dto.UserId} not found");
 
-        var product = await _marketProductRepository.GetAsync(dto.ProductId);
+        var product = await _marketProductRepository.GetAsync(dto.ProductId, cancellationToken);
         
         if (product is null)
             throw new MarketReviewException($"Product with id {dto.ProductId} not found");
@@ -78,8 +92,8 @@ public class MarketReviewService : IMarketReviewService
         if(marketReview is null)
             throw new MarketReviewException("Unknown error market review is null");
         
-        var addedReview = await _marketReviewRepository.AddAsync(marketReview);
-        var reviewWithAuthor = await _marketReviewRepository.GetByIdWithAuthorAsync(addedReview.Id);
+        var addedReview = await _marketReviewRepository.AddAsync(marketReview, cancellationToken);
+        var reviewWithAuthor = await _marketReviewRepository.GetByIdWithAuthorAsync(addedReview.Id, cancellationToken);
         
         if (reviewWithAuthor is null)
             throw new MarketReviewException($"Review with id {addedReview.Id} not found");
@@ -87,9 +101,9 @@ public class MarketReviewService : IMarketReviewService
         return reviewWithAuthor.ToGetMarketReviewDto();
     }
 
-    public async Task<bool> UpdateAsync(Guid id, UpdateMarketReviewDto dto)
+    public async Task<bool> UpdateAsync(Guid id, UpdateMarketReviewDto dto, CancellationToken cancellationToken = default)
     {
-        var review = await _marketReviewRepository.GetAsync(id);
+        var review = await _marketReviewRepository.GetAsync(id, cancellationToken);
         
         if(review is null)
             throw new MarketReviewException($"Market review with id {id} not found");
@@ -99,19 +113,19 @@ public class MarketReviewService : IMarketReviewService
         if (error != null)
             throw new MarketReviewException(error);
         
-        await _marketReviewRepository.UpdateAsync(review);
+        await _marketReviewRepository.UpdateAsync(review, cancellationToken);
 
         return true;
     }
 
-    public async Task<bool> DeleteAsync(Guid id)
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var review = await _marketReviewRepository.GetAsync(id);
+        var review = await _marketReviewRepository.GetAsync(id, cancellationToken);
 
         if (review is null)
             return false;
 
-        await _marketReviewRepository.DeleteAsync(id);
+        await _marketReviewRepository.DeleteAsync(id, cancellationToken);
         return true;
     }
 }
