@@ -3,7 +3,7 @@ using HealthBeside.Domain.Shared;
 
 namespace HealthBeside.Domain.Interfaces;
 
-public interface IMarketCategoryRepository : IGenericRepository<MarketCategory>
+public interface IMarketCartItemRepository : IGenericRepository<MarketCartItem>
 {
     
 }

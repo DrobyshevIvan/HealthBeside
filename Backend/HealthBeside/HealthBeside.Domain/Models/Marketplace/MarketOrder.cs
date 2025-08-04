@@ -1,21 +1,14 @@
-﻿using HealthBeside.Domain.Models.Users;
+﻿using HealthBeside.Domain.Models.Enums;
+using HealthBeside.Domain.Models.Users;
 
 namespace HealthBeside.Domain.Models.Marketplace;
 
-public enum OrderStatus
-{
-    Pending,
-    Processing,
-    Shipped,
-    Delivered,
-    Cancelled
-}
 public class MarketOrder
 {
     public Guid Id { get; private set; }
     public DateTime OrderDate { get; private set; }
     public decimal TotalPrice { get; private set; }
-    public string Status { get; private set; }
+    public OrderStatus Status { get; private set; }
     public string ShippingAddress { get; private set; }
     
     public Guid UserId { get; private set; }
@@ -48,7 +41,7 @@ public class MarketOrder
             UserId = userId,
             OrderDate = DateTime.UtcNow,
             TotalPrice = totalPrice,
-            Status = OrderStatus.Pending.ToString(),
+            Status = OrderStatus.Pending,
             ShippingAddress = shippingAddress
         };
         

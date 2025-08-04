@@ -50,13 +50,14 @@ public class MarketReviewService : IMarketReviewService
     public async Task<GetMarketReviewDto> GetByIdAsync(Guid id)
     {
         var marketReview = await _marketReviewRepository.GetByIdWithAuthorAsync(id);
-
+        
         if(marketReview == null)
             throw new MarketReviewException("Market review not found");
         
         return marketReview.ToGetMarketReviewDto();
     }
-
+    
+    // TODO: ДОдати перевірку чи купляв юзер цей товар та чи не залишав вже відгук
     public async Task<GetMarketReviewDto> CreateAsync(CreateMarketReviewDto dto)
     {
         var user = await _userRepository.GetAsync(dto.UserId);

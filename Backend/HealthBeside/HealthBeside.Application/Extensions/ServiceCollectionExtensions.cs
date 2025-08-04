@@ -24,6 +24,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IMarketProductRepository, MarketProductRepository>();
         services.AddScoped<IMarketCategoryRepository, MarketCategoryRepository>();
         services.AddScoped<IMarketReviewRepository, MarketReviewRepository>();
+        services.AddScoped<IMarketCartItemRepository, MarketCartItemRepository>();
+        services.AddScoped<IMarketCartRepository, MarketCartRepository>();
 
         // Services
         services.AddScoped<IAccountService, AccountService>();
@@ -32,6 +34,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IMarketProductService, MarketProductService>();
         services.AddScoped<IMarketCategoryService, MarketCategoryService>();
         services.AddScoped<IMarketReviewService, MarketReviewService>();
+        services.AddScoped<IMarketCartService, MarketCartService>();
 
         return services;
     }
