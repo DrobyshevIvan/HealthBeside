@@ -1,4 +1,5 @@
-﻿using HealthBeside.Application.Contracts;
+﻿using System.Security.Claims;
+using HealthBeside.Application.Contracts;
 using HealthBeside.Application.Interfaces;
 using HealthBeside.Domain.Exceptions;
 using HealthBeside.Domain.Interfaces;
@@ -103,8 +104,17 @@ public class AccountController : ControllerBase
 
     [HttpGet("get-user-info")]
     [Authorize]
-    public async Task<IActionResult> GetUserInfoAsync()
+    public async Task<ActionResult<GetUserInfoDto>> GetMyProfile(CancellationToken cancellationToken)
     {
-        return Ok("User information retrieved successfully.");
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Unauthorized("Invalid or missing user identifier.");
+        }
+
+        var userInfo = await _accountService.GetUserInfoAsync(userId, userId, cancellationToken);
+        return Ok(userInfo);
     }
+
 }

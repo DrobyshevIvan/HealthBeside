@@ -31,6 +31,35 @@ public class AccountService : IAccountService
         _refreshTokenRepository = refreshTokenRepository;
         _logger = logger;
     }
+    
+    public async Task<GetUserInfoDto> GetUserInfoAsync(
+        Guid currentUserId, 
+        Guid requestedUserId, 
+        CancellationToken cancellationToken = default)
+    {
+        if (currentUserId != requestedUserId)
+        {
+            _logger.LogWarning("User {UserId} attempted to access profile of another user {TargetUserId}", currentUserId, requestedUserId);
+            throw new UnauthorizedAccessException("You are not authorized to access this user's information.");
+        }
+
+        var user = await _userManager.FindByIdAsync(requestedUserId.ToString());
+
+        if (user is null)
+        {
+            _logger.LogWarning("User with ID {UserId} was not found.", requestedUserId);
+            throw new KeyNotFoundException($"User with ID {requestedUserId} not found.");
+        }
+
+        return new GetUserInfoDto
+        {
+            Id = user.Id,
+            Email = user.Email,
+            FullName = $"{user.FirstName} {user.LastName}",
+            Role = (await _userManager.GetRolesAsync(user)).FirstOrDefault() ?? "User"
+        };
+    }
+
 
     public async Task RegisterAsync(RegisterRequest request)
     {
