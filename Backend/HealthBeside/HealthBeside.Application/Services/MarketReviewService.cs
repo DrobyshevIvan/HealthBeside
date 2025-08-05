@@ -70,7 +70,8 @@ public class MarketReviewService : IMarketReviewService
         
         return marketReview.ToGetMarketReviewDto();
     }
-
+    
+    // TODO: ДОдати перевірку чи купляв юзер цей товар та чи не залишав вже відгук
     public async Task<GetMarketReviewDto> CreateAsync(CreateMarketReviewDto dto, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.GetAsync(dto.UserId, cancellationToken);

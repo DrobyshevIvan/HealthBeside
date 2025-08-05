@@ -9,6 +9,7 @@ public static class UserExtension
     {
         return new GetUserDto()
         {
+            UserId = user.Id,
             FirstName = user.FirstName,
             LastName = user.LastName,
         };

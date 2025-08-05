@@ -147,9 +147,16 @@ public class MarketProduct
         if (errors.Any())
             return string.Join("; ", errors);
 
+        return null;
+    }
+
+    public string? UpdateStock(int newQuantity)
+    {
+        if (newQuantity < 0)
+            return "Cannot reduce quantity below zero.";
+
+        Quantity = newQuantity;
         if (!hasChanges)
             return "No valid changes provided.";
-
-        return null;
     }
 }

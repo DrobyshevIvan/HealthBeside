@@ -1,4 +1,6 @@
 ﻿using System.Linq.Expressions;
+using HealthBeside.Application.Contracts.MarketPlace.MarketCartItemDto;
+using HealthBeside.Application.Contracts.MarketPlace.MarketOrderItemDto;
 using HealthBeside.Application.Contracts.MarketPlace.MarketProductDto;
 using HealthBeside.Application.Extensions.Mapping.Marketplace.MarketCategoryDto;
 using HealthBeside.Application.Filters;
@@ -22,6 +24,29 @@ public static class MarketProductExtension
             SKU = marketProduct.SKU,
             ImageUrl = marketProduct.ImageUrl,
             Category = marketProduct.Category.ToGetCategoryDto()
+        };
+    }
+
+    public static GetCartItemProductDto ToGetCartItemProductDto(this MarketProduct marketProduct)
+    {
+        return new GetCartItemProductDto()
+        {
+            Id = marketProduct.Id,
+            Name = marketProduct.Name,
+            ImageUrl = marketProduct.ImageUrl,
+            Price = marketProduct.Price,
+            SKU = marketProduct.SKU
+        };
+    }
+
+    public static GetProductForOrderItemDto ToGetOrderItemProductDto(this MarketProduct marketProduct)
+    {
+        return new GetProductForOrderItemDto()
+        {
+            Id = marketProduct.Id,
+            Name = marketProduct.Name,
+            ImageUrl = marketProduct.ImageUrl,
+            SKU = marketProduct.SKU
         };
     }
 

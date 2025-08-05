@@ -4,6 +4,7 @@ using HealthBeside.Domain.Interfaces;
 using HealthBeside.Domain.Shared;
 using HealthBeside.Infrastructure.Processors;
 using HealthBeside.Infrastructure.Repositories;
+using HealthBeside.Infrastructure.UnitOfWork;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HealthBeside.Application.Extensions;
@@ -24,6 +25,13 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IMarketProductRepository, MarketProductRepository>();
         services.AddScoped<IMarketCategoryRepository, MarketCategoryRepository>();
         services.AddScoped<IMarketReviewRepository, MarketReviewRepository>();
+        services.AddScoped<IMarketCartItemRepository, MarketCartItemRepository>();
+        services.AddScoped<IMarketCartRepository, MarketCartRepository>();
+        services.AddScoped<IMarketOrderRepository, MarketOrderRepository>();
+        services.AddScoped<IMarketOrderItemRepository, MarketOrderItemRepository>();
+
+        // Unit of Work
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Services
         services.AddScoped<IAccountService, AccountService>();
@@ -32,6 +40,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IMarketProductService, MarketProductService>();
         services.AddScoped<IMarketCategoryService, MarketCategoryService>();
         services.AddScoped<IMarketReviewService, MarketReviewService>();
+        services.AddScoped<IMarketCartService, MarketCartService>();
+        services.AddScoped<IMarketOrderService, MarketOrderService>();
 
         return services;
     }

@@ -14,7 +14,7 @@ public class MarketCartItem
     private MarketCartItem() { }
 
     public static (string? Error, MarketCartItem? MarketCartItem) Create(
-        int quantity, Guid productId, Guid orderId)
+        int quantity, Guid productId, Guid cartId)
     {
         var errors = new List<string>();
         
@@ -24,7 +24,7 @@ public class MarketCartItem
         if(productId.Equals(Guid.Empty))
             errors.Add("Product Id cannot be empty.");
         
-        if(orderId.Equals(Guid.Empty))
+        if(cartId.Equals(Guid.Empty))
             errors.Add("Order Id cannot be empty.");
 
         if (errors.Any())
@@ -35,9 +35,48 @@ public class MarketCartItem
             Id = Guid.NewGuid(),
             Quantity = quantity,
             ProductId = productId,
-            CartId = orderId,
+            CartId = cartId,
         };
         
         return (null, marketCartItem);
+    }
+    
+    public string? AddQuantityToExistsItem(int quantity)
+    {
+        var errors = new List<string>();
+
+        if (quantity <= 0)
+            errors.Add("Quantity must be greater than zero.");
+        
+        if (Quantity + quantity > 100) 
+            errors.Add("Quantity exceeds 100.");
+        
+        if (quantity > 100)
+            errors.Add("Quantity cannot be more than 100.");
+        
+        Quantity += quantity;
+        
+        if (errors.Any())
+            return string.Join("; ", errors);
+
+        return null;
+    }
+
+    public string? Update(int quantity)
+    {
+        var  errors = new List<string>();
+        
+        if (quantity <= 0)
+            errors.Add("Quantity must be greater than zero.");
+        
+        if (quantity > 100)
+            errors.Add("Quantity cannot be more than 100.");
+
+        Quantity = quantity;
+        
+        if (errors.Any())
+            return string.Join("; ", errors);
+
+        return null;
     }
 }
