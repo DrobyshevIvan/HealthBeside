@@ -19,5 +19,10 @@ public class MarketCategoryConfiguration : IEntityTypeConfiguration<MarketCatego
         builder.Property(c => c.Description)
             .HasMaxLength(500)
             .IsRequired();
+        
+        builder.HasMany(c => c.MarketProducts)
+                    .WithOne() 
+                    .HasForeignKey("CategoryId") 
+                    .OnDelete(DeleteBehavior.Restrict);
     }    
 }

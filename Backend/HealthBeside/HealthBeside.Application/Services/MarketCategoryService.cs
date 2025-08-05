@@ -4,6 +4,7 @@ using HealthBeside.Application.Interfaces;
 using HealthBeside.Domain.Exceptions;
 using HealthBeside.Domain.Interfaces;
 using HealthBeside.Domain.Models.Marketplace;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace HealthBeside.Application.Services;
@@ -22,6 +23,13 @@ public class MarketCategoryService : IMarketCategoryService
     public async Task<IEnumerable<GetMarketCategoryDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var categories = await _marketCategoryRepository.GetAllAsync(cancellationToken);
+        
+        /*if(categories.Count == 0)
+        {
+            _logger.LogInformation("No market categories found.");
+            return Enumerable.Empty<GetMarketCategoryDto>();
+        }*/
+            
         return categories.Select(c => c.ToGetCategoryDto());
     }
 
@@ -48,7 +56,7 @@ public class MarketCategoryService : IMarketCategoryService
         if (marketCategory is null)
             throw new MarketCategoryException("Unknown error market category is null");
         
-        var addedCategory = await _marketCategoryRepository.AddAsync(marketCategory);
+        var addedCategory = await _marketCategoryRepository.AddAsync(marketCategory, cancellationToken);
         
         return addedCategory.ToGetCategoryDto();
     }
@@ -75,18 +83,27 @@ public class MarketCategoryService : IMarketCategoryService
 
     public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var category = await _marketCategoryRepository.GetAsync(id);
+        var category = await _marketCategoryRepository.GetAsync(id, cancellationToken);
 
         if (category is null)
             return false;
+
+        try
+        {
+            await _marketCategoryRepository.DeleteAsync(id, cancellationToken);
+            return true;
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Failed to delete category {CategoryId} due to related products.", id);
         
-        await _marketCategoryRepository.DeleteAsync(id);
-        return true;
+            throw new InvalidOperationException($"Cannot delete category with ID {id} because it has associated products.", ex);
+        }
     }
 
     public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var product = await _marketCategoryRepository.GetAsync(id);
+        var product = await _marketCategoryRepository.GetAsync(id, cancellationToken);
         
         if (product is null)
             return false;
