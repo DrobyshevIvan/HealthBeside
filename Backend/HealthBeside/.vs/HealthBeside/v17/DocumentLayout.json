@@ -1,12 +1,168 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\repos\\GitDesk\\HealthBeside\\Backend\\HealthBeside\\",
-  "Documents": [],
+  "WorkspaceRootPath": "D:\\HealthBeside\\Backend\\HealthBeside\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{4F848F51-E0DB-4421-B83E-4F18F6DE9D6D}|HealthBeside.API\\HealthBeside.API.csproj|d:\\healthbeside\\backend\\healthbeside\\healthbeside.api\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F848F51-E0DB-4421-B83E-4F18F6DE9D6D}|HealthBeside.API\\HealthBeside.API.csproj|solutionrelative:healthbeside.api\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F848F51-E0DB-4421-B83E-4F18F6DE9D6D}|HealthBeside.API\\HealthBeside.API.csproj|d:\\healthbeside\\backend\\healthbeside\\healthbeside.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F848F51-E0DB-4421-B83E-4F18F6DE9D6D}|HealthBeside.API\\HealthBeside.API.csproj|solutionrelative:healthbeside.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{915F2383-BB32-4E46-8F3C-F601285DCC1B}|HealthBeside.Application\\HealthBeside.Application.csproj|d:\\healthbeside\\backend\\healthbeside\\healthbeside.application\\contracts\\user\\loginrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{915F2383-BB32-4E46-8F3C-F601285DCC1B}|HealthBeside.Application\\HealthBeside.Application.csproj|solutionrelative:healthbeside.application\\contracts\\user\\loginrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{915F2383-BB32-4E46-8F3C-F601285DCC1B}|HealthBeside.Application\\HealthBeside.Application.csproj|d:\\healthbeside\\backend\\healthbeside\\healthbeside.application\\contracts\\user\\registerrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{915F2383-BB32-4E46-8F3C-F601285DCC1B}|HealthBeside.Application\\HealthBeside.Application.csproj|solutionrelative:healthbeside.application\\contracts\\user\\registerrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F848F51-E0DB-4421-B83E-4F18F6DE9D6D}|HealthBeside.API\\HealthBeside.API.csproj|d:\\healthbeside\\backend\\healthbeside\\healthbeside.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{4F848F51-E0DB-4421-B83E-4F18F6DE9D6D}|HealthBeside.API\\HealthBeside.API.csproj|solutionrelative:healthbeside.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7C942F47-DCA1-4725-86A8-D1E0D0AF6955}|HealthBeside.Domain\\HealthBeside.Domain.csproj|d:\\healthbeside\\backend\\healthbeside\\healthbeside.domain\\interfaces\\imarketproductrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7C942F47-DCA1-4725-86A8-D1E0D0AF6955}|HealthBeside.Domain\\HealthBeside.Domain.csproj|solutionrelative:healthbeside.domain\\interfaces\\imarketproductrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7C942F47-DCA1-4725-86A8-D1E0D0AF6955}|HealthBeside.Domain\\HealthBeside.Domain.csproj|d:\\healthbeside\\backend\\healthbeside\\healthbeside.domain\\interfaces\\imarketcategoryrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7C942F47-DCA1-4725-86A8-D1E0D0AF6955}|HealthBeside.Domain\\HealthBeside.Domain.csproj|solutionrelative:healthbeside.domain\\interfaces\\imarketcategoryrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7C942F47-DCA1-4725-86A8-D1E0D0AF6955}|HealthBeside.Domain\\HealthBeside.Domain.csproj|d:\\healthbeside\\backend\\healthbeside\\healthbeside.domain\\interfaces\\iapplicationuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7C942F47-DCA1-4725-86A8-D1E0D0AF6955}|HealthBeside.Domain\\HealthBeside.Domain.csproj|solutionrelative:healthbeside.domain\\interfaces\\iapplicationuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7C942F47-DCA1-4725-86A8-D1E0D0AF6955}|HealthBeside.Domain\\HealthBeside.Domain.csproj|d:\\healthbeside\\backend\\healthbeside\\healthbeside.domain\\interfaces\\imarketreviewrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7C942F47-DCA1-4725-86A8-D1E0D0AF6955}|HealthBeside.Domain\\HealthBeside.Domain.csproj|solutionrelative:healthbeside.domain\\interfaces\\imarketreviewrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AccountController.cs",
+              "DocumentMoniker": "D:\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.API\\Controllers\\AccountController.cs",
+              "RelativeDocumentMoniker": "HealthBeside.API\\Controllers\\AccountController.cs",
+              "ToolTip": "D:\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.API\\Controllers\\AccountController.cs",
+              "RelativeToolTip": "HealthBeside.API\\Controllers\\AccountController.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAACEAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-03T20:47:01.745Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "LoginRequest.cs",
+              "DocumentMoniker": "D:\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Application\\Contracts\\User\\LoginRequest.cs",
+              "RelativeDocumentMoniker": "HealthBeside.Application\\Contracts\\User\\LoginRequest.cs",
+              "ToolTip": "D:\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Application\\Contracts\\User\\LoginRequest.cs",
+              "RelativeToolTip": "HealthBeside.Application\\Contracts\\User\\LoginRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-03T20:46:52.199Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "RegisterRequest.cs",
+              "DocumentMoniker": "D:\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Application\\Contracts\\User\\RegisterRequest.cs",
+              "RelativeDocumentMoniker": "HealthBeside.Application\\Contracts\\User\\RegisterRequest.cs",
+              "ToolTip": "D:\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Application\\Contracts\\User\\RegisterRequest.cs",
+              "RelativeToolTip": "HealthBeside.Application\\Contracts\\User\\RegisterRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-03T13:18:01.552Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.API\\Program.cs",
+              "RelativeDocumentMoniker": "HealthBeside.API\\Program.cs",
+              "ToolTip": "D:\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.API\\Program.cs",
+              "RelativeToolTip": "HealthBeside.API\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAKAAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-31T19:31:46.325Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "IMarketReviewRepository.cs",
+              "DocumentMoniker": "D:\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\Interfaces\\IMarketReviewRepository.cs",
+              "RelativeDocumentMoniker": "HealthBeside.Domain\\Interfaces\\IMarketReviewRepository.cs",
+              "ToolTip": "D:\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\Interfaces\\IMarketReviewRepository.cs",
+              "RelativeToolTip": "HealthBeside.Domain\\Interfaces\\IMarketReviewRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAA5AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-31T19:16:14.747Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "IMarketProductRepository.cs",
+              "DocumentMoniker": "D:\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\Interfaces\\IMarketProductRepository.cs",
+              "RelativeDocumentMoniker": "HealthBeside.Domain\\Interfaces\\IMarketProductRepository.cs",
+              "ToolTip": "D:\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\Interfaces\\IMarketProductRepository.cs",
+              "RelativeToolTip": "HealthBeside.Domain\\Interfaces\\IMarketProductRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-31T19:15:37.597Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "IMarketCategoryRepository.cs",
+              "DocumentMoniker": "D:\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\Interfaces\\IMarketCategoryRepository.cs",
+              "RelativeDocumentMoniker": "HealthBeside.Domain\\Interfaces\\IMarketCategoryRepository.cs",
+              "ToolTip": "D:\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\Interfaces\\IMarketCategoryRepository.cs",
+              "RelativeToolTip": "HealthBeside.Domain\\Interfaces\\IMarketCategoryRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-31T19:15:16.423Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "IApplicationUserRepository.cs",
+              "DocumentMoniker": "D:\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\Interfaces\\IApplicationUserRepository.cs",
+              "RelativeDocumentMoniker": "HealthBeside.Domain\\Interfaces\\IApplicationUserRepository.cs",
+              "ToolTip": "D:\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.Domain\\Interfaces\\IApplicationUserRepository.cs",
+              "RelativeToolTip": "HealthBeside.Domain\\Interfaces\\IApplicationUserRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-31T19:14:51.311Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.API\\appsettings.json",
+              "RelativeDocumentMoniker": "HealthBeside.API\\appsettings.json",
+              "ToolTip": "D:\\HealthBeside\\Backend\\HealthBeside\\HealthBeside.API\\appsettings.json",
+              "RelativeToolTip": "HealthBeside.API\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-07-31T19:05:26.757Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

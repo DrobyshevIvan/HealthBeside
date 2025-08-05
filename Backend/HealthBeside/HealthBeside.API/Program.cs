@@ -23,16 +23,7 @@ public class Program
         builder.Services.Configure<JwtOptions>(
             builder.Configuration.GetSection(JwtOptions.JwtOptionsKey));
 
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy("CorsPolicy", opts =>
-            {
-                opts.AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials()
-                    .WithOrigins("http://localhost:5180");
-            });
-        });
+        
 
         builder.Services.AddControllers();
 
@@ -124,7 +115,19 @@ public class Program
         builder.Services.AddOpenApi();
 
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-        
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowReactFrontend",
+                policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
+        });
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -142,13 +145,20 @@ public class Program
             });
         }
 
+        
+
+      
+
+
         app.UseExceptionHandler("/Error");
 
         app.UseHttpsRedirection();
         
-        app.UseCors("CorsPolicy");
+       
         
-        app.UseRouting();  
+        app.UseRouting();
+
+        app.UseCors("AllowReactFrontend");
 
         app.UseAuthentication();
 

@@ -1,5 +1,6 @@
 ﻿using HealthBeside.Domain.Models.Marketplace;
-using HealthBeside.Domain.Models.Shared;
+using HealthBeside.Domain.Shared;
+
 
 namespace HealthBeside.Domain.Interfaces;
 
