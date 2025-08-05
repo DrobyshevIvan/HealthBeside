@@ -18,7 +18,9 @@ public class MarketProduct
     public ICollection<MarketCartItem> CartItems { get; private set; }
     public ICollection<MarketReview> Reviews { get; private set; }
 
-    private MarketProduct() { }
+    private MarketProduct()
+    {
+    }
 
     public static (string? Error, MarketProduct MarketProduct) Create(string name, string description, decimal price,
         int quantity, string sku, string imageUrl, Guid categoryId)
@@ -61,61 +63,86 @@ public class MarketProduct
         return (null, marketProduct);
     }
 
-    public string? Update(string? name, string? description, decimal? price, int? quantity, string? sku, string? imageUrl,
-        Guid? categoryId)
+    public string? Update(string? name, string? description, decimal? price, int? quantity, string? sku,
+        string? imageUrl, Guid? categoryId)
     {
+        bool hasChanges = false;
         var errors = new List<string>();
 
-        if (name != null)
+        if (!string.IsNullOrWhiteSpace(name) && name != Name)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                errors.Add("Name cannot be empty.");
-            else
-                Name = name;
+            Name = name;
+            hasChanges = true;
+        }
+        else if (name is not null && string.IsNullOrWhiteSpace(name))
+        {
+            errors.Add("Name cannot be empty.");
         }
 
-        if (description != null)
+        if (!string.IsNullOrWhiteSpace(description) && description != Description)
         {
-            if (string.IsNullOrWhiteSpace(description))
-                errors.Add("Description cannot be empty.");
-            else
-                Description = description;
+            Description = description;
+            hasChanges = true;
+        }
+        else if (description is not null && string.IsNullOrWhiteSpace(description))
+        {
+            errors.Add("Description cannot be empty.");
         }
 
         if (price.HasValue)
         {
             if (price.Value < 0)
+            {
                 errors.Add("Price must be greater than zero.");
-            else
+            }
+            else if (price.Value != Price)
+            {
                 Price = price.Value;
+                hasChanges = true;
+            }
         }
 
         if (quantity.HasValue)
         {
             if (quantity.Value < 0)
+            {
                 errors.Add("Quantity must be greater than zero.");
-            else
+            }
+            else if (quantity.Value != Quantity)
+            {
                 Quantity = quantity.Value;
+                hasChanges = true;
+            }
         }
 
-        if (sku != null)
+        if (!string.IsNullOrWhiteSpace(sku) && sku != SKU)
         {
-            if (string.IsNullOrWhiteSpace(sku))
-                errors.Add("SKU cannot be empty.");
-            else
-                SKU = sku;
+            SKU = sku;
+            hasChanges = true;
+        }
+        else if (sku is not null && string.IsNullOrWhiteSpace(sku))
+        {
+            errors.Add("SKU cannot be empty.");
         }
 
         if (categoryId.HasValue)
         {
             if (categoryId.Value == Guid.Empty)
+            {
                 errors.Add("Category ID cannot be empty.");
-            else
+            }
+            else if (categoryId.Value != CategoryId)
+            {
                 CategoryId = categoryId.Value;
+                hasChanges = true;
+            }
         }
 
-        if (imageUrl != null)
+        if (!string.IsNullOrWhiteSpace(imageUrl) && imageUrl != ImageUrl)
+        {
             ImageUrl = imageUrl;
+            hasChanges = true;
+        }
 
         if (errors.Any())
             return string.Join("; ", errors);
@@ -129,6 +156,7 @@ public class MarketProduct
             return "Cannot reduce quantity below zero.";
 
         Quantity = newQuantity;
-        return null;
+        if (!hasChanges)
+            return "No valid changes provided.";
     }
 }

@@ -4,27 +4,30 @@ using HealthBeside.Application.Interfaces;
 using HealthBeside.Domain.Exceptions;
 using HealthBeside.Domain.Interfaces;
 using HealthBeside.Domain.Models.Marketplace;
+using Microsoft.Extensions.Logging;
 
 namespace HealthBeside.Application.Services;
 
 public class MarketCategoryService : IMarketCategoryService
 {
     private readonly IMarketCategoryRepository _marketCategoryRepository;
-    
-    public MarketCategoryService(IMarketCategoryRepository marketCategoryRepository)
+    private readonly ILogger<MarketCategoryService> _logger;
+
+    public MarketCategoryService(IMarketCategoryRepository marketCategoryRepository, ILogger<MarketCategoryService> logger)
     {
         _marketCategoryRepository = marketCategoryRepository;
+        _logger = logger;
     }
     
-    public async Task<IEnumerable<GetMarketCategoryDto>> GetAllAsync()
+    public async Task<IEnumerable<GetMarketCategoryDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var categories = await _marketCategoryRepository.GetAllAsync();
+        var categories = await _marketCategoryRepository.GetAllAsync(cancellationToken);
         return categories.Select(c => c.ToGetCategoryDto());
     }
 
-    public async Task<GetMarketCategoryDto> GetByIdAsync(Guid id)
+    public async Task<GetMarketCategoryDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var category = await _marketCategoryRepository.GetAsync(id);
+        var category = await _marketCategoryRepository.GetAsync(id, cancellationToken);
 
         if (category is null)
             throw new MarketCategoryException($"Category with id {id} was not found");
@@ -32,7 +35,9 @@ public class MarketCategoryService : IMarketCategoryService
         return category.ToGetCategoryDto();
     }
 
-    public async Task<GetMarketCategoryDto> CreateAsync(CreateMarketCategoryDto createMarketCategoryDto)
+    public async Task<GetMarketCategoryDto> CreateAsync(
+        CreateMarketCategoryDto createMarketCategoryDto, 
+        CancellationToken cancellationToken = default)
     {
         (string? error, MarketCategory? marketCategory) = MarketCategory.Create(
             createMarketCategoryDto.Name, createMarketCategoryDto.Description);
@@ -48,9 +53,12 @@ public class MarketCategoryService : IMarketCategoryService
         return addedCategory.ToGetCategoryDto();
     }
 
-    public async Task<bool> UpdateAsync(Guid id, UpdateMarketCategoryDto updateMarketCategoryDto)
+    public async Task<bool> UpdateAsync(
+        Guid id, 
+        UpdateMarketCategoryDto updateMarketCategoryDto,
+        CancellationToken cancellationToken = default)
     {
-        var category = await _marketCategoryRepository.GetAsync(id);
+        var category = await _marketCategoryRepository.GetAsync(id, cancellationToken);
         
         if (category is null)
             throw new MarketCategoryException($"Category with id {id} was not found");
@@ -60,12 +68,12 @@ public class MarketCategoryService : IMarketCategoryService
         if (error != null)
             throw new MarketCategoryException(error);
 
-        await _marketCategoryRepository.UpdateAsync(category);
+        await _marketCategoryRepository.UpdateAsync(category, cancellationToken);
         
         return true;
     }
 
-    public async Task<bool> DeleteAsync(Guid id)
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var category = await _marketCategoryRepository.GetAsync(id);
 
@@ -76,7 +84,7 @@ public class MarketCategoryService : IMarketCategoryService
         return true;
     }
 
-    public async Task<bool> ExistsAsync(Guid id)
+    public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var product = await _marketCategoryRepository.GetAsync(id);
         

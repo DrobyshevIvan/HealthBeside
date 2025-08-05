@@ -1,24 +1,37 @@
-﻿using HealthBeside.Application.Contracts.Forum.ForumCommentDto;
+﻿using HealthBeside.Application.Contracts;
+using HealthBeside.Application.Contracts.Forum.ForumCommentDto;
 using HealthBeside.Application.Interfaces;
+using HealthBeside.Domain.Exceptions;
 using HealthBeside.Domain.Interfaces;
 using HealthBeside.Domain.Models.Forum;
+using Microsoft.Extensions.Logging;
 
 namespace HealthBeside.Application.Services;
 
-//TODO implement this service and add custom exceptions for better error handling
 public class ForumCommentService : IForumCommentService
 {
     private readonly IForumCommentRepository _forumCommentRepository;
+    private readonly ILogger<ForumCommentService> _logger;
 
-    public ForumCommentService(IForumCommentRepository forumCommentRepository)
+    public ForumCommentService(IForumCommentRepository forumCommentRepository, ILogger<ForumCommentService> logger)
     {
         _forumCommentRepository = forumCommentRepository;
+        _logger = logger;
     }
 
-
-    public async Task<IEnumerable<GetForumCommentDto>> GetAllAsync()
+    private static void EnsureOwnership(ForumComment post, Guid userId)
     {
-        var comments = await _forumCommentRepository.GetAllAsync();
+        if (post.AuthorId != userId)
+            throw new UnauthorizedAccessException("You are not authorized to perform this action.");
+    }
+
+    public async Task<IEnumerable<GetForumCommentDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Attempting to retrieve all forum comments.");
+        await Task.Delay(5000, cancellationToken);
+        var comments = await _forumCommentRepository.GetAllAsync(cancellationToken);
+        _logger.LogInformation("Successfully retrieved {Count} forum comments.", comments.Count());
+        
         return comments.Select(comment => new GetForumCommentDto
         {
             Id = comment.Id,
@@ -30,13 +43,20 @@ public class ForumCommentService : IForumCommentService
         });
     }
 
-    public async Task<GetForumCommentDto> GetByIdAsync(Guid id)
+    public async Task<GetForumCommentDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var comment = await _forumCommentRepository.GetAsync(id);
+        _logger.LogInformation("Attempting to retrieve forum comment with ID: {CommentId}.", id);
+        
+        var comment = await _forumCommentRepository.GetAsync(id, cancellationToken);
     
         if (comment is null)
+        {
+            _logger.LogWarning("Comment with ID {CommentId} not found.", id);
             throw new KeyNotFoundException($"Comment with ID {id} not found.");
+        }
 
+        _logger.LogInformation("Successfully retrieved comment with ID: {CommentId}.", id);
+        
         return new GetForumCommentDto
         {
             Id = comment.Id,
@@ -48,24 +68,42 @@ public class ForumCommentService : IForumCommentService
         };
     }
 
-    public async Task<GetDetailedForumCommentDto> CreateAsync(CreateForumCommentDto forumCommentDto, Guid authorId)
+    public async Task<GetDetailedForumCommentDto> CreateAsync(
+        CreateForumCommentDto forumCommentDto, 
+        Guid authorId, 
+        CancellationToken cancellationToken = default)
     {
+        _logger.LogInformation("Attempting to create a new forum comment for PostId: {PostId} by AuthorId: {AuthorId}.", 
+            forumCommentDto.PostId, authorId);
+        
         (string? error, ForumComment? forumComment) = ForumComment.Create(
             authorId,
             forumCommentDto.Content,
             forumCommentDto.PostId);
 
         if (error != null)
-            throw new ArgumentException(error, nameof(forumCommentDto));
+        {
+            _logger.LogWarning("Failed to create ForumComment object due to validation error: {Error}", error);
+            throw new ForumCommentCreationException(error);
+        }
 
         if (forumComment is null)
-            throw new InvalidOperationException("Unknown error: ForumComment is null.");
+        {
+            _logger.LogError("ForumComment.Create returned a null object without an error message. This indicates an unexpected state.");
+            throw new ForumCommentCreationException("Unknown error: ForumComment is null.");
+        }
 
-        var addedComment = await _forumCommentRepository.AddAsync(forumComment);
+        var addedComment = await _forumCommentRepository.AddAsync(forumComment, cancellationToken);
 
         if (addedComment is null)
+        {
+            _logger.LogError("Repository.AddAsync returned a null object after successful creation. This indicates an unexpected state.");
             throw new InvalidOperationException("Unknown error: ForumComment could not be added.");
+        }
 
+        _logger.LogInformation("Successfully created a new comment with ID: {CommentId} for PostId: {PostId}.", 
+            addedComment.Id, addedComment.PostId);
+        
         return new GetDetailedForumCommentDto
         {
             Id = addedComment.Id,
@@ -74,47 +112,87 @@ public class ForumCommentService : IForumCommentService
             Likes = addedComment.Likes,
             Dislikes = addedComment.Dislikes,
             IsAnswer = addedComment.IsAnswer,
-            AuthorId = addedComment.AuthorId,
+            Author = addedComment.Author == null
+                ? null
+                : new GetUserDto 
+                { 
+                    FirstName = addedComment.Author.FirstName, 
+                    LastName = addedComment.Author.LastName 
+                },
             PostId = addedComment.PostId
         };
     }
 
-    public async Task<bool> UpdateAsync(UpdateForumCommentDto updateForumCommentDto) 
+    public async Task<GetUpdatedForumCommentDto> UpdateAsync(
+        UpdateForumCommentDto updateForumCommentDto,
+        Guid userId,
+        CancellationToken cancellationToken = default) 
     {
-        var comment = await _forumCommentRepository.GetAsync(updateForumCommentDto.CommentId);
+        _logger.LogInformation("Attempting to update comment with ID: {CommentId} by user {UserId}.", 
+            updateForumCommentDto.CommentId, userId);
+        
+        var comment = await _forumCommentRepository.GetAsync(updateForumCommentDto.CommentId, cancellationToken);
         
         if(comment is null)
+        {
+            _logger.LogWarning("Comment with ID {CommentId} not found for update.", updateForumCommentDto.CommentId);
             throw new KeyNotFoundException($"Comment with ID {updateForumCommentDto.CommentId} not found.");
+        }
+        
+        EnsureOwnership(comment, userId);
         
         var error = comment.Update(
             updateForumCommentDto.Content,
             updateForumCommentDto.IsAnswer);
+        
         if (error != null)
+        {
+            _logger.LogWarning("Validation failed for comment update {CommentId}: {Error}", updateForumCommentDto.CommentId, error);
             throw new ArgumentException(error);
+        }
         
-        await _forumCommentRepository.UpdateAsync(comment);
+        comment.Touch();
         
+        await _forumCommentRepository.UpdateAsync(comment, cancellationToken);
+        
+        _logger.LogInformation("Successfully updated comment with ID: {CommentId}.", comment.Id);
+        
+        return new GetUpdatedForumCommentDto
+        {
+            Id = comment.Id,
+            Content = comment.Content,
+            IsAnswer = comment.IsAnswer,
+            UpdatedAt = comment.UpdatedAt,
+            Likes = comment.Likes,
+            Dislikes = comment.Dislikes
+        };
+    }
+
+    public async Task<bool> DeleteAsync(Guid id, Guid userId, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("User {UserId} is attempting to delete forum comment {CommentId}", userId, id);
+        var comment = await _forumCommentRepository.GetAsync(id, cancellationToken);
+
+        if (comment is null)
+        {
+            _logger.LogWarning("Attempt to delete non-existent forum comment: {CommentId}", id);
+            return false;
+        }
+
+        EnsureOwnership(comment, userId);
+        await _forumCommentRepository.DeleteAsync(id, cancellationToken);
+
+        _logger.LogInformation("Forum comment {CommentId} deleted successfully by user {UserId}", id, userId);
         return true;
     }
 
-    public async Task<bool> DeleteAsync(Guid id)
+    public async Task<bool> Exists(Guid id, CancellationToken cancellationToken = default)
     {
-        var comment = await _forumCommentRepository.GetAsync(id);
-
-        if (comment is null)
-            return false;
+        _logger.LogDebug("Checking if comment with ID {CommentId} exists.", id);
+        var comment = await _forumCommentRepository.GetAsync(id, cancellationToken);
         
-        await _forumCommentRepository.DeleteAsync(id);
-        return true;
-    }
-
-    public async Task<bool> Exists(Guid id)
-    {
-        var comment = await _forumCommentRepository.GetAsync(id);
-
-        if (comment is null)
-            return false;
-
-        return true;
+        bool exists = comment is not null;
+        _logger.LogDebug("Forum comment {CommentId} exists: {Exists}", id, exists);
+        return exists;
     }
 }

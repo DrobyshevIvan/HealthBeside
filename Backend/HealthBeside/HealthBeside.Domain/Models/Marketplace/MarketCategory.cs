@@ -35,27 +35,37 @@ public class MarketCategory
 
     public string? Update(string? name, string? description)
     {
+        bool hasChanges = false;
         var errors = new List<string>();
 
-        if (name is not null)
+        if(!string.IsNullOrWhiteSpace(name) && Name != name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 errors.Add("Name cannot be empty.");
             else
+            {
                 Name = name;
+                hasChanges = true;
+            }
         }
 
-        if (description is not null)
+        if(!string.IsNullOrWhiteSpace(description) && Description != description)
         {
             if (string.IsNullOrWhiteSpace(description))
                 errors.Add("Description cannot be empty.");
-            else 
+            else
+            {
                 Description = description;
+                hasChanges = true;
+            }
         }
         
         if (errors.Any())
             return string.Join("; ", errors);
 
+        if(!hasChanges)
+            return "No changes made.";
+        
         return null;
     }
 }

@@ -93,14 +93,28 @@ public class ForumComment
         return (null, forumComment);
     }
     
-    public string? Update(string content, bool isAnswer)
+    public string? Update(string? content, bool isAnswer)
     {
-        if (string.IsNullOrWhiteSpace(content))
-            return "Content cannot be empty.";
-        
-        Content = content;
+        bool hasChanges = false;
+        var errors = new List<string>();
+
+
+        if (!string.IsNullOrWhiteSpace(content) && content != Content)
+        {
+            Content = content;
+            hasChanges = true;
+        }
+
+        if (!hasChanges)
+            return "No valid changes provided.";
+
         IsAnswer = isAnswer;
         UpdatedAt = DateTime.UtcNow;
         return null;
+    }
+    
+    public void Touch()
+    {
+        UpdatedAt = DateTime.UtcNow;
     }
 }

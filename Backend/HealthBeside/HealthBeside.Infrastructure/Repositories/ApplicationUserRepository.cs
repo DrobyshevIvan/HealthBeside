@@ -14,16 +14,17 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
         _context = context;
     }
     
-    public async Task<ApplicationUser?> GetUserByRefreshTokenAsync(string refreshToken)
+    public async Task<ApplicationUser?> GetUserByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
     {
         var userToken = await _context.Set<RefreshToken>()
-            .FirstOrDefaultAsync(t => t.Token == refreshToken);
+            .FirstOrDefaultAsync(t => t.Token == refreshToken, cancellationToken);
 
         if (userToken == null)
             return null;
         
-        var user = await _context.Set<ApplicationUser>().FirstOrDefaultAsync(u => u.Id == userToken.UserId);
+        var user = await _context.Set<ApplicationUser>().FirstOrDefaultAsync(u => u.Id == userToken.UserId, cancellationToken);
         return user;
     }
-    //TODO: Implement other methods as needed, such as GetUserByIdAsync, CreateUserAsync, etc.
+    
+    //TODO: Implement other methods as needed
 }

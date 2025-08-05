@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using HealthBeside.API.Handlers;
+using HealthBeside.API.Middlewares;
 using HealthBeside.Application.Extensions;
 using HealthBeside.Domain.Models.Users;
 using HealthBeside.Infrastructure;
@@ -30,7 +31,7 @@ public class Program
                 opts.AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials()
-                    .WithOrigins("http://localhost:5180");
+                    .WithOrigins("http://localhost:5173");
             });
         });
 
@@ -70,24 +71,26 @@ public class Program
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-            
-        //NOTE: Я закоментував поки гугл аутентифікацію, бо тут треба налаштувати cliентId та clientSecret
-        
-            /*.AddCookie().AddGoogle(options =>
+        }).AddCookie().AddGoogle(options =>
         {
             var clientId = builder.Configuration["Authentication:Google:ClientId"];
+
             if (clientId == null)
+            {
                 throw new ArgumentNullException(nameof(clientId));
-            
+            }
+    
             var clientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+    
             if (clientSecret == null)
-                throw new ArgumentNullException(nameof(clientId));
-            
+            {
+                throw new ArgumentNullException(nameof(clientSecret));
+            }
+
             options.ClientId = clientId;
             options.ClientSecret = clientSecret;
             options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        })*/.AddJwtBearer(options =>
+        }).AddJwtBearer(options =>
         {
             var jwtOptions = builder.Configuration.GetSection(JwtOptions.JwtOptionsKey)
                 .Get<JwtOptions>() ?? throw new ArgumentException(nameof(JwtOptions));
@@ -142,14 +145,16 @@ public class Program
             });
         }
 
-        app.UseExceptionHandler("/Error");
+        app.UseExceptionHandler("/error");
 
         app.UseHttpsRedirection();
         
         app.UseCors("CorsPolicy");
         
+        //app.UseMiddleware<TaskCancellationHandlingMiddleware>(); //TODO fix the middleware to handle task cancellation properly
+        
         app.UseRouting();  
-
+        
         app.UseAuthentication();
 
         app.UseAuthorization();

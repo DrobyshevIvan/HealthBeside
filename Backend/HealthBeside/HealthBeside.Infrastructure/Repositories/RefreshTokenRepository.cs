@@ -14,8 +14,8 @@ public class RefreshTokenRepository : GenericRepository<RefreshToken>, IRefreshT
         _context = context;
     }
 
-    public async Task<RefreshToken?> GetRefreshTokenByUserId(Guid userId)
+    public async Task<RefreshToken?> GetRefreshTokenByUserId(Guid userId, CancellationToken cancellationToken = default)
     {
-        return await _context.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == userId);
+        return await _context.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
     }
 }

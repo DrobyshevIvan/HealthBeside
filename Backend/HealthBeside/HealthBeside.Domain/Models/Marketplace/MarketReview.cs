@@ -54,26 +54,38 @@ public class MarketReview
 
     public string? Update(string? description, int? rating)
     {
+        bool hasChanges = false;
         var errors = new List<string>();
 
-        if (description is not null)
+        if (!string.IsNullOrWhiteSpace(description) && Description != description)
         {
-            if (string.IsNullOrWhiteSpace(description))
-                errors.Add("Description cannot be empty.");
-            else
-                Description = description;
+            Description = description;
+            hasChanges = true;
         }
+        else if (description is not null && string.IsNullOrWhiteSpace(description))
+        {
+            errors.Add("Description cannot be empty.");
+        }
+       
 
         if (rating.HasValue)
         {
-            if (rating.Value <= 0 && rating.Value > 5) 
+            if (rating.Value <= 0 || rating.Value > 5)
+            {
                 errors.Add("Rating must be between 0 and 5.");
-            else 
+            }
+            else
+            {
+                hasChanges = true;
                 Rating = rating.Value;
+            }
         }
         
         if (errors.Any())
             return string.Join("; ", errors);
+        
+        if(!hasChanges)
+            return "No changes made to the review.";
         
         return null;
     }
