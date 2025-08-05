@@ -16,4 +16,9 @@ public static class MarketCartItemExtension
             TotalPrice = marketCartItem.Quantity * marketCartItem.MarketProduct.Price
         };
     }
+
+    // public static MarketOrderItem ToMarketOrderItem(this MarketCartItem cartItem)
+    // {
+    //     return MarketOrderItem.Create(cartItem.Quantity, cartItem.MarketProduct.Price, cartItem.ProductId, );
+    // }
 }

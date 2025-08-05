@@ -47,4 +47,38 @@ public class MarketOrder
         
         return (null, marketOrder);
     }
+
+    public string? UpdateStatus(OrderStatus newStatus)
+    {
+        if (!Enum.IsDefined(typeof(OrderStatus), newStatus))
+            return "Invalid order status.";
+        
+        if (Status == newStatus)
+            return "Order already has this status.";
+        
+        if (!CanUpdateStatus(newStatus))
+            return $"Cannot change status from {Status} to {newStatus}.";
+        
+        if (Status == OrderStatus.Pending && newStatus == OrderStatus.Confirmed)
+        {
+            // Можна додати логіку підтвердження замовлення
+            // Наприклад, перевірка наявності товарів
+        }
+    
+        Status = newStatus;
+        return null; // Успішно оновлено
+    }
+
+    private bool CanUpdateStatus(OrderStatus newStatus)
+    {
+        return Status switch
+        {
+            OrderStatus.Pending => newStatus == OrderStatus.Confirmed || newStatus == OrderStatus.Canceled,
+            OrderStatus.Confirmed => newStatus == OrderStatus.Shipped || newStatus == OrderStatus.Canceled,
+            OrderStatus.Shipped => newStatus == OrderStatus.Delivered,
+            OrderStatus.Delivered => false,
+            OrderStatus.Canceled => false,
+            _ => false
+        };
+    }
 }

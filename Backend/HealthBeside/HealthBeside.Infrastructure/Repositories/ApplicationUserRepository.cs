@@ -25,6 +25,5 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
         var user = await _context.Set<ApplicationUser>().FirstOrDefaultAsync(u => u.Id == userToken.UserId);
         return user;
     }
-    
     //TODO: Implement other methods as needed, such as GetUserByIdAsync, CreateUserAsync, etc.
 }

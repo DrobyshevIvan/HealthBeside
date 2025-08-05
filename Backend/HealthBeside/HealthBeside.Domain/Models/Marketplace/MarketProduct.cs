@@ -8,44 +8,44 @@ public class MarketProduct
     public decimal Price { get; private set; }
     public int Quantity { get; private set; }
     public string SKU { get; private set; }
-    
+
     public string? ImageUrl { get; private set; }
-    
+
     public Guid CategoryId { get; private set; }
     public MarketCategory Category { get; private set; }
-    
+
     public ICollection<MarketOrderItem> OrderItems { get; private set; }
     public ICollection<MarketCartItem> CartItems { get; private set; }
     public ICollection<MarketReview> Reviews { get; private set; }
-    
+
     private MarketProduct() { }
 
-    public static (string? Error, MarketProduct MarketProduct) Create(string name, string description, decimal price, 
+    public static (string? Error, MarketProduct MarketProduct) Create(string name, string description, decimal price,
         int quantity, string sku, string imageUrl, Guid categoryId)
     {
         var errors = new List<string>();
-        
-        if(string.IsNullOrWhiteSpace(name))
+
+        if (string.IsNullOrWhiteSpace(name))
             errors.Add("Name cannot be empty.");
-        
-        if(string.IsNullOrWhiteSpace(description))
+
+        if (string.IsNullOrWhiteSpace(description))
             errors.Add("Description cannot be empty.");
-        
-        if(price <= 0)
+
+        if (price <= 0)
             errors.Add("Price must be greater than zero.");
-        
-        if(quantity <= 0)
+
+        if (quantity <= 0)
             errors.Add("Quantity must be greater than zero.");
-        
-        if(string.IsNullOrWhiteSpace(sku))
+
+        if (string.IsNullOrWhiteSpace(sku))
             errors.Add("SKU cannot be empty.");
-        
-        if(categoryId.Equals(Guid.Empty))
+
+        if (categoryId.Equals(Guid.Empty))
             errors.Add("Category ID cannot be empty.");
-        
-        if(errors.Any())
+
+        if (errors.Any())
             return (string.Join("; ", errors), null);
-        
+
         var marketProduct = new MarketProduct
         {
             Id = Guid.NewGuid(),
@@ -57,7 +57,7 @@ public class MarketProduct
             ImageUrl = imageUrl,
             CategoryId = categoryId
         };
-        
+
         return (null, marketProduct);
     }
 
@@ -102,7 +102,7 @@ public class MarketProduct
         {
             if (string.IsNullOrWhiteSpace(sku))
                 errors.Add("SKU cannot be empty.");
-            else 
+            else
                 SKU = sku;
         }
 
@@ -113,13 +113,22 @@ public class MarketProduct
             else
                 CategoryId = categoryId.Value;
         }
-        
+
         if (imageUrl != null)
             ImageUrl = imageUrl;
 
         if (errors.Any())
             return string.Join("; ", errors);
-        
+
+        return null;
+    }
+
+    public string? UpdateStock(int newQuantity)
+    {
+        if (newQuantity < 0)
+            return "Cannot reduce quantity below zero.";
+
+        Quantity = newQuantity;
         return null;
     }
 }

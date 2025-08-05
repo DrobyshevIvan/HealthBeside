@@ -10,11 +10,11 @@ namespace HealthBeside.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<int>(
-                name: "Status",
-                table: "MarketOrders",
-                type: "integer",
-                nullable: false,
+            migrationBuilder.AlterColumn<string>(
+                name: "ImageUrl",
+                table: "MarketProducts",
+                type: "text",
+                nullable: true,
                 oldClrType: typeof(string),
                 oldType: "text");
         }
@@ -23,12 +23,14 @@ namespace HealthBeside.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "Status",
-                table: "MarketOrders",
+                name: "ImageUrl",
+                table: "MarketProducts",
                 type: "text",
                 nullable: false,
-                oldClrType: typeof(int),
-                oldType: "integer");
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "text",
+                oldNullable: true);
         }
     }
 }

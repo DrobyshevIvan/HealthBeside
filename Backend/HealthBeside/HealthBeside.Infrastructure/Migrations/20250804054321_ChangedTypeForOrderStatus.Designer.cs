@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HealthBeside.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250804052601_ChangedTypeForOrderStatus")]
+    [Migration("20250804054321_ChangedTypeForOrderStatus")]
     partial class ChangedTypeForOrderStatus
     {
         /// <inheritdoc />
@@ -200,8 +200,9 @@ namespace HealthBeside.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("numeric");
