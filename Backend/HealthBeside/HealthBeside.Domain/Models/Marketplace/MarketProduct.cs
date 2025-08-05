@@ -150,13 +150,32 @@ public class MarketProduct
         return null;
     }
 
-    public string? UpdateStock(int newQuantity)
+    public string? UpdateStock(int? newQuantity)
     {
-        if (newQuantity < 0)
-            return "Cannot reduce quantity below zero.";
+        var errors = new List<string>();
+        bool hasChanges = false;
 
-        Quantity = newQuantity;
+        if (!newQuantity.HasValue)
+        {
+            errors.Add("Quantity is required.");
+        }
+        else if (newQuantity.Value < 0)
+        {
+            errors.Add("Quantity cannot be negative.");
+        }
+        else if (newQuantity.Value != Quantity)
+        {
+            Quantity = newQuantity.Value;
+            hasChanges = true;
+        }
+
+        if (errors.Any())
+            return string.Join("; ", errors);
+
         if (!hasChanges)
-            return "No valid changes provided.";
+            return "No changes were made to the stock.";
+
+        return null;
     }
+
 }
