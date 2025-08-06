@@ -14,7 +14,11 @@ public interface IMarketReviewService
         PageParams? pageParams,
         CancellationToken cancellationToken = default);
     Task<GetMarketReviewDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<GetMarketReviewDto> CreateAsync(CreateMarketReviewDto dto, CancellationToken cancellationToken = default);
-    Task<bool> UpdateAsync(Guid id, UpdateMarketReviewDto dto, CancellationToken cancellationToken = default);
-    Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<GetMarketReviewDto> CreateAsync(CreateMarketReviewDto dto, Guid userId, CancellationToken cancellationToken = default);
+    Task<GetMarketReviewDto> UpdateAsync(
+        Guid reviewId,
+        Guid currentUserId,
+        UpdateMarketReviewDto dto,
+        CancellationToken cancellationToken = default);
+    Task<bool> DeleteAsync(Guid reviewId, Guid currentUserId, CancellationToken cancellationToken = default);
 }

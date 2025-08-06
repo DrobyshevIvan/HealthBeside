@@ -1,8 +1,6 @@
 ﻿namespace HealthBeside.Application.Contracts.MarketPlace.MarketReviewDto;
 
-public class UpdateMarketReviewDto
+public class DeleteMarketReviewDto
 {
     public Guid ReviewId { get; set; }
-    public string? Description { get; set; }
-    public int? Rating { get; set; }
 }
