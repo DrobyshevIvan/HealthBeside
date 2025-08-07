@@ -8,7 +8,7 @@ public interface IMarketCategoryService
     Task<IEnumerable<GetMarketCategoryDto>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<GetMarketCategoryDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<GetMarketCategoryDto> CreateAsync(CreateMarketCategoryDto createMarketCategoryDto, CancellationToken cancellationToken = default);
-    Task<bool> UpdateAsync(Guid id, UpdateMarketCategoryDto updateMarketCategoryDto, CancellationToken cancellationToken = default);
+    Task<GetMarketCategoryDto> UpdateAsync(Guid id, UpdateMarketCategoryDto updateMarketCategoryDto, CancellationToken cancellationToken = default);
     Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
     Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default);
 }

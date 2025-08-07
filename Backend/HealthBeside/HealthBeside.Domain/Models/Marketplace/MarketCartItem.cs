@@ -62,21 +62,29 @@ public class MarketCartItem
         return null;
     }
 
-    public string? Update(int quantity)
+    public string? Update(int? quantity)
     {
-        var  errors = new List<string>();
-        
-        if (quantity <= 0)
-            errors.Add("Quantity must be greater than zero.");
-        
-        if (quantity > 100)
-            errors.Add("Quantity cannot be more than 100.");
+        bool hasChanges = false;
+        var errors = new List<string>();
 
-        Quantity = quantity;
-        
+        if (quantity.HasValue && quantity != Quantity)
+        {
+            if (quantity.Value <= 0 || quantity.Value > 100)
+                errors.Add("Quantity must be greater than zero and less that hundred.");
+            else
+            {
+                Quantity = quantity.Value;
+                hasChanges = true;
+            }
+        }
+
         if (errors.Any())
             return string.Join("; ", errors);
 
+        if (!hasChanges)
+            return "No valid changes provided.";
+
         return null;
     }
+
 }
