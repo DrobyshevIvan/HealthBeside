@@ -1,5 +1,6 @@
 ﻿using HealthBeside.Application.Contracts;
 using HealthBeside.Application.Contracts.Forum.ForumCommentDto;
+using HealthBeside.Application.Extensions.Mapping.Forum.ForumCommentDto;
 using HealthBeside.Application.Interfaces;
 using HealthBeside.Domain.Exceptions;
 using HealthBeside.Domain.Interfaces;
@@ -31,7 +32,7 @@ public class ForumCommentService : IForumCommentService
         var comments = await _forumCommentRepository.GetAllAsync(cancellationToken);
         _logger.LogInformation("Successfully retrieved {Count} forum comments.", comments.Count());
         
-        return comments.Select(comment => comments.ToGetForumCommentDto());
+        return comments.Select(comments => comments.ToGetForumCommentDto());
     }
 
     public async Task<GetForumCommentDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -48,15 +49,7 @@ public class ForumCommentService : IForumCommentService
 
         _logger.LogInformation("Successfully retrieved comment with ID: {CommentId}.", id);
         
-        return new GetForumCommentDto
-        {
-            Id = comment.Id,
-            Content = comment.Content,
-            CreatedAt = comment.CreatedAt,
-            Likes = comment.Likes,
-            Dislikes = comment.Dislikes,
-            IsAnswer = comment.IsAnswer
-        };
+        return comment.ToGetForumCommentDto();
     }
 
     public async Task<GetDetailedForumCommentDto> CreateAsync(
@@ -95,23 +88,7 @@ public class ForumCommentService : IForumCommentService
         _logger.LogInformation("Successfully created a new comment with ID: {CommentId} for PostId: {PostId}.", 
             addedComment.Id, addedComment.PostId);
         
-        return new GetDetailedForumCommentDto
-        {
-            Id = addedComment.Id,
-            Content = addedComment.Content,
-            CreatedAt = addedComment.CreatedAt,
-            Likes = addedComment.Likes,
-            Dislikes = addedComment.Dislikes,
-            IsAnswer = addedComment.IsAnswer,
-            Author = addedComment.Author == null
-                ? null
-                : new GetUserDto 
-                { 
-                    FirstName = addedComment.Author.FirstName, 
-                    LastName = addedComment.Author.LastName 
-                },
-            PostId = addedComment.PostId
-        };
+        return addedComment.ToGetDetailedForumCommentDto();
     }
 
     public async Task<GetUpdatedForumCommentDto> UpdateAsync(
@@ -148,15 +125,7 @@ public class ForumCommentService : IForumCommentService
         
         _logger.LogInformation("Successfully updated comment with ID: {CommentId}.", comment.Id);
         
-        return new GetUpdatedForumCommentDto
-        {
-            Id = comment.Id,
-            Content = comment.Content,
-            IsAnswer = comment.IsAnswer,
-            UpdatedAt = comment.UpdatedAt,
-            Likes = comment.Likes,
-            Dislikes = comment.Dislikes
-        };
+        return comment.ToGetUpdatedForumCommentDto();
     }
 
     public async Task<bool> DeleteAsync(Guid id, Guid userId, CancellationToken cancellationToken = default)
