@@ -28,19 +28,10 @@ public class ForumCommentService : IForumCommentService
     public async Task<IEnumerable<GetForumCommentDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Attempting to retrieve all forum comments.");
-        await Task.Delay(5000, cancellationToken);
         var comments = await _forumCommentRepository.GetAllAsync(cancellationToken);
         _logger.LogInformation("Successfully retrieved {Count} forum comments.", comments.Count());
         
-        return comments.Select(comment => new GetForumCommentDto
-        {
-            Id = comment.Id,
-            Content = comment.Content,
-            CreatedAt = comment.CreatedAt,
-            Likes = comment.Likes,
-            Dislikes = comment.Dislikes,
-            IsAnswer = comment.IsAnswer
-        });
+        return comments.Select(comment => comments.ToGetForumCommentDto());
     }
 
     public async Task<GetForumCommentDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
