@@ -1,7 +1,5 @@
 ﻿using HealthBeside.Application.Contracts;
 using HealthBeside.Application.Contracts.Forum.ForumCommentDto;
-using HealthBeside.Application.Contracts.Forum.ForumPostDto;
-using HealthBeside.Application.Extensions.Mapping.User;
 using HealthBeside.Domain.Models.Forum;
 
 namespace HealthBeside.Application.Extensions.Mapping.Forum.ForumCommentDto;
@@ -21,7 +19,7 @@ public static class ForumCommentDto
         };
     }
     
-    public static GetUpdatedForumCommentDto ToGetUpdatedForumPostDto(this ForumComment comment)
+    public static GetUpdatedForumCommentDto ToGetUpdatedForumCommentDto(this ForumComment comment)
     {
         return new GetUpdatedForumCommentDto()
         {
@@ -36,16 +34,22 @@ public static class ForumCommentDto
 
     public static GetDetailedForumCommentDto ToGetDetailedForumCommentDto(this ForumComment comment)
     {
-        return new GetDetailedForumPostDto
+        return new GetDetailedForumCommentDto()
         {
             Id = comment.Id,
             Content = comment.Content,
-            Title = comment.Title,
             CreatedAt = comment.CreatedAt,
-            UpdatedAt = comment.UpdatedAt,
-            Dislikes = comment.Dislikes,
             Likes = comment.Likes,
-            Author = comment.Author.ToGetUserDto()
+            Dislikes = comment.Dislikes,
+            IsAnswer = comment.IsAnswer,
+            Author = comment.Author == null
+                ? null
+                : new GetUserDto 
+                { 
+                    FirstName = comment.Author.FirstName, 
+                    LastName = comment.Author.LastName 
+                },
+            PostId = comment.PostId
         };
     }
 }
