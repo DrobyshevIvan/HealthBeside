@@ -67,7 +67,6 @@ namespace HealthBeside.API.Controllers
 
             try
             {
-                await Task.Delay(5000, cancellationToken); // Simulate a delay for demonstration purposes //TODO Remove in production
                 var createdPost = await _forumPostService.CreateAsync(createDto, userId, cancellationToken);
                 _logger.LogInformation("Forum post {PostId} created by user {UserId}", createdPost.Id, userId);
                 return CreatedAtAction(nameof(GetForumPost), new { id = createdPost.Id }, createdPost);

@@ -115,7 +115,7 @@ public class MarketProductService : IMarketProductService
         return productWithCategory.ToGetDetailedMarketProductDto();
     }
 
-    public async Task<bool> UpdateAsync(Guid id, UpdateMarketProductDto updateMarketProductDto, CancellationToken cancellationToken = default)
+    public async Task<GetDetailedMarketProductDto> UpdateAsync(Guid id, UpdateMarketProductDto updateMarketProductDto, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Updating market product {ProductId}", id);
 
@@ -146,7 +146,7 @@ public class MarketProductService : IMarketProductService
 
         _logger.LogInformation("Market product {ProductId} updated successfully.", id);
 
-        return true;
+        return product.ToGetDetailedMarketProductDto();
     }
 
     public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
