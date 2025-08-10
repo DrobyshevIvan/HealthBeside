@@ -136,7 +136,7 @@ public class Program
             app.MapOpenApi();
             app.MapScalarApiReference(options =>
             {
-                options.WithTitle("JWT Authentication API");
+                options.WithTitle("HealthBeside API");
             });
             app.MapGet("/", context =>
             {

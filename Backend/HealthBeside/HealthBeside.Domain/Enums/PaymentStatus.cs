@@ -1,4 +1,4 @@
-﻿namespace HealthBeside.Domain.Models.Enums;
+﻿namespace HealthBeside.Domain.Enums;
 
 public enum PaymentStatus
 {

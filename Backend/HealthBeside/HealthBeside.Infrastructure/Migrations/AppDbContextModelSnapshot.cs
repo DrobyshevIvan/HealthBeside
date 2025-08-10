@@ -917,7 +917,7 @@ namespace HealthBeside.Infrastructure.Migrations
                     b.Navigation("PatientProfile")
                         .IsRequired();
 
-                    b.Navigation("RefreshToken");
+                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }
