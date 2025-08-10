@@ -16,8 +16,6 @@ public class ForumPost
     public ApplicationUser Author { get; private set; }
     
     public ICollection<ForumComment> Comments { get; private set; }
-    // private readonly List<ForumComment> _comments = new List<ForumComment>();
-    // public IReadOnlyCollection<ForumComment> Comments => _comments.AsReadOnly();
     
     private ForumPost() {}
     

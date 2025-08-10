@@ -26,5 +26,6 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
         return user;
     }
     
+    
     //TODO: Implement other methods as needed
 }

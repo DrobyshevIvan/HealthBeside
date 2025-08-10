@@ -15,13 +15,17 @@ public class ApplicationUser : IdentityUser<Guid>
     public DoctorProfile DoctorProfile { get; set; }
     public PatientProfile PatientProfile { get; set; }
 
-    //Зробити ще навігаційні властивості форуму, замовлення, коментарів на форумі і наче все 
+    // Forum
     public ICollection<ForumPost> ForumPosts { get; private set; }
     public ICollection<ForumComment> ForumComments { get; private set; }
+
+    // Marketplace
     public ICollection<MarketReview> MarketReviews { get; private set; }
     public MarketCart? MarketCart { get; private set; }
     public ICollection<MarketOrder> MarketOrders { get; private set; }
-    public ICollection<RefreshToken> RefreshToken { get; private set; }
+
+    // Auth
+    public ICollection<RefreshToken> RefreshTokens { get; private set; }
     public DateTime? RefreshTokenExpiresAtUtc { get; private set; }
 
     public ApplicationUser() { }

@@ -21,16 +21,16 @@ public class MarketOrderRepository : GenericRepository<MarketOrder>, IMarketOrde
             .Include(o => o.User);
     }
 
-    public async Task<MarketOrder?> GetOrderWithItems(Guid id)
+    public async Task<MarketOrder?> GetOrderWithItems(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.MarketOrders
             .Include(o => o.MarketOrderItems)
             .ThenInclude(oi => oi.MarketProduct)
             .Include(o => o.User)
-            .FirstOrDefaultAsync(o => o.Id == id);
+            .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
     }
 
-    public async Task<IEnumerable<MarketOrder>> GetAllUserOrders(Guid userId)
+    public async Task<IEnumerable<MarketOrder>> GetAllUserOrders(Guid userId, CancellationToken cancellationToken = default)
     {
         return await _context.MarketOrders
             .Include(o => o.MarketOrderItems)
@@ -38,6 +38,7 @@ public class MarketOrderRepository : GenericRepository<MarketOrder>, IMarketOrde
             .Include(o => o.User)
             .Where(o => o.UserId == userId)
             .OrderByDescending(o => o.OrderDate)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
+    
 }

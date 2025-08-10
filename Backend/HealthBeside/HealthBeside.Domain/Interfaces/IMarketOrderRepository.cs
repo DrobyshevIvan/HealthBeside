@@ -6,6 +6,6 @@ namespace HealthBeside.Domain.Interfaces;
 public interface IMarketOrderRepository : IGenericRepository<MarketOrder>
 {
     IQueryable<MarketOrder> GetQueryable();
-    Task<MarketOrder?> GetOrderWithItems(Guid id);
-    Task<IEnumerable<MarketOrder>> GetAllUserOrders(Guid userId);
+    Task<MarketOrder?> GetOrderWithItems(Guid id, CancellationToken cancellationToken = default);
+    Task<IEnumerable<MarketOrder>> GetAllUserOrders(Guid userId, CancellationToken cancellationToken = default);
 }
