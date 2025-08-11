@@ -25,6 +25,5 @@ public class MarketOrderConfiguration : IEntityTypeConfiguration<MarketOrder>
         builder.Property(o => o.Status)
             .IsRequired();
         
-        //TODO Add user address configuration
     }
 }

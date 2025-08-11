@@ -65,7 +65,7 @@ public class MarketOrderController : ControllerBase
             return Unauthorized();
         }
         
-        var order =  await _marketOrderService.CreateOrder(userId, request.ShippingAddress);
+        var order =  await _marketOrderService.CreateOrder(userId, request.ShippingAddress, cancellationToken);
         
         return Ok(order);
     }

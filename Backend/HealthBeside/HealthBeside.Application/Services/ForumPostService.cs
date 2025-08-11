@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 
 namespace HealthBeside.Application.Services;
 
-//TODO ADD CANCELLATION TOKENS TO ALL ASYNC METHODS
 public class ForumPostService : IForumPostService
 {
     private readonly IForumPostRepository _forumPostRepository;
