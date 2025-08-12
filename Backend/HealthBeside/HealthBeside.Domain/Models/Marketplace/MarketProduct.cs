@@ -156,7 +156,6 @@ public class MarketProduct
             return "Cannot reduce quantity below zero.";
 
         Quantity = newQuantity;
-        if (!hasChanges)
-            return "No valid changes provided.";
+        return null;
     }
 }
