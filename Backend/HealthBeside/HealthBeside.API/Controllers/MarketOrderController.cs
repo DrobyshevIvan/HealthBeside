@@ -22,16 +22,16 @@ public class MarketOrderController : ControllerBase
 
     [HttpGet("get-order/{orderId}")]
     [Authorize]
-    public async Task<ActionResult<GetOrderDto>> GetOrder(Guid orderId)
+    public async Task<ActionResult<GetOrderDto>> GetOrder(Guid orderId, CancellationToken cancellationToken = default)
     {
-        var order = await _marketOrderService.GetOrder(orderId);
+        var order = await _marketOrderService.GetOrder(orderId, cancellationToken); 
         
         return Ok(order);
     }
 
     [HttpGet("get-user-orders")]
     [Authorize]
-    public async Task<ActionResult<IEnumerable<GetOrderDto>>> GetUserOrders()
+    public async Task<ActionResult<IEnumerable<GetOrderDto>>> GetUserOrders(CancellationToken cancellationToken = default)
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
@@ -39,7 +39,7 @@ public class MarketOrderController : ControllerBase
             return Unauthorized();
         }
 
-        var orders = await _marketOrderService.GetAllUserOrders(userId);
+        var orders = await _marketOrderService.GetAllUserOrders(userId, cancellationToken);
         
         return Ok(orders);
     }
@@ -49,14 +49,15 @@ public class MarketOrderController : ControllerBase
     public async Task<ActionResult<IEnumerable<GetOrderDto>>> GetAllOrders(
         [FromQuery] MarketOrderFilter marketOrderFilter,
         [FromQuery] SortParams sortParams,
-        [FromQuery] PageParams pageParams)
+        [FromQuery] PageParams pageParams,
+        CancellationToken cancellationToken = default)
     {
-        return Ok(await _marketOrderService.GetAllOrders(marketOrderFilter, sortParams, pageParams));
+        return Ok(await _marketOrderService.GetAllOrders(marketOrderFilter, sortParams, pageParams, cancellationToken));
     }
 
     [HttpPost("add-order")]
     [Authorize]
-    public async Task<ActionResult<GetOrderDto>> CreateOrder([FromBody] CreateOrderRequest request)
+    public async Task<ActionResult<GetOrderDto>> CreateOrder([FromBody] CreateOrderRequest request, CancellationToken cancellationToken = default)
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
@@ -64,25 +65,26 @@ public class MarketOrderController : ControllerBase
             return Unauthorized();
         }
         
-        var order =  await _marketOrderService.CreateOrder(userId, request.ShippingAddress);
+        var order =  await _marketOrderService.CreateOrder(userId, request.ShippingAddress, cancellationToken);
         
         return Ok(order);
     }
 
     [HttpPut("update-order/{orderId}")]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<GetOrderDto>> UpdateOrder([FromBody] UpdateOrderRequest request, Guid orderId)
+    public async Task<ActionResult<GetOrderDto>> UpdateOrder([FromBody] UpdateOrderRequest request, Guid orderId,
+        CancellationToken cancellationToken = default)
     {
-        var updated = await _marketOrderService.UpdateOrder(orderId, request.OrderStatus);
+        var updated = await _marketOrderService.UpdateOrder(orderId, request.OrderStatus, cancellationToken);
         
         return Ok(updated);
     }
 
     [HttpDelete("delete-order/{orderId}")]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult> DeleteOrder(Guid orderId)
+    public async Task<ActionResult> DeleteOrder(Guid orderId, CancellationToken cancellationToken = default)
     {
-        var deleted = await _marketOrderService.DeleteOrder(orderId);
+        var deleted = await _marketOrderService.DeleteOrder(orderId, cancellationToken);
         
         if (!deleted) 
             return Forbid("Order with status delivered cannot be deleted");

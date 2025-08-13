@@ -1,7 +1,4 @@
 ﻿using HealthBeside.Application.Contracts.MarketPlace.MarketOrderItemDto;
-using HealthBeside.Domain.Models.Enums;
-using HealthBeside.Domain.Models.Marketplace;
-using HealthBeside.Domain.Models.Users;
 
 namespace HealthBeside.Application.Contracts.MarketPlace.MarketOrderDto;
 

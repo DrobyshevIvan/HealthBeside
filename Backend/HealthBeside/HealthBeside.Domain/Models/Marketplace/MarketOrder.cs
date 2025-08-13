@@ -1,4 +1,4 @@
-﻿using HealthBeside.Domain.Models.Enums;
+﻿using HealthBeside.Domain.Enums;
 using HealthBeside.Domain.Models.Users;
 
 namespace HealthBeside.Domain.Models.Marketplace;
@@ -9,6 +9,8 @@ public class MarketOrder
     public DateTime OrderDate { get; private set; }
     public decimal TotalPrice { get; private set; }
     public OrderStatus Status { get; private set; }
+    
+    //TODO Add user address
     public string ShippingAddress { get; private set; }
     
     public Guid UserId { get; private set; }

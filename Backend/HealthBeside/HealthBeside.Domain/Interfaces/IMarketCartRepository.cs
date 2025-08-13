@@ -5,6 +5,6 @@ namespace HealthBeside.Domain.Interfaces;
 
 public interface IMarketCartRepository : IGenericRepository<MarketCart>
 {
-    Task<MarketCart?> GetByIdWithAllItems(Guid id);
-    Task<MarketCart?> GetByUserId(Guid id);
+    Task<MarketCart?> GetByIdWithAllItems(Guid id, CancellationToken cancellationToken = default);
+    Task<MarketCart?> GetByUserId(Guid id, CancellationToken cancellationToken = default);
 }

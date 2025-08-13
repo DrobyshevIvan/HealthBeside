@@ -4,7 +4,7 @@ public class PatientProfile
 {
     public Guid Id { get; private set; }
     public DateTime DateOfBirth { get; private set; }
-    public string Address { get; private set; }
+    public string Address { get; private set; } //TODO 
     public string PhoneNumber { get; private set; }
     public string MedicalHistorySummary { get; private set; }
     

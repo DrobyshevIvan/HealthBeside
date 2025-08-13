@@ -13,19 +13,19 @@ public class MarketCartRepository : GenericRepository<MarketCart>, IMarketCartRe
         _context = context;
     }
 
-    public async Task<MarketCart?> GetByIdWithAllItems(Guid id)
+    public async Task<MarketCart?> GetByIdWithAllItems(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.MarketCarts
             .Include(c => c.CartItems)
             .ThenInclude(c => c.MarketProduct)
-            .FirstOrDefaultAsync(c => c.Id == id);
+            .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
     }
 
-    public async Task<MarketCart?> GetByUserId(Guid id)
+    public async Task<MarketCart?> GetByUserId(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.MarketCarts
             .Include(c => c.CartItems)
             .ThenInclude(c => c.MarketProduct)
-            .FirstOrDefaultAsync(c => c.UserId == id);;
+            .FirstOrDefaultAsync(c => c.UserId == id, cancellationToken);;
     }
 }

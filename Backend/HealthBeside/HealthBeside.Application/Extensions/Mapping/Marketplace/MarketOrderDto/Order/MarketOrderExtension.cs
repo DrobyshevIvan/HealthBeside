@@ -21,8 +21,8 @@ public static class MarketOrderExtension
             OrderDate = marketOrder.OrderDate,
             TotalPrice = marketOrder.TotalPrice,
             Status = marketOrder.Status.ToString(),
-            ShippingAddress = marketOrder.ShippingAddress,
             User = marketOrder.User.ToGetUserDto(),
+            //TODO Add user address
         };
     }
 

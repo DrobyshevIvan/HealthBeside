@@ -11,7 +11,7 @@ public interface IMarketProductService
         MarketProductFilter? marketProductFilter, SortParams? sortParams, PageParams? pageParams, CancellationToken cancellationToken = default);
     Task<GetDetailedMarketProductDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<GetDetailedMarketProductDto> CreateAsync(CreateMarketProductDto createDto, CancellationToken cancellationToken = default);
-    Task<bool> UpdateAsync(Guid id, UpdateMarketProductDto updateMarketProductDto, CancellationToken cancellationToken = default);
+    Task<GetDetailedMarketProductDto> UpdateAsync(Guid id, UpdateMarketProductDto updateMarketProductDto, CancellationToken cancellationToken = default);
     Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
     Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default);
 }

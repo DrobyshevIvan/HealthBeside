@@ -1,4 +1,4 @@
-﻿using HealthBeside.Domain.Models.Enums;
+﻿using HealthBeside.Domain.Enums;
 using HealthBeside.Domain.Models.Marketplace;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -18,5 +18,12 @@ public class MarketOrderConfiguration : IEntityTypeConfiguration<MarketOrder>
             .HasConversion(
                 v => v.ToString(),
                 v => (OrderStatus)Enum.Parse(typeof(OrderStatus), v));
+        
+        builder.Property(o => o.OrderDate)
+            .IsRequired();
+
+        builder.Property(o => o.Status)
+            .IsRequired();
+        
     }
 }

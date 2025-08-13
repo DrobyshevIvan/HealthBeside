@@ -60,16 +60,17 @@ public class MarketProductController : ControllerBase
     {
         _logger.LogInformation("PUT /update-product/{ProductId} called by user {UserId}", id, User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-        var result = await _marketProductService.UpdateAsync(id, updateDto, cancellationToken);
-
-        if (!result)
+        try
+        {
+            var result = await _marketProductService.UpdateAsync(id, updateDto, cancellationToken);
+            _logger.LogInformation("Market product {ProductId} updated successfully.", id);
+            return Ok(result);
+        }
+        catch (Exception e)
         {
             _logger.LogWarning("Market product {ProductId} not found during update.", id);
             return NotFound($"Product with id {id} not found.");
         }
-
-        _logger.LogInformation("Market product {ProductId} updated successfully.", id);
-        return Ok(result);
     }
 
     [HttpPost("create-product")]

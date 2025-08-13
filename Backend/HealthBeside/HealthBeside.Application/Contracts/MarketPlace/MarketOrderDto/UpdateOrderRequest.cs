@@ -1,4 +1,4 @@
-﻿using HealthBeside.Domain.Models.Enums;
+﻿using HealthBeside.Domain.Enums;
 
 namespace HealthBeside.Application.Contracts.MarketPlace.MarketOrderDto;
 
