@@ -159,9 +159,14 @@ public class MarketOrderService : IMarketOrderService
 
         foreach (var orderItem in order.MarketOrderItems)
         {
-            orderItem.MarketProduct.UpdateStock(orderItem.Quantity + orderItem.MarketProduct.Quantity);
+            var product = orderItem.MarketProduct;
+            var newStock = product.Quantity + orderItem.Quantity;
+            
+            var stockUpdateError = product.UpdateStock(newStock);
+            if (stockUpdateError != null)
+                throw new MarketOrderException($"Failed to update stock: {stockUpdateError}");
 
-            await _marketProductRepository.UpdateAsync(orderItem.MarketProduct, cancellationToken);
+            await _marketProductRepository.UpdateAsync(product, cancellationToken);
             await _marketOrderItemRepository.DeleteAsync(orderItem.Id, cancellationToken);
         }
 
