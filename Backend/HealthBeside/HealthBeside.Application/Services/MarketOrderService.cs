@@ -1,5 +1,6 @@
 ﻿using HealthBeside.Application.Contracts;
 using HealthBeside.Application.Contracts.MarketPlace.MarketOrderDto;
+using HealthBeside.Application.Contracts.User;
 using HealthBeside.Application.Extensions.Mapping.Marketplace.MarketOrderDto.Order;
 using HealthBeside.Application.Filters;
 using HealthBeside.Application.Interfaces;

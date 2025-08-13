@@ -1,5 +1,7 @@
 ﻿using System.Linq.Expressions;
+using HealthBeside.Application.Contracts;
 using HealthBeside.Application.Contracts.MarketPlace.MarketOrderDto;
+using HealthBeside.Application.Contracts.User;
 using HealthBeside.Application.Extensions.Mapping.Marketplace.MarketOrderDto.OrderItem;
 using HealthBeside.Application.Extensions.Mapping.User;
 using HealthBeside.Application.Filters;
@@ -27,10 +29,11 @@ public static class MarketOrderExtension
         };
     }
     
-    public static GetUserDeliveryInfoDto ToGetUserDeliveryInfoDto(this UserDeliveryInfo deliveryInfo)
+    public static UserDeliveryInfoDto ToGetUserDeliveryInfoDto(this UserDeliveryInfo deliveryInfo)
     {
-        return new GetUserDeliveryInfoDto
+        return new UserDeliveryInfoDto
         {
+            Id = deliveryInfo.Id,
             City = deliveryInfo.City,
             PhoneNumber = deliveryInfo.PhoneNumber,
             PostalIndex = deliveryInfo.PostalIndex,

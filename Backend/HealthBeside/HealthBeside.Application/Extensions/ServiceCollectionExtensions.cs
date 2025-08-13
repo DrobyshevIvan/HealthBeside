@@ -43,6 +43,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IMarketReviewService, MarketReviewService>();
         services.AddScoped<IMarketCartService, MarketCartService>();
         services.AddScoped<IMarketOrderService, MarketOrderService>();
+        services.AddScoped<IUserDeliveryInfoService, UserDeliveryInfoService>();
 
         return services;
     }

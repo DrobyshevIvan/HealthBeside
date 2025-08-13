@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using HealthBeside.Application.Contracts;
 using HealthBeside.Application.Contracts.MarketPlace.MarketOrderDto;
+using HealthBeside.Application.Contracts.User;
 using HealthBeside.Application.Filters;
 using HealthBeside.Application.Interfaces;
 using HealthBeside.Application.Pagination;
