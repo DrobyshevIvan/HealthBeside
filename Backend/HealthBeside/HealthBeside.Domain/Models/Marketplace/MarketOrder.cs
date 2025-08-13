@@ -10,7 +10,6 @@ public class MarketOrder
     public decimal TotalPrice { get; private set; }
     public OrderStatus Status { get; private set; }
     
-    //TODO Add user address
     public Guid UserDeliveryInfoId { get; private set; }
     public UserDeliveryInfo UserDeliveryInfo { get; private set; }
     
