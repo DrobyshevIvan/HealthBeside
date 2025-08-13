@@ -24,4 +24,10 @@ public class MarketProductRepository : GenericRepository<MarketProduct>, IMarket
             .Include(p => p.Category)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken); 
     }
+    
+    public async Task UpdateRangeAsync(IEnumerable<MarketProduct> entities, CancellationToken cancellationToken = default)
+    {
+        _context.MarketProducts.UpdateRange(entities);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }

@@ -14,6 +14,9 @@ public class ApplicationUser : IdentityUser<Guid>
     // Navigation properties for related profiles
     public DoctorProfile DoctorProfile { get; set; }
     public PatientProfile PatientProfile { get; set; }
+    
+    //Address info
+    public UserDeliveryInfo UserDeliveryInfo { get; private set; }
 
     // Forum
     public ICollection<ForumPost> ForumPosts { get; private set; }
@@ -25,8 +28,10 @@ public class ApplicationUser : IdentityUser<Guid>
     public ICollection<MarketOrder> MarketOrders { get; private set; }
 
     // Auth
-    public ICollection<RefreshToken> RefreshTokens { get; private set; }
+    public ICollection<RefreshToken> RefreshToken { get; private set; }
     public DateTime? RefreshTokenExpiresAtUtc { get; private set; }
+    
+    
 
     public ApplicationUser() { }
 

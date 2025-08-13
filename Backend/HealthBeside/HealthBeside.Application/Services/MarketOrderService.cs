@@ -1,4 +1,5 @@
-﻿using HealthBeside.Application.Contracts.MarketPlace.MarketOrderDto;
+﻿using HealthBeside.Application.Contracts;
+using HealthBeside.Application.Contracts.MarketPlace.MarketOrderDto;
 using HealthBeside.Application.Extensions.Mapping.Marketplace.MarketOrderDto.Order;
 using HealthBeside.Application.Filters;
 using HealthBeside.Application.Interfaces;
@@ -8,6 +9,8 @@ using HealthBeside.Domain.Exceptions;
 using HealthBeside.Domain.Interfaces;
 using HealthBeside.Domain.Enums;
 using HealthBeside.Domain.Models.Marketplace;
+using HealthBeside.Domain.Models.Users;
+using HealthBeside.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace HealthBeside.Application.Services;
@@ -19,18 +22,24 @@ public class MarketOrderService : IMarketOrderService
     private readonly IMarketCartItemRepository _marketCartItemRepository;
     private readonly IMarketCartRepository _marketCartRepository;
     private readonly IMarketProductRepository _marketProductRepository;
+    private readonly IUserDeliveryInfoRepository _userDeliveryInfoRepository;
+    private readonly AppDbContext _context;
 
     public MarketOrderService(IMarketOrderRepository marketOrderRepository,
         IMarketOrderItemRepository marketOrderItemRepository,
         IMarketCartItemRepository marketCartItemRepository,
         IMarketCartRepository marketCartRepository,
-        IMarketProductRepository marketProductRepository)
+        IMarketProductRepository marketProductRepository,
+        IUserDeliveryInfoRepository userDeliveryInfoRepository,
+        AppDbContext context)
     {
         _marketOrderRepository = marketOrderRepository;
         _marketOrderItemRepository = marketOrderItemRepository;
         _marketCartItemRepository = marketCartItemRepository;
         _marketCartRepository = marketCartRepository;
         _marketProductRepository = marketProductRepository;
+        _userDeliveryInfoRepository = userDeliveryInfoRepository;
+        _context = context;
     }
 
     public async Task<GetOrderDto> GetOrder(Guid orderId, CancellationToken cancellationToken = default)
@@ -74,59 +83,100 @@ public class MarketOrderService : IMarketOrderService
 
     // TODO : Додати до цього метода unitofwork 
     // TODO : Додавання перевірки наявності товару та зміни його при створенні замовлення
-    public async Task<GetOrderDto> CreateOrder(Guid userId, string shippingAddress, CancellationToken cancellationToken = default)
+    public async Task<GetOrderDto> CreateOrder(
+        Guid userId, 
+        UserDeliveryInfoDto deliveryInfoDto, 
+        CancellationToken cancellationToken = default)
     {
-        var cart = await _marketCartRepository.GetByUserId(userId, cancellationToken);
+        using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
-        if (cart is null)
-            throw new MarketOrderException($"Cart for user with id {userId} not found");
-
-        var cartItems = cart.CartItems;
-
-        (string? error, MarketOrder? order) = MarketOrder.Create(userId,
-            cartItems.Sum(i => i.Quantity * i.MarketProduct.Price), shippingAddress);
-
-        if (error is not null)
-            throw new MarketOrderException(error);
-
-        if (order is null)
-            throw new MarketOrderException($"Unknow exception while creating marker order");
-        
-        foreach (var cartItem in cartItems)
+        try
         {
-            if (cartItem.MarketProduct.Quantity < cartItem.Quantity)
-                throw new MarketOrderException($"The amount of desired product is less than the quantity in stock");
-        }
-        
-        await _marketOrderRepository.AddAsync(order, cancellationToken);
-        
-        foreach (var cartItem in cartItems)
-        {
-            (error, MarketOrderItem? orderItem) = MarketOrderItem.Create(
-                cartItem.Quantity, 
-                cartItem.MarketProduct.Price, 
-                cartItem.ProductId, 
-                order.Id);
+            var cart = await _marketCartRepository.GetByUserId(userId, cancellationToken);
+            if(cart == null)
+                throw new MarketOrderException("Cart not found");
+
+            UserDeliveryInfo deliveryInfo;
+            
+            var existingDeliveryInfo = await _userDeliveryInfoRepository.GetByDetailsAsync( //TODO
+                userId, 
+                deliveryInfoDto.City, 
+                deliveryInfoDto.StreetName, 
+                deliveryInfoDto.StreetNumber, 
+                cancellationToken);
+            
+            if(existingDeliveryInfo is not null)
+                deliveryInfo = existingDeliveryInfo;
+            else
+            {
+                (string? createError, UserDeliveryInfo? newDeliveryInfo) = UserDeliveryInfo.Create(
+                    deliveryInfoDto.City,
+                    deliveryInfoDto.PhoneNumber,
+                    deliveryInfoDto.PostalIndex,
+                    deliveryInfoDto.StreetName,
+                    deliveryInfoDto.StreetNumber,
+                    userId);
+
+                if (createError is not null)
+                    throw new MarketOrderException(createError);
+            
+                deliveryInfo = newDeliveryInfo!;
+                await _userDeliveryInfoRepository.AddAsync(deliveryInfo, cancellationToken);
+            }
+            
+            var cartItems = cart.CartItems;
+            
+            if (!cartItems.Any())
+                throw new MarketOrderException("Cart is empty");
+
+            foreach (var cartItem in cartItems)
+            {
+                if (cartItem.MarketProduct.Quantity < cartItem.Quantity)
+                    throw new MarketOrderException(
+                        $"The amount of desired product '{cartItem.MarketProduct.Name}' is less than the quantity in stock.");
+            }
+            
+            (string? error, MarketOrder? order) = MarketOrder.Create(
+                userId,
+                cartItems.Sum(i => i.Quantity * i.MarketProduct.Price),
+                deliveryInfo.Id); 
 
             if (error is not null)
                 throw new MarketOrderException(error);
+            
+            var orderItems = new List<MarketOrderItem>();
+            foreach (var cartItem in cartItems)
+            {
+                (string? itemError, MarketOrderItem? orderItem) = MarketOrderItem.Create(
+                    cartItem.Quantity,
+                    cartItem.MarketProduct.Price,
+                    cartItem.ProductId,
+                    order.Id);
 
-            if (orderItem is null)
-                throw new MarketOrderException($"Unknow exception while creating marker order item");
+                if (itemError is not null)
+                    throw new MarketOrderException(itemError);
 
-            cartItem.MarketProduct.UpdateStock(cartItem.MarketProduct.Quantity - cartItem.Quantity);
-            await _marketProductRepository.UpdateAsync(cartItem.MarketProduct, cancellationToken);
-            await _marketOrderItemRepository.AddAsync(orderItem, cancellationToken);
-            await _marketCartItemRepository.DeleteAsync(cartItem.Id, cancellationToken);
+                orderItems.Add(orderItem!);
+
+                cartItem.MarketProduct.UpdateStock(cartItem.MarketProduct.Quantity - cartItem.Quantity);
+            }
+
+            order.AddOrderItems(orderItems);
+            await _marketOrderRepository.AddAsync(order, cancellationToken);
+            await _marketProductRepository.UpdateRangeAsync(cartItems.Select(ci => ci.MarketProduct), cancellationToken);
+            await _marketCartItemRepository.DeleteRangeAsync(cartItems, cancellationToken);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+
+            return order.ToGetOrderDto();
         }
-
-        order = await _marketOrderRepository.GetOrderWithItems(order.Id, cancellationToken);
-
-        if (order is null)
-            throw new MarketOrderException($"After creating, order was not found");
-
-        return order.ToGetOrderDto();
-        
+        catch (Exception)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 
     public async Task<GetOrderDto> UpdateOrder(Guid orderId, OrderStatus status, CancellationToken cancellationToken = default)
