@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using HealthBeside.Application.Contracts;
 using HealthBeside.Application.Contracts.MarketPlace.MarketOrderDto;
 using HealthBeside.Application.Filters;
 using HealthBeside.Application.Interfaces;
@@ -57,7 +58,7 @@ public class MarketOrderController : ControllerBase
 
     [HttpPost("add-order")]
     [Authorize]
-    public async Task<ActionResult<GetOrderDto>> CreateOrder([FromBody] CreateOrderRequest request, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<GetOrderDto>> CreateOrder([FromBody] UserDeliveryInfoDto deliveryInfoDto, CancellationToken cancellationToken = default)
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
@@ -65,7 +66,7 @@ public class MarketOrderController : ControllerBase
             return Unauthorized();
         }
         
-        var order =  await _marketOrderService.CreateOrder(userId, request.ShippingAddress, cancellationToken);
+        var order =  await _marketOrderService.CreateOrder(userId, deliveryInfoDto, cancellationToken);
         
         return Ok(order);
     }

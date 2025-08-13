@@ -4,19 +4,17 @@ public class PatientProfile
 {
     public Guid Id { get; private set; }
     public DateTime DateOfBirth { get; private set; }
-    public string Address { get; private set; } //TODO 
-    public string PhoneNumber { get; private set; }
-    public string MedicalHistorySummary { get; private set; }
-    
+    public string MedicalHistorySummary { get; private set; } // TODO
     public Guid ApplicationUserId { get; private set; }
     public ApplicationUser ApplicationUser { get; private set; }
 
-    private PatientProfile()
-    {
-    }
+    private PatientProfile() { }
 
-    public static (string? Error, PatientProfile? PatientProfile) Create(Guid applicationUserId, DateTime dateOfBirth,
-        string address, string phoneNumber, string medicalHistorySummary)
+    public static (string? Error, PatientProfile? PatientProfile) Create(
+        Guid applicationUserId,
+        DateTime dateOfBirth,
+        string medicalHistorySummary,
+        ApplicationUser user)
     {
         var errors = new List<string>();
 
@@ -26,11 +24,8 @@ public class PatientProfile
         if (dateOfBirth == default)
             errors.Add("Date of birth is required.");
 
-        if (string.IsNullOrWhiteSpace(address))
-            errors.Add("Address cannot be empty.");
-
-        if (string.IsNullOrWhiteSpace(phoneNumber))
-            errors.Add("Phone number cannot be empty.");
+        if (user == null)
+            errors.Add("User cannot be null.");
 
         if (string.IsNullOrWhiteSpace(medicalHistorySummary))
             errors.Add("Medical history summary cannot be empty.");
@@ -43,8 +38,6 @@ public class PatientProfile
             Id = Guid.NewGuid(),
             ApplicationUserId = applicationUserId,
             DateOfBirth = dateOfBirth,
-            Address = address,
-            PhoneNumber = phoneNumber,
             MedicalHistorySummary = medicalHistorySummary
         };
 

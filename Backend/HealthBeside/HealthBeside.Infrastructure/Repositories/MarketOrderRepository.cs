@@ -41,4 +41,10 @@ public class MarketOrderRepository : GenericRepository<MarketOrder>, IMarketOrde
             .ToListAsync(cancellationToken);
     }
     
+    public async Task UpdateRangeAsync(IEnumerable<MarketProduct> entities, CancellationToken cancellationToken = default)
+    {
+        _context.MarketProducts.UpdateRange(entities);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+    
 }

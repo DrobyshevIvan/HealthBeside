@@ -29,6 +29,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IMarketCartRepository, MarketCartRepository>();
         services.AddScoped<IMarketOrderRepository, MarketOrderRepository>();
         services.AddScoped<IMarketOrderItemRepository, MarketOrderItemRepository>();
+        services.AddScoped<IUserDeliveryInfoRepository, UserDeliveryInfoRepository>();
 
         // Unit of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();

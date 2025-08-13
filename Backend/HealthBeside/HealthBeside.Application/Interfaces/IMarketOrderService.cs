@@ -1,4 +1,5 @@
-﻿using HealthBeside.Application.Contracts.MarketPlace.MarketOrderDto;
+﻿using HealthBeside.Application.Contracts;
+using HealthBeside.Application.Contracts.MarketPlace.MarketOrderDto;
 using HealthBeside.Application.Filters;
 using HealthBeside.Application.Pagination;
 using HealthBeside.Application.Sorting;
@@ -15,7 +16,11 @@ public interface IMarketOrderService
         PageParams pageParams,
         CancellationToken cancellationToken = default);
     Task<IEnumerable<GetOrderDto>> GetAllUserOrders(Guid userId, CancellationToken cancellationToken = default);
-    Task<GetOrderDto> CreateOrder(Guid userId, string shippingAddress, CancellationToken cancellationToken = default);
+
+    Task<GetOrderDto> CreateOrder(
+        Guid userId,
+        UserDeliveryInfoDto deliveryInfoDto,
+        CancellationToken cancellationToken = default);
     Task<GetOrderDto> UpdateOrder(Guid orderId, OrderStatus status, CancellationToken cancellationToken = default);
     Task<bool> DeleteOrder(Guid orderId, CancellationToken cancellationToken = default);
 }

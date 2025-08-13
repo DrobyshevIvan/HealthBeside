@@ -130,7 +130,7 @@ public class AccountService : IAccountService
             throw new RefreshTokenException("Invalid refresh token.");
         }
 
-        var storedRefreshToken = await _refreshTokenRepository.GetRefreshTokenByUserId(user.Id);
+        var storedRefreshToken = await _refreshTokenRepository.GetRefreshTokenByUserId(user.Id, cancellationToken);
 
         if (storedRefreshToken is null)
         {
@@ -239,7 +239,7 @@ public class AccountService : IAccountService
             // Optionally: ignore or rethrow depending on your policy
         }
     }
-
+    
 
     private async Task<(List<Claim> roleClaim, IList<Claim> userClaim)> GetClaimsForUser(ApplicationUser user)
     {
