@@ -11,17 +11,19 @@ public class MarketOrder
     public OrderStatus Status { get; private set; }
     
     //TODO Add user address
-    public string ShippingAddress { get; private set; }
+    public Guid UserDeliveryInfoId { get; private set; }
+    public UserDeliveryInfo UserDeliveryInfo { get; private set; }
     
     public Guid UserId { get; private set; }
     public ApplicationUser User { get; private set; }
     public Payment Payment { get; private set; }
+    private readonly List<MarketOrderItem> _marketOrderItems = new();
     public ICollection<MarketOrderItem> MarketOrderItems { get; private set; }
     
     private MarketOrder() { }
     
     public static (string? Error, MarketOrder MarketOrder) Create(Guid userId,
-        decimal totalPrice, string shippingAddress)
+        decimal totalPrice, Guid userDeliveryInfoId)
     {
         var errors = new List<string>();
         
@@ -30,10 +32,7 @@ public class MarketOrder
         
         if(totalPrice <= 0)
             errors.Add("Total price must be greater than zero.");
-        
-        if(string.IsNullOrWhiteSpace(shippingAddress))
-            errors.Add("Shipping address cannot be empty.");
-        
+
         if(errors.Any())
             return (string.Join("; ", errors), null);
         
@@ -41,10 +40,10 @@ public class MarketOrder
         {
             Id = Guid.NewGuid(),
             UserId = userId,
+            UserDeliveryInfoId = userDeliveryInfoId, 
             OrderDate = DateTime.UtcNow,
             TotalPrice = totalPrice,
-            Status = OrderStatus.Pending,
-            ShippingAddress = shippingAddress
+            Status = OrderStatus.Pending
         };
         
         return (null, marketOrder);
@@ -82,5 +81,10 @@ public class MarketOrder
             OrderStatus.Canceled => false,
             _ => false
         };
+    }
+    
+    public void AddOrderItems(ICollection<MarketOrderItem> orderItems)
+    {
+        _marketOrderItems.AddRange(orderItems);
     }
 }

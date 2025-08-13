@@ -19,6 +19,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     public DbSet<ApplicationUser> Users { get; set; }
     public DbSet<DoctorProfile> DoctorProfiles { get; set; }
     public DbSet<PatientProfile> PatientProfiles { get; set; }
+    public DbSet<UserDeliveryInfo> UserDeliveryInfos { get; set; }
     public DbSet<ForumPost> ForumPosts { get; set; }
     public DbSet<ForumComment> ForumComments { get; set; }
     public DbSet<MarketCart> MarketCarts { get; set; }
@@ -48,6 +49,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
         modelBuilder.ApplyConfiguration(new MarketProductConfiguration());
         modelBuilder.ApplyConfiguration(new RoleConfiguration());
         modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
+        modelBuilder.ApplyConfiguration(new UserDeliveryInfoConfiguration());
     }
 }
 
