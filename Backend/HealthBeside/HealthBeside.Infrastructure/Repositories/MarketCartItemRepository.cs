@@ -11,10 +11,4 @@ public class MarketCartItemRepository : GenericRepository<MarketCartItem>, IMark
     {
         _context = context;
     }
-    
-    public async Task DeleteRangeAsync(IEnumerable<MarketCartItem> entities, CancellationToken cancellationToken = default)
-    {
-        _context.MarketCartItems.RemoveRange(entities);
-        await _context.SaveChangesAsync(cancellationToken);
-    }
 }

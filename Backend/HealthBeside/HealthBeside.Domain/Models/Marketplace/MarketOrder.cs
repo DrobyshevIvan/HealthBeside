@@ -83,8 +83,4 @@ public class MarketOrder
         };
     }
     
-    public void AddOrderItems(ICollection<MarketOrderItem> orderItems)
-    {
-        _marketOrderItems.AddRange(orderItems);
-    }
 }

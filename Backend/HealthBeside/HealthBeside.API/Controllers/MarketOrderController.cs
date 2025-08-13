@@ -5,6 +5,7 @@ using HealthBeside.Application.Filters;
 using HealthBeside.Application.Interfaces;
 using HealthBeside.Application.Pagination;
 using HealthBeside.Application.Sorting;
+using HealthBeside.Domain.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,19 +16,28 @@ namespace HealthBeside.API.Controllers;
 public class MarketOrderController : ControllerBase
 {
     private readonly IMarketOrderService _marketOrderService;
+    private readonly ILogger<MarketOrderController> _logger;
 
-    public MarketOrderController(IMarketOrderService marketOrderService)
+    public MarketOrderController(IMarketOrderService marketOrderService, ILogger<MarketOrderController> logger)
     {
         _marketOrderService = marketOrderService;
+        _logger = logger;
     }
 
     [HttpGet("get-order/{orderId}")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<GetOrderDto>> GetOrder(Guid orderId, CancellationToken cancellationToken = default)
     {
-        var order = await _marketOrderService.GetOrder(orderId, cancellationToken); 
-        
-        return Ok(order);
+        try
+        {
+            var order = await _marketOrderService.GetOrder(orderId, cancellationToken);
+            return Ok(order);
+        }
+        catch (MarketOrderException ex)
+        {
+            _logger.LogWarning(ex, "Order {OrderId} not found", orderId);
+            return NotFound(new { error = ex.Message });
+        }
     }
 
     [HttpGet("get-user-orders")]
@@ -37,11 +47,11 @@ public class MarketOrderController : ControllerBase
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
         {
+            _logger.LogWarning("Unauthorized attempt to get user orders");
             return Unauthorized();
         }
 
         var orders = await _marketOrderService.GetAllUserOrders(userId, cancellationToken);
-        
         return Ok(orders);
     }
 
@@ -53,43 +63,78 @@ public class MarketOrderController : ControllerBase
         [FromQuery] PageParams pageParams,
         CancellationToken cancellationToken = default)
     {
-        return Ok(await _marketOrderService.GetAllOrders(marketOrderFilter, sortParams, pageParams, cancellationToken));
+        var orders = await _marketOrderService.GetAllOrders(marketOrderFilter, sortParams, pageParams, cancellationToken);
+        return Ok(orders);
     }
 
-    [HttpPost("add-order")]
+    [HttpPost("create-order")]
     [Authorize]
-    public async Task<ActionResult<GetOrderDto>> CreateOrder([FromBody] UserDeliveryInfoDto deliveryInfoDto, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<GetOrderDto>> CreateOrder(
+        [FromBody] UserDeliveryInfoDto deliveryInfoDto,
+        CancellationToken cancellationToken = default)
     {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
         {
+            _logger.LogWarning("Unauthorized access attempt to create order");
             return Unauthorized();
         }
-        
-        var order =  await _marketOrderService.CreateOrder(userId, deliveryInfoDto, cancellationToken);
-        
-        return Ok(order);
+
+        try
+        {
+            _logger.LogInformation("User {UserId} is attempting to create a new order", userId);
+
+            var order = await _marketOrderService.CreateOrder(userId, deliveryInfoDto, cancellationToken);
+
+            _logger.LogInformation("Order {OrderId} successfully created for user {UserId}", order.Id, userId);
+
+            return Ok(order);
+        }
+        catch (MarketOrderException ex)
+        {
+            _logger.LogWarning(ex, "Business validation failed for user {UserId} when creating order", userId);
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while creating order for user {UserId}", userId);
+            return StatusCode(500, new { message = "An unexpected error occurred while creating the order." });
+        }
     }
 
     [HttpPut("update-order/{orderId}")]
-    [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<GetOrderDto>> UpdateOrder([FromBody] UpdateOrderRequest request, Guid orderId,
-        CancellationToken cancellationToken = default)
+    [Authorize]
+    public async Task<ActionResult<GetOrderDto>> UpdateOrder(Guid orderId, [FromBody] UpdateOrderRequest request, CancellationToken cancellationToken = default)
     {
-        var updated = await _marketOrderService.UpdateOrder(orderId, request.OrderStatus, cancellationToken);
-        
-        return Ok(updated);
+        try
+        {
+            var updated = await _marketOrderService.UpdateOrder(orderId, request.OrderStatus, cancellationToken);
+            return Ok(updated);
+        }
+        catch (MarketOrderException ex)
+        {
+            _logger.LogWarning(ex, "Failed to update order {OrderId}", orderId);
+            return BadRequest(new { error = ex.Message });
+        }
     }
 
     [HttpDelete("delete-order/{orderId}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public async Task<ActionResult> DeleteOrder(Guid orderId, CancellationToken cancellationToken = default)
     {
-        var deleted = await _marketOrderService.DeleteOrder(orderId, cancellationToken);
-        
-        if (!deleted) 
-            return Forbid("Order with status delivered cannot be deleted");
-        
-        return Ok(deleted);
+        try
+        {
+            var deleted = await _marketOrderService.DeleteOrder(orderId, cancellationToken);
+
+            if (!deleted)
+                return Forbid("Order with status delivered cannot be deleted");
+
+            return Ok(new { deleted = true });
+        }
+        catch (MarketOrderException ex)
+        {
+            _logger.LogWarning(ex, "Failed to delete order {OrderId}", orderId);
+            return NotFound(new { error = ex.Message });
+        }
     }
 }
