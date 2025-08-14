@@ -1,11 +1,14 @@
 ﻿using System.Linq.Expressions;
+using HealthBeside.Application.Contracts;
 using HealthBeside.Application.Contracts.MarketPlace.MarketOrderDto;
+using HealthBeside.Application.Contracts.User;
 using HealthBeside.Application.Extensions.Mapping.Marketplace.MarketOrderDto.OrderItem;
 using HealthBeside.Application.Extensions.Mapping.User;
 using HealthBeside.Application.Filters;
 using HealthBeside.Application.Pagination;
 using HealthBeside.Application.Sorting;
 using HealthBeside.Domain.Models.Marketplace;
+using HealthBeside.Domain.Models.Users;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace HealthBeside.Application.Extensions.Mapping.Marketplace.MarketOrderDto.Order;
@@ -22,7 +25,20 @@ public static class MarketOrderExtension
             TotalPrice = marketOrder.TotalPrice,
             Status = marketOrder.Status.ToString(),
             User = marketOrder.User.ToGetUserDto(),
-            //TODO Add user address
+            ShippingAddress = marketOrder.UserDeliveryInfo?.ToGetUserDeliveryInfoDto()
+        };
+    }
+    
+    public static UserDeliveryInfoDto ToGetUserDeliveryInfoDto(this UserDeliveryInfo deliveryInfo)
+    {
+        return new UserDeliveryInfoDto
+        {
+            Id = deliveryInfo.Id,
+            City = deliveryInfo.City,
+            PhoneNumber = deliveryInfo.PhoneNumber,
+            PostalIndex = deliveryInfo.PostalIndex,
+            StreetName = deliveryInfo.StreetName,
+            StreetNumber = deliveryInfo.StreetNumber
         };
     }
 

@@ -26,6 +26,7 @@ public class MarketOrderRepository : GenericRepository<MarketOrder>, IMarketOrde
         return await _context.MarketOrders
             .Include(o => o.MarketOrderItems)
             .ThenInclude(oi => oi.MarketProduct)
+            .Include(o => o.UserDeliveryInfo)
             .Include(o => o.User)
             .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
     }
@@ -37,14 +38,9 @@ public class MarketOrderRepository : GenericRepository<MarketOrder>, IMarketOrde
             .ThenInclude(oi => oi.MarketProduct)
             .Include(o => o.User)
             .Where(o => o.UserId == userId)
+            .Include(udi => udi.UserDeliveryInfo)
             .OrderByDescending(o => o.OrderDate)
             .ToListAsync(cancellationToken);
-    }
-    
-    public async Task UpdateRangeAsync(IEnumerable<MarketProduct> entities, CancellationToken cancellationToken = default)
-    {
-        _context.MarketProducts.UpdateRange(entities);
-        await _context.SaveChangesAsync(cancellationToken);
     }
     
 }
