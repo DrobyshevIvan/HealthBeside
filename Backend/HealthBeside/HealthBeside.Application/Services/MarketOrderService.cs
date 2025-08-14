@@ -1,5 +1,6 @@
 ﻿using HealthBeside.Application.Contracts;
 using HealthBeside.Application.Contracts.MarketPlace.MarketOrderDto;
+using HealthBeside.Application.Contracts.User;
 using HealthBeside.Application.Extensions.Mapping.Marketplace.MarketOrderDto.Order;
 using HealthBeside.Application.Filters;
 using HealthBeside.Application.Interfaces;
@@ -161,10 +162,10 @@ public class MarketOrderService : IMarketOrderService
                 cartItem.MarketProduct.UpdateStock(cartItem.MarketProduct.Quantity - cartItem.Quantity);
             }
 
-            order.AddOrderItems(orderItems);
-            await _marketOrderRepository.AddAsync(order, cancellationToken);
-            await _marketProductRepository.UpdateRangeAsync(cartItems.Select(ci => ci.MarketProduct), cancellationToken);
-            await _marketCartItemRepository.DeleteRangeAsync(cartItems, cancellationToken);
+            // order.AddOrderItems(orderItems);
+            // await _marketOrderRepository.AddAsync(order, cancellationToken);
+            // await _marketProductRepository.UpdateRangeAsync(cartItems.Select(ci => ci.MarketProduct), cancellationToken);
+            // await _marketCartItemRepository.DeleteRangeAsync(cartItems, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
 

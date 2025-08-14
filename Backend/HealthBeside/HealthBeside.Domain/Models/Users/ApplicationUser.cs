@@ -29,6 +29,7 @@ public class ApplicationUser : IdentityUser<Guid>
 
     // Auth
     public ICollection<RefreshToken> RefreshToken { get; private set; }
+    public ICollection<Payment> Payments { get; private set; }
     public DateTime? RefreshTokenExpiresAtUtc { get; private set; }
     
     
