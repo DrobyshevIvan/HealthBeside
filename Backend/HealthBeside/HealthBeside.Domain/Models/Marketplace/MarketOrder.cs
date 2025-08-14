@@ -16,7 +16,7 @@ public class MarketOrder
     
     public Guid UserId { get; private set; }
     public ApplicationUser User { get; private set; }
-    public Payment Payment { get; private set; }
+    public Payment? Payment { get; private set; }
     private readonly List<MarketOrderItem> _marketOrderItems = new();
     public ICollection<MarketOrderItem> MarketOrderItems { get; private set; }
     
