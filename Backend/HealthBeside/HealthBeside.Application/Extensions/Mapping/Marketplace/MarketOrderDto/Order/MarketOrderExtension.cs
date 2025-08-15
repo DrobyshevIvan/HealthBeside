@@ -10,6 +10,7 @@ using HealthBeside.Application.Sorting;
 using HealthBeside.Domain.Models.Marketplace;
 using HealthBeside.Domain.Models.Users;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using GetUserDeliveryInfoDto = HealthBeside.Application.Contracts.User.GetUserDeliveryInfoDto;
 
 namespace HealthBeside.Application.Extensions.Mapping.Marketplace.MarketOrderDto.Order;
 
@@ -29,9 +30,9 @@ public static class MarketOrderExtension
         };
     }
     
-    public static UserDeliveryInfoDto ToGetUserDeliveryInfoDto(this UserDeliveryInfo deliveryInfo)
+    public static GetUserDeliveryInfoDto ToGetUserDeliveryInfoDto(this UserDeliveryInfo deliveryInfo)
     {
-        return new UserDeliveryInfoDto
+        return new GetUserDeliveryInfoDto
         {
             Id = deliveryInfo.Id,
             City = deliveryInfo.City,

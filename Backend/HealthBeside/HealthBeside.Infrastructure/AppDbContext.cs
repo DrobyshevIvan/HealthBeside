@@ -30,6 +30,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     public DbSet<MarketProduct> MarketProducts { get; set; }
     public DbSet<MarketReview> MarketReviews { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<Payment> Payments { get; set; }
     
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -50,6 +51,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
         modelBuilder.ApplyConfiguration(new RoleConfiguration());
         modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
         modelBuilder.ApplyConfiguration(new UserDeliveryInfoConfiguration());
+        modelBuilder.ApplyConfiguration(new PaymentConfiguration());
     }
 }
 

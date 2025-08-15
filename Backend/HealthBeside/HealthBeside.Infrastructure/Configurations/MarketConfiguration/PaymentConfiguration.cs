@@ -1,4 +1,5 @@
-﻿using HealthBeside.Domain.Models.Marketplace;
+﻿using HealthBeside.Domain.Enums;
+using HealthBeside.Domain.Models.Marketplace;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -17,5 +18,10 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
             .WithOne(o => o.Payment)
             .HasForeignKey<Payment>(p => p.OrderId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.Property(o => o.Status)
+            .HasConversion(
+                v => v.ToString(),
+                v => (PaymentStatus)Enum.Parse(typeof(PaymentStatus), v));
     }
 }
