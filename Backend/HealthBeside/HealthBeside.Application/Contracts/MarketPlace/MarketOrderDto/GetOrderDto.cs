@@ -9,7 +9,7 @@ public class GetOrderDto
     public DateTime OrderDate { get; set; }
     public decimal TotalPrice { get; set; }
     public string Status { get; set; }
-    public UserDeliveryInfoDto ShippingAddress { get; set; }
+    public User.GetUserDeliveryInfoDto? ShippingAddress { get; set; }
     
     public GetUserDto User { get; set; }
     public ICollection<GetOrderItemDto> MarketOrderItems { get; set; }

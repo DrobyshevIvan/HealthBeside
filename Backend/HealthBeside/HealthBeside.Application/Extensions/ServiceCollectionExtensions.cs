@@ -30,6 +30,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IMarketOrderRepository, MarketOrderRepository>();
         services.AddScoped<IMarketOrderItemRepository, MarketOrderItemRepository>();
         services.AddScoped<IUserDeliveryInfoRepository, UserDeliveryInfoRepository>();
+        services.AddScoped<IPaymentRepository, PaymentRepository>();
 
         // Unit of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -44,6 +45,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IMarketCartService, MarketCartService>();
         services.AddScoped<IMarketOrderService, MarketOrderService>();
         services.AddScoped<IUserDeliveryInfoService, UserDeliveryInfoService>();
+        services.AddScoped<IPaymentService, PaymentService>();
 
         return services;
     }

@@ -26,7 +26,7 @@ public class UserDeliveryInfoService : IUserDeliveryInfoService
             throw new UnauthorizedAccessException("You are not authorized to perform this action.");
     }
     
-    public async Task<UserDeliveryInfoDto?> GetUserDeliveryInfoAsync(Guid userId, CancellationToken cancellationToken = default)
+    public async Task<GetUserDeliveryInfoDto?> GetUserDeliveryInfoAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Attempting to retrieve user delivery info for user ID: {UserId}", userId);
         var userDeliveryInfo = await _userDeliveryInfoRepository.GetByUserIdAsync(userId, cancellationToken);
@@ -41,7 +41,7 @@ public class UserDeliveryInfoService : IUserDeliveryInfoService
         return userDeliveryInfo.ToGetUserDeliveryInfoDto();
     }
 
-    public async Task<UserDeliveryInfoDto?> GetUserDeliveryInfoByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<GetUserDeliveryInfoDto?> GetUserDeliveryInfoByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Attempting to retrieve user delivery info by ID: {Id}", id);
         var userDeliveryInfo = await _userDeliveryInfoRepository.GetAsync(id, cancellationToken);
@@ -56,7 +56,7 @@ public class UserDeliveryInfoService : IUserDeliveryInfoService
         return userDeliveryInfo.ToGetUserDeliveryInfoDto();
     }
 
-    public async Task<UserDeliveryInfoDto> CreateUserDeliveryInfoAsync(UserDeliveryInfo userDeliveryInfo, CancellationToken cancellationToken = default)
+    public async Task<GetUserDeliveryInfoDto> CreateUserDeliveryInfoAsync(UserDeliveryInfo userDeliveryInfo, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Attempting to create user delivery info for user ID: {UserId}", userDeliveryInfo.ApplicationUserId);
         
@@ -98,7 +98,7 @@ public class UserDeliveryInfoService : IUserDeliveryInfoService
         return addedUserDeliveryInfo.ToGetUserDeliveryInfoDto();
     }
 
-    public async Task<UserDeliveryInfoDto> UpdateUserDeliveryInfoAsync(
+    public async Task<GetUserDeliveryInfoDto> UpdateUserDeliveryInfoAsync(
         UserDeliveryInfo userDeliveryInfo, 
         CancellationToken cancellationToken = default)
     {
@@ -134,7 +134,7 @@ public class UserDeliveryInfoService : IUserDeliveryInfoService
         return existingInfo.ToGetUserDeliveryInfoDto();
     }
 
-    public async Task<UserDeliveryInfoDto> DeleteUserDeliveryInfoAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<GetUserDeliveryInfoDto> DeleteUserDeliveryInfoAsync(Guid id, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Attempting to delete user delivery info with ID: {Id}", id);
         

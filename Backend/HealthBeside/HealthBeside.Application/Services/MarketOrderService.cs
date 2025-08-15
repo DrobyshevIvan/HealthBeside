@@ -1,4 +1,4 @@
-﻿using HealthBeside.Application.Contracts;
+﻿﻿using HealthBeside.Application.Contracts;
 using HealthBeside.Application.Contracts.MarketPlace.MarketOrderDto;
 using HealthBeside.Application.Contracts.User;
 using HealthBeside.Application.Extensions.Mapping.Marketplace.MarketOrderDto.Order;
@@ -25,6 +25,7 @@ public class MarketOrderService : IMarketOrderService
     private readonly IMarketCartItemRepository _marketCartItemRepository;
     private readonly IMarketProductRepository _marketProductRepository;
     private readonly IUserDeliveryInfoRepository _userDeliveryInfoRepository;
+    private readonly IPaymentRepository _paymentRepository;
     private readonly ILogger<MarketOrderService> _logger;
     private readonly AppDbContext _context;
 
@@ -34,6 +35,7 @@ public class MarketOrderService : IMarketOrderService
         IMarketCartRepository marketCartRepository,
         IMarketProductRepository marketProductRepository,
         IUserDeliveryInfoRepository userDeliveryInfoRepository,
+        IPaymentRepository paymentRepository,
         ILogger<MarketOrderService> logger,
         AppDbContext context)
     {
@@ -43,6 +45,7 @@ public class MarketOrderService : IMarketOrderService
         _marketCartRepository = marketCartRepository;
         _marketProductRepository = marketProductRepository;
         _userDeliveryInfoRepository = userDeliveryInfoRepository;
+        _paymentRepository = paymentRepository;
         _logger = logger;
         _context = context;
     }
@@ -116,6 +119,117 @@ public class MarketOrderService : IMarketOrderService
 
     // TODO : Додати до цього метода unitofwork 
     // TODO : Додавання перевірки наявності товару та зміни його при створенні замовлення
+    // public async Task<GetOrderDto> CreateOrder(
+    //     Guid userId,
+    //     UserDeliveryInfoDto deliveryInfoDto,
+    //     CancellationToken cancellationToken = default)
+    // {
+    //     using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+    //
+    //     try
+    //     {
+    //         _logger.LogInformation("Starting order creation for user {UserId}", userId);
+    //
+    //         var cart = await _marketCartRepository.GetByUserId(userId, cancellationToken);
+    //         if (cart == null)
+    //             throw new MarketOrderException("Cart not found");
+    //
+    //         if (!cart.CartItems.Any())
+    //             throw new MarketOrderException("Cart is empty");
+    //
+    //         var existingDeliveryInfo = await _userDeliveryInfoRepository.GetByDetailsAsync(
+    //             userId,
+    //             deliveryInfoDto.City,
+    //             deliveryInfoDto.StreetName,
+    //             deliveryInfoDto.StreetNumber,
+    //             cancellationToken);
+    //
+    //         UserDeliveryInfo deliveryInfo;
+    //         if (existingDeliveryInfo is not null)
+    //         {
+    //             _logger.LogInformation("Using existing delivery info {DeliveryInfoId}", existingDeliveryInfo.Id);
+    //             deliveryInfo = existingDeliveryInfo;
+    //         }
+    //         else
+    //         {
+    //             (string? createError, UserDeliveryInfo? newDeliveryInfo) = UserDeliveryInfo.Create(
+    //                 deliveryInfoDto.City,
+    //                 deliveryInfoDto.PhoneNumber,
+    //                 deliveryInfoDto.PostalIndex,
+    //                 deliveryInfoDto.StreetName,
+    //                 deliveryInfoDto.StreetNumber,
+    //                 userId);
+    //
+    //             if (createError is not null)
+    //                 throw new MarketOrderException(createError);
+    //
+    //             deliveryInfo = newDeliveryInfo!;
+    //             await _userDeliveryInfoRepository.AddAsync(deliveryInfo, cancellationToken);
+    //             _logger.LogInformation("Created new delivery info {DeliveryInfoId}", deliveryInfo.Id);
+    //         }
+    //
+    //         foreach (var cartItem in cart.CartItems)
+    //         {
+    //             if (cartItem.MarketProduct.Quantity < cartItem.Quantity)
+    //                 throw new MarketOrderException(
+    //                     $"The amount of desired product '{cartItem.MarketProduct.Name}' is less than the quantity in stock.");
+    //         }
+    //
+    //         (string? orderError, MarketOrder? order) = MarketOrder.Create(
+    //             userId,
+    //             cart.CartItems.Sum(i => i.Quantity * i.MarketProduct.Price),
+    //             deliveryInfo.Id);
+    //
+    //         if (orderError is not null)
+    //             throw new MarketOrderException(orderError);
+    //
+    //         await _marketOrderRepository.AddAsync(order!, cancellationToken);
+    //
+    //         foreach (var cartItem in cart.CartItems)
+    //         {
+    //             (string? itemError, MarketOrderItem? orderItem) = MarketOrderItem.Create(
+    //                 cartItem.Quantity,
+    //                 cartItem.MarketProduct.Price,
+    //                 cartItem.ProductId,
+    //                 order!.Id);
+    //
+    //             if (itemError is not null)
+    //                 throw new MarketOrderException(itemError);
+    //             
+    //             if (orderItem is null)
+    //                 throw new MarketOrderException("Unexpected null order item");
+    //
+    //             await _marketOrderItemRepository.AddAsync(orderItem!, cancellationToken);
+    //
+    //             var product = orderItem.MarketProduct;
+    //             var newStock = product.Quantity + orderItem.Quantity;
+    //         
+    //             var stockUpdateError = product.UpdateStock(newStock);
+    //             if (stockUpdateError != null)
+    //                 throw new MarketOrderException($"Failed to update stock: {stockUpdateError}");
+    //
+    //             await _marketProductRepository.UpdateAsync(product, cancellationToken);
+    //
+    //             await _marketCartItemRepository.DeleteAsync(cartItem.Id, cancellationToken);
+    //         }
+    //
+    //         var createdOrder = await _marketOrderRepository.GetOrderWithItems(order!.Id, cancellationToken);
+    //         if (createdOrder is null)
+    //             throw new MarketOrderException("Order not found after creation");
+    //
+    //         await transaction.CommitAsync(cancellationToken);
+    //
+    //         _logger.LogInformation("Order {OrderId} successfully created for user {UserId}", createdOrder.Id, userId);
+    //
+    //         return createdOrder.ToGetOrderDto();
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         _logger.LogError(ex, "Error creating order for user {UserId}", userId);
+    //         await transaction.RollbackAsync(cancellationToken);
+    //         throw;
+    //     }
+    // }
     public async Task<GetOrderDto> CreateOrder(
         Guid userId,
         UserDeliveryInfoDto deliveryInfoDto,
@@ -192,15 +306,32 @@ public class MarketOrderService : IMarketOrderService
 
                 if (itemError is not null)
                     throw new MarketOrderException(itemError);
+                
+                if (orderItem is null)
+                    throw new MarketOrderException("Unexpected null order item");
 
                 await _marketOrderItemRepository.AddAsync(orderItem!, cancellationToken);
 
-                cartItem.MarketProduct.UpdateStock(cartItem.MarketProduct.Quantity - cartItem.Quantity);
-                await _marketProductRepository.UpdateAsync(cartItem.MarketProduct, cancellationToken);
+                var product = orderItem.MarketProduct;
+                var newStock = product.Quantity - orderItem.Quantity;
+            
+                var stockUpdateError = product.UpdateStock(newStock);
+                if (stockUpdateError != null)
+                    throw new MarketOrderException($"Failed to update stock: {stockUpdateError}");
+                
+                await _marketProductRepository.UpdateAsync(product, cancellationToken);
 
-                await _marketCartItemRepository.DeleteAsync(cartItem.Id, cancellationToken);
+                // TODO: Перенести це на обробку платежу
+                // await _marketCartItemRepository.DeleteAsync(cartItem.Id, cancellationToken);
             }
 
+            (string? paymentError, Payment payment) = Payment.Create(userId, order.Id, order.TotalPrice);
+            
+            if (paymentError is not null)
+                throw new PaymentException(paymentError);
+            
+            await _paymentRepository.AddAsync(payment!, cancellationToken);
+            
             var createdOrder = await _marketOrderRepository.GetOrderWithItems(order!.Id, cancellationToken);
             if (createdOrder is null)
                 throw new MarketOrderException("Order not found after creation");
@@ -218,7 +349,14 @@ public class MarketOrderService : IMarketOrderService
             throw;
         }
     }
+    
+    // TODO: Додати метод для cancel замовлення та пейменту(також ендпоінт)
 
+    public async Task CancelOrder(Guid orderId)
+    {
+        
+    }
+    
     public async Task<GetOrderDto> UpdateOrder(Guid orderId, OrderStatus status,
         CancellationToken cancellationToken = default)
     {
@@ -275,8 +413,14 @@ public class MarketOrderService : IMarketOrderService
 
         foreach (var orderItem in order.MarketOrderItems)
         {
-            orderItem.MarketProduct.UpdateStock(orderItem.Quantity + orderItem.MarketProduct.Quantity);
-            await _marketProductRepository.UpdateAsync(orderItem.MarketProduct, cancellationToken);
+            var product = orderItem.MarketProduct;
+            var newStock = product.Quantity - orderItem.Quantity;
+            
+            var stockUpdateError = product.UpdateStock(newStock);
+            if (stockUpdateError != null)
+                throw new MarketOrderException($"Failed to update stock: {stockUpdateError}");
+
+            await _marketProductRepository.UpdateAsync(product, cancellationToken);
             await _marketOrderItemRepository.DeleteAsync(orderItem.Id, cancellationToken);
         }
 
