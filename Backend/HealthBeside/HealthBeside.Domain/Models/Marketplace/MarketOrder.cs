@@ -73,11 +73,11 @@ public class MarketOrder
     {
         return Status switch
         {
-            OrderStatus.Pending => newStatus == OrderStatus.Confirmed || newStatus == OrderStatus.Canceled,
-            OrderStatus.Confirmed => newStatus == OrderStatus.Shipped || newStatus == OrderStatus.Canceled,
+            OrderStatus.Pending => newStatus == OrderStatus.Confirmed || newStatus == OrderStatus.Cancelled,
+            OrderStatus.Confirmed => newStatus == OrderStatus.Shipped || newStatus == OrderStatus.Cancelled,
             OrderStatus.Shipped => newStatus == OrderStatus.Delivered,
             OrderStatus.Delivered => false,
-            OrderStatus.Canceled => false,
+            OrderStatus.Cancelled => false,
             _ => false
         };
     }
