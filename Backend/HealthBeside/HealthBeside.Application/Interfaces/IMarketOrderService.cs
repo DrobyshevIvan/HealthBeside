@@ -22,6 +22,9 @@ public interface IMarketOrderService
         Guid userId,
         UserDeliveryInfoDto deliveryInfoDto,
         CancellationToken cancellationToken = default);
+
+    Task<bool> CancelOrder(Guid orderId, CancellationToken cancellationToken = default);
     Task<GetOrderDto> UpdateOrder(Guid orderId, OrderStatus status, CancellationToken cancellationToken = default);
     Task<bool> DeleteOrder(Guid orderId, CancellationToken cancellationToken = default);
+    Task CleanupExpiredOrders(CancellationToken cancellationToken);
 }

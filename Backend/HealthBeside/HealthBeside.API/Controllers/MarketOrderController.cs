@@ -102,6 +102,26 @@ public class MarketOrderController : ControllerBase
             return StatusCode(500, new { message = "An unexpected error occurred while creating the order." });
         }
     }
+    
+    [HttpPut("cancel-order/{orderId}")]
+    [Authorize]
+    public async Task<ActionResult> CancelOrder(Guid orderId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var cancelled = await _marketOrderService.CancelOrder(orderId, cancellationToken);
+
+            if (!cancelled)
+                return Forbid("Order with status not pending cannot be deleted");
+
+            return Ok(new { cancelled = true });
+        }
+        catch (MarketOrderException ex)
+        {
+            _logger.LogWarning(ex, "Failed to delete order {OrderId}", orderId);
+            return NotFound(new { error = ex.Message });
+        }
+    }
 
     [HttpPut("update-order/{orderId}")]
     [Authorize]

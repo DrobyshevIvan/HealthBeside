@@ -71,8 +71,6 @@ public class MarketOrderService : IMarketOrderService
         return order.ToGetOrderDto();
     }
 
-
-
     public async Task<IEnumerable<GetOrderDto>> GetAllOrders(
         MarketOrderFilter? marketOrderFilter,
         SortParams? sortParams,
@@ -116,120 +114,6 @@ public class MarketOrderService : IMarketOrderService
         return orders.Select(o => o.ToGetOrderDto()).ToList();
     }
 
-
-    // TODO : Додати до цього метода unitofwork 
-    // TODO : Додавання перевірки наявності товару та зміни його при створенні замовлення
-    // public async Task<GetOrderDto> CreateOrder(
-    //     Guid userId,
-    //     UserDeliveryInfoDto deliveryInfoDto,
-    //     CancellationToken cancellationToken = default)
-    // {
-    //     using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-    //
-    //     try
-    //     {
-    //         _logger.LogInformation("Starting order creation for user {UserId}", userId);
-    //
-    //         var cart = await _marketCartRepository.GetByUserId(userId, cancellationToken);
-    //         if (cart == null)
-    //             throw new MarketOrderException("Cart not found");
-    //
-    //         if (!cart.CartItems.Any())
-    //             throw new MarketOrderException("Cart is empty");
-    //
-    //         var existingDeliveryInfo = await _userDeliveryInfoRepository.GetByDetailsAsync(
-    //             userId,
-    //             deliveryInfoDto.City,
-    //             deliveryInfoDto.StreetName,
-    //             deliveryInfoDto.StreetNumber,
-    //             cancellationToken);
-    //
-    //         UserDeliveryInfo deliveryInfo;
-    //         if (existingDeliveryInfo is not null)
-    //         {
-    //             _logger.LogInformation("Using existing delivery info {DeliveryInfoId}", existingDeliveryInfo.Id);
-    //             deliveryInfo = existingDeliveryInfo;
-    //         }
-    //         else
-    //         {
-    //             (string? createError, UserDeliveryInfo? newDeliveryInfo) = UserDeliveryInfo.Create(
-    //                 deliveryInfoDto.City,
-    //                 deliveryInfoDto.PhoneNumber,
-    //                 deliveryInfoDto.PostalIndex,
-    //                 deliveryInfoDto.StreetName,
-    //                 deliveryInfoDto.StreetNumber,
-    //                 userId);
-    //
-    //             if (createError is not null)
-    //                 throw new MarketOrderException(createError);
-    //
-    //             deliveryInfo = newDeliveryInfo!;
-    //             await _userDeliveryInfoRepository.AddAsync(deliveryInfo, cancellationToken);
-    //             _logger.LogInformation("Created new delivery info {DeliveryInfoId}", deliveryInfo.Id);
-    //         }
-    //
-    //         foreach (var cartItem in cart.CartItems)
-    //         {
-    //             if (cartItem.MarketProduct.Quantity < cartItem.Quantity)
-    //                 throw new MarketOrderException(
-    //                     $"The amount of desired product '{cartItem.MarketProduct.Name}' is less than the quantity in stock.");
-    //         }
-    //
-    //         (string? orderError, MarketOrder? order) = MarketOrder.Create(
-    //             userId,
-    //             cart.CartItems.Sum(i => i.Quantity * i.MarketProduct.Price),
-    //             deliveryInfo.Id);
-    //
-    //         if (orderError is not null)
-    //             throw new MarketOrderException(orderError);
-    //
-    //         await _marketOrderRepository.AddAsync(order!, cancellationToken);
-    //
-    //         foreach (var cartItem in cart.CartItems)
-    //         {
-    //             (string? itemError, MarketOrderItem? orderItem) = MarketOrderItem.Create(
-    //                 cartItem.Quantity,
-    //                 cartItem.MarketProduct.Price,
-    //                 cartItem.ProductId,
-    //                 order!.Id);
-    //
-    //             if (itemError is not null)
-    //                 throw new MarketOrderException(itemError);
-    //             
-    //             if (orderItem is null)
-    //                 throw new MarketOrderException("Unexpected null order item");
-    //
-    //             await _marketOrderItemRepository.AddAsync(orderItem!, cancellationToken);
-    //
-    //             var product = orderItem.MarketProduct;
-    //             var newStock = product.Quantity + orderItem.Quantity;
-    //         
-    //             var stockUpdateError = product.UpdateStock(newStock);
-    //             if (stockUpdateError != null)
-    //                 throw new MarketOrderException($"Failed to update stock: {stockUpdateError}");
-    //
-    //             await _marketProductRepository.UpdateAsync(product, cancellationToken);
-    //
-    //             await _marketCartItemRepository.DeleteAsync(cartItem.Id, cancellationToken);
-    //         }
-    //
-    //         var createdOrder = await _marketOrderRepository.GetOrderWithItems(order!.Id, cancellationToken);
-    //         if (createdOrder is null)
-    //             throw new MarketOrderException("Order not found after creation");
-    //
-    //         await transaction.CommitAsync(cancellationToken);
-    //
-    //         _logger.LogInformation("Order {OrderId} successfully created for user {UserId}", createdOrder.Id, userId);
-    //
-    //         return createdOrder.ToGetOrderDto();
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         _logger.LogError(ex, "Error creating order for user {UserId}", userId);
-    //         await transaction.RollbackAsync(cancellationToken);
-    //         throw;
-    //     }
-    // }
     public async Task<GetOrderDto> CreateOrder(
         Guid userId,
         UserDeliveryInfoDto deliveryInfoDto,
@@ -306,7 +190,7 @@ public class MarketOrderService : IMarketOrderService
 
                 if (itemError is not null)
                     throw new MarketOrderException(itemError);
-                
+
                 if (orderItem is null)
                     throw new MarketOrderException("Unexpected null order item");
 
@@ -314,24 +198,21 @@ public class MarketOrderService : IMarketOrderService
 
                 var product = orderItem.MarketProduct;
                 var newStock = product.Quantity - orderItem.Quantity;
-            
+
                 var stockUpdateError = product.UpdateStock(newStock);
                 if (stockUpdateError != null)
                     throw new MarketOrderException($"Failed to update stock: {stockUpdateError}");
-                
-                await _marketProductRepository.UpdateAsync(product, cancellationToken);
 
-                // TODO: Перенести це на обробку платежу
-                // await _marketCartItemRepository.DeleteAsync(cartItem.Id, cancellationToken);
+                await _marketProductRepository.UpdateAsync(product, cancellationToken);
             }
 
             (string? paymentError, Payment payment) = Payment.Create(userId, order.Id, order.TotalPrice);
-            
+
             if (paymentError is not null)
                 throw new PaymentException(paymentError);
-            
+
             await _paymentRepository.AddAsync(payment!, cancellationToken);
-            
+
             var createdOrder = await _marketOrderRepository.GetOrderWithItems(order!.Id, cancellationToken);
             if (createdOrder is null)
                 throw new MarketOrderException("Order not found after creation");
@@ -349,14 +230,78 @@ public class MarketOrderService : IMarketOrderService
             throw;
         }
     }
-    
-    // TODO: Додати метод для cancel замовлення та пейменту(також ендпоінт)
 
-    public async Task CancelOrder(Guid orderId)
+    public async Task<bool> CancelOrder(Guid orderId, CancellationToken cancellationToken = default)
     {
-        
+        if (orderId == Guid.Empty)
+        {
+            _logger.LogWarning("Attempt to cancel order with empty ID");
+            throw new ArgumentException("Order ID cannot be empty", nameof(orderId));
+        }
+
+        _logger.LogInformation("Attempting to cancel order {OrderId}", orderId);
+
+        await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+        try
+        {
+            var order = await _marketOrderRepository.GetOrderWithItems(orderId, cancellationToken);
+
+            if (order is null)
+            {
+                _logger.LogWarning("Order {OrderId} not found for cancellation", orderId);
+                throw new MarketOrderException($"Order with id {orderId} not found");
+            }
+
+            if (order.Status != OrderStatus.Pending)
+            {
+                _logger.LogWarning("Order {OrderId} cannot be cancelled because his status is not pending", orderId);
+                return false;
+            }
+
+            foreach (var orderItem in order.MarketOrderItems)
+            {
+                var product = orderItem.MarketProduct;
+                var newStock = product.Quantity + orderItem.Quantity;
+
+                var stockUpdateError = product.UpdateStock(newStock);
+                if (stockUpdateError != null)
+                    throw new MarketOrderException($"Failed to update stock: {stockUpdateError}");
+
+                await _marketProductRepository.UpdateAsync(product, cancellationToken);
+            }
+
+            var payment = await _paymentRepository.GetByOrderId(orderId, cancellationToken);
+
+            if (payment is null)
+            {
+                _logger.LogWarning("Payment by order id {OrderId} not found", orderId);
+                throw new MarketOrderException("Payment not found");
+            }
+
+            var paymentStatusError = payment.UpdateStatus(PaymentStatus.Canceled);
+            if (paymentStatusError is not null)
+                throw new MarketOrderException(paymentStatusError);
+
+            var orderStatusError = order.UpdateStatus(OrderStatus.Canceled);
+            if (orderStatusError is not null)
+                throw new MarketOrderException(orderStatusError);
+
+            await _marketOrderRepository.UpdateAsync(order, cancellationToken);
+            await _paymentRepository.UpdateAsync(payment, cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+
+            _logger.LogInformation("Order {OrderId} successfully cancelled", orderId);
+
+            return true;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
-    
+
     public async Task<GetOrderDto> UpdateOrder(Guid orderId, OrderStatus status,
         CancellationToken cancellationToken = default)
     {
@@ -414,8 +359,8 @@ public class MarketOrderService : IMarketOrderService
         foreach (var orderItem in order.MarketOrderItems)
         {
             var product = orderItem.MarketProduct;
-            var newStock = product.Quantity - orderItem.Quantity;
-            
+            var newStock = product.Quantity + orderItem.Quantity;
+
             var stockUpdateError = product.UpdateStock(newStock);
             if (stockUpdateError != null)
                 throw new MarketOrderException($"Failed to update stock: {stockUpdateError}");
@@ -428,5 +373,27 @@ public class MarketOrderService : IMarketOrderService
         _logger.LogInformation("Order {OrderId} successfully deleted", orderId);
 
         return true;
+    }
+
+    public async Task CleanupExpiredOrders(CancellationToken cancellationToken)
+    {
+        var cutoff = DateTime.UtcNow.AddMinutes(-15);
+        var expiredOrderIds = await _context.MarketOrders
+            .AsNoTracking()
+            .Where(o => o.Status == OrderStatus.Pending && o.OrderDate < cutoff)
+            .Select(o => o.Id)
+            .ToListAsync(cancellationToken);
+
+        foreach (var expiredOrderId in expiredOrderIds)
+        {
+            try
+            {
+                await CancelOrder(expiredOrderId, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to cancel expired order {OrderId}", expiredOrderId);
+            }
+        }
     }
 }
