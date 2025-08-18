@@ -5,5 +5,5 @@ namespace HealthBeside.Domain.Interfaces;
 
 public interface IPaymentRepository : IGenericRepository<Payment>
 {
-    
+    Task<Payment?> GetByOrderId(Guid orderId, CancellationToken cancellationToken = default);
 }

@@ -3,6 +3,7 @@ using System.Text;
 using HealthBeside.API.Handlers;
 using HealthBeside.API.Middlewares;
 using HealthBeside.Application.Extensions;
+using HealthBeside.Application.Services;
 using HealthBeside.Domain.Models.Users;
 using HealthBeside.Infrastructure;
 using HealthBeside.Infrastructure.Options;
@@ -127,6 +128,8 @@ public class Program
         builder.Services.AddOpenApi();
 
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+        builder.Services.AddHostedService<OrderTimeoutCleanupBackgroundService>();
         
         var app = builder.Build();
 
@@ -164,3 +167,7 @@ public class Program
         app.Run();
     }
 }
+
+// Загальні tod o:
+// TODO: Реалізувати бекграунд сервіс
+// TODO: Підключити sandbox оплату через stripe
