@@ -32,7 +32,7 @@ public class GlobalExceptionHandler : IExceptionHandler
         {
             LoginFailedException => (HttpStatusCode.Unauthorized, exception.Message),
             UserAlreadyExistsException => (HttpStatusCode.Conflict, exception.Message),
-            UserResistrationFailedException => (HttpStatusCode.BadRequest, exception.Message),
+            UserRegistrationFailedException => (HttpStatusCode.BadRequest, exception.Message),
             RefreshTokenException => (HttpStatusCode.Unauthorized, exception.Message),
             ForumPostCreationException => (HttpStatusCode.BadRequest, exception.Message),
             _ => (HttpStatusCode.InternalServerError, exception.Message) 
