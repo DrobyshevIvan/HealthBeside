@@ -119,7 +119,7 @@ public class MarketProductService : IMarketProductService
     {
         _logger.LogInformation("Updating market product {ProductId}", id);
 
-        var product = await _marketProductRepository.GetAsync(id, cancellationToken);
+        var product = await _marketProductRepository.GetByIdWithCategoryAsync(id, cancellationToken);
 
         if (product is null)
         {

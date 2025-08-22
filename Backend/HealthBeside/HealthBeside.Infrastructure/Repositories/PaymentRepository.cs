@@ -17,4 +17,10 @@ public class PaymentRepository : GenericRepository<Payment>, IPaymentRepository
     {
         return await _context.Payments.FirstOrDefaultAsync(p => p.OrderId == orderId, cancellationToken);
     }
+
+    public async Task<Payment?> GetByCheckoutSessionId(string stripeCheckoutSessionId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Payments.FirstOrDefaultAsync(p => p.StripeCheckoutSessionId == stripeCheckoutSessionId, cancellationToken);
+    }
 }
