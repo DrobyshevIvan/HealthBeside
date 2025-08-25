@@ -2,6 +2,7 @@
 using HealthBeside.Domain.Enums;
 using HealthBeside.Domain.Exceptions;
 using HealthBeside.Domain.Interfaces;
+using HealthBeside.Domain.Models.Marketplace;
 using HealthBeside.Infrastructure;
 using HealthBeside.Infrastructure.Configurations.MarketConfiguration;
 using Microsoft.AspNetCore.Http;
@@ -58,6 +59,9 @@ public class StripeService : IStripeService
         
         var user = await _userRepository.GetAsync(order.UserId);
 
+        if (order.Status == OrderStatus.Canceled)
+            throw new StripeException($"Cannot create checkout session, order with id {order.Id} is canceled");
+        
         var options = new SessionCreateOptions
         {
             PaymentMethodTypes = new List<string> { "card" },
@@ -66,7 +70,6 @@ public class StripeService : IStripeService
             SuccessUrl = _configuration["Stripe:SuccessUrl"],
             CancelUrl = _configuration["Stripe:CancelUrl"],
             CustomerEmail = user?.Email ?? null,
-            ExpiresAt = DateTime.UtcNow.AddMinutes(30),
             Currency = "usd",
             
             Metadata = new Dictionary<string, string>
@@ -159,6 +162,35 @@ public class StripeService : IStripeService
                             _logger.LogInformation("Payment and Order already completed");
                             break;
                         }
+
+                        if (order.Status == OrderStatus.Canceled)
+                        {
+                            _logger.LogWarning("User paid for already canceled order {OrderId}", orderId);
+
+                            var refundService = new RefundService();
+                            try
+                            {
+                                await refundService.CreateAsync(new RefundCreateOptions
+                                {
+                                    PaymentIntent = paymentIntent.Id,
+                                    Reason = "duplicate"
+                                });
+
+                                _logger.LogError(
+                                    "Payment {PaymentId} was refunded because order {OrderId} was already canceled)",
+                                    paymentIntent.Id, orderId);
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogError(ex, "Failed to create refund for payment {PaymentId}", paymentIntent.Id);
+                                await refundService.CreateAsync(new RefundCreateOptions
+                                {
+                                    PaymentIntent = paymentIntent.Id,
+                                });
+                            }
+
+                            return;
+                        }
                         
                         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
                         try
@@ -235,6 +267,18 @@ public class StripeService : IStripeService
                         break;
                     }
                     
+                    if (order.Status == OrderStatus.Canceled)
+                    {
+                        _logger.LogInformation("Order {OrderId} already canceled by background service, ignoring payment failure", orderId);
+                        return;
+                    }
+
+                    if (payment.Status == PaymentStatus.Canceled)
+                    {
+                        _logger.LogInformation("Payment already canceled");
+                        break;
+                    }
+                    
                     payment.UpdateStatus(PaymentStatus.Failed);
             
                     var error = payment.ApplyStripeFailure(paymentIntent.Id, paymentIntent.LastPaymentError.Code, paymentIntent.LastPaymentError.Message);
@@ -244,7 +288,7 @@ public class StripeService : IStripeService
                     await _paymentRepository.UpdateAsync(payment, cancellationToken);
                     break; 
                 }
-
+                
                 case EventTypes.PaymentIntentCreated:
                     _logger.LogInformation("=== PaymentIntentCreated ===");
                     break;

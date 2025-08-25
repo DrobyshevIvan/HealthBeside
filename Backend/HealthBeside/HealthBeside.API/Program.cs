@@ -131,7 +131,7 @@ public class Program
 
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
-        //builder.Services.AddHostedService<OrderTimeoutCleanupBackgroundService>();
+        builder.Services.AddHostedService<OrderTimeoutCleanupBackgroundService>();
         
         builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
         var stripeSettings = builder.Configuration.GetSection("Stripe").Get<StripeSettings>()!;
