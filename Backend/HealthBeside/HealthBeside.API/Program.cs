@@ -6,6 +6,7 @@ using HealthBeside.Application.Extensions;
 using HealthBeside.Application.Services;
 using HealthBeside.Domain.Models.Users;
 using HealthBeside.Infrastructure;
+using HealthBeside.Infrastructure.Configurations.MarketConfiguration;
 using HealthBeside.Infrastructure.Options;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using Stripe;
 
 namespace HealthBeside.API;
 
@@ -62,10 +64,10 @@ public class Program
         var jwt = builder.Configuration.GetSection("JwtOptions");
 
         var secretKey = builder.Configuration.GetValue<string>("JwtOptions:Secret");
-        
-        if(secretKey == null)
+
+        if (secretKey == null)
             throw new ArgumentNullException(nameof(secretKey));
-            
+
 
         builder.Services.AddAuthentication(options =>
         {
@@ -80,9 +82,9 @@ public class Program
             {
                 throw new ArgumentNullException(nameof(clientId));
             }
-    
+
             var clientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-    
+
             if (clientSecret == null)
             {
                 throw new ArgumentNullException(nameof(clientSecret));
@@ -117,7 +119,7 @@ public class Program
             };
 
         });
-        
+
         builder.Services.AddAuthorization();
 
         builder.Services.AddHttpContextAccessor();
@@ -131,6 +133,12 @@ public class Program
 
         builder.Services.AddHostedService<OrderTimeoutCleanupBackgroundService>();
         
+        builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+        var stripeSettings = builder.Configuration.GetSection("Stripe").Get<StripeSettings>()!;
+        StripeConfiguration.ApiKey = stripeSettings.SecretKey;
+        
+        // StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -151,13 +159,13 @@ public class Program
         app.UseExceptionHandler("/error");
 
         app.UseHttpsRedirection();
-        
+
         app.UseCors("CorsPolicy");
-        
+
         //app.UseMiddleware<TaskCancellationHandlingMiddleware>(); //TODO fix the middleware to handle task cancellation properly
-        
-        app.UseRouting();  
-        
+
+        app.UseRouting();
+
         app.UseAuthentication();
 
         app.UseAuthorization();

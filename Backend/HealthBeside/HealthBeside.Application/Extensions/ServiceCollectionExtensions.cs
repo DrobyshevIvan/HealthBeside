@@ -46,6 +46,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IMarketOrderService, MarketOrderService>();
         services.AddScoped<IUserDeliveryInfoService, UserDeliveryInfoService>();
         services.AddScoped<IPaymentService, PaymentService>();
+        services.AddScoped<IStripeService, StripeService>();
 
         return services;
     }

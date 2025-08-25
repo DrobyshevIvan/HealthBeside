@@ -1,4 +1,5 @@
-﻿using HealthBeside.Domain.Interfaces;
+﻿using HealthBeside.Domain.Enums;
+using HealthBeside.Domain.Interfaces;
 using HealthBeside.Domain.Models.Marketplace;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,6 +42,16 @@ public class MarketOrderRepository : GenericRepository<MarketOrder>, IMarketOrde
             .Include(udi => udi.UserDeliveryInfo)
             .OrderByDescending(o => o.OrderDate)
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<MarketOrder?> GetNearestOrderOlderThan(DateTime time, OrderStatus orderStatus,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.MarketOrders
+            .AsNoTracking()
+            .Where(o => o.OrderDate > time && o.Status == orderStatus)
+            .OrderBy(o => o.OrderDate)
+            .FirstOrDefaultAsync(cancellationToken);
     }
     
 }
