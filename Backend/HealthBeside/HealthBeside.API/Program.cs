@@ -175,7 +175,3 @@ public class Program
         app.Run();
     }
 }
-
-// Загальні tod o:
-// TODO: Реалізувати бекграунд сервіс
-// TODO: Підключити sandbox оплату через stripe

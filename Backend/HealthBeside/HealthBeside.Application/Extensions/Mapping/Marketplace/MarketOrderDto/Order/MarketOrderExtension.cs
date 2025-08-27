@@ -43,6 +43,17 @@ public static class MarketOrderExtension
         };
     }
 
+    public static OrderDtoForPayment ToOrderDtoForPayment(this MarketOrder marketOrder)
+    {
+        return new OrderDtoForPayment()
+        {
+            Id = marketOrder.Id,
+            OrderDate = marketOrder.OrderDate,
+            TotalPrice = marketOrder.TotalPrice,
+            Status = marketOrder.Status.ToString(),
+        };
+    }
+
     public static IQueryable<MarketOrder> Filter(this IQueryable<MarketOrder> query,
         MarketOrderFilter filter)
     {
