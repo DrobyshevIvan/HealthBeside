@@ -62,7 +62,7 @@ public class PaymentController : ControllerBase
         [FromQuery] PageParams pageParams,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("GET /get-orders called with filters: {@Filters}, sort: {@Sort}, page: {@Page}",
+        _logger.LogInformation("GET /get-payments called with filters: {@Filters}, sort: {@Sort}, page: {@Page}",
             paymentFilter, sortParams, pageParams);
 
         var payments = await _paymentService.GetPayments(paymentFilter, sortParams, pageParams, cancellationToken);
