@@ -13,6 +13,20 @@ public class PaymentRepository : GenericRepository<Payment>, IPaymentRepository
         _context = context;
     }
 
+    public IQueryable<Payment> GetQueryable()
+    {
+        return _context.Payments;
+    }
+
+    public async Task<Payment?> GetDetailedPayment(Guid paymentId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Payments
+            .Where(p => p.Id == paymentId)
+            .Include(p => p.Order)
+            .Include(p => p.User)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+    
     public async Task<Payment?> GetByOrderId(Guid orderId, CancellationToken cancellationToken = default)
     {
         return await _context.Payments.FirstOrDefaultAsync(p => p.OrderId == orderId, cancellationToken);
