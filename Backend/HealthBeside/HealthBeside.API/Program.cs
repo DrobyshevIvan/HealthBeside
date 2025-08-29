@@ -139,6 +139,15 @@ public class Program
         
         // StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("CorsPolicy", p =>
+                p.WithOrigins("http://localhost:5173", "https://localhost:5173")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials());
+        });
+        
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
