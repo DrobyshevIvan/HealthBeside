@@ -31,6 +31,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IMarketOrderItemRepository, MarketOrderItemRepository>();
         services.AddScoped<IUserDeliveryInfoRepository, UserDeliveryInfoRepository>();
         services.AddScoped<IPaymentRepository, PaymentRepository>();
+        services.AddScoped<IDoctorProfileRepository, DoctorProfileRepository>();
+        services.AddScoped<IPatientProfileRepository, PatientProfileRepository>();
 
         // Unit of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();
