@@ -65,9 +65,9 @@ public class Payment
     {
         return Status switch
         {
-            PaymentStatus.Pending => newStatus == PaymentStatus.Completed || newStatus == PaymentStatus.Canceled || newStatus == PaymentStatus.Failed,
+            PaymentStatus.Pending => newStatus == PaymentStatus.Completed || newStatus == PaymentStatus.Cancelled || newStatus == PaymentStatus.Failed,
             PaymentStatus.Completed => false,
-            PaymentStatus.Canceled => false,
+            PaymentStatus.Cancelled => false,
             PaymentStatus.Failed => false,
             _ => false
         };

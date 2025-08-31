@@ -278,11 +278,11 @@ public class MarketOrderService : IMarketOrderService
                 throw new MarketOrderException("Payment not found");
             }
 
-            var paymentStatusError = payment.UpdateStatus(PaymentStatus.Canceled);
+            var paymentStatusError = payment.UpdateStatus(PaymentStatus.Cancelled);
             if (paymentStatusError is not null)
                 throw new MarketOrderException(paymentStatusError);
 
-            var orderStatusError = order.UpdateStatus(OrderStatus.Canceled);
+            var orderStatusError = order.UpdateStatus(OrderStatus.Cancelled);
             if (orderStatusError is not null)
                 throw new MarketOrderException(orderStatusError);
 
