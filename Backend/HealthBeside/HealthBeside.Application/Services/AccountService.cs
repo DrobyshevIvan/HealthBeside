@@ -205,19 +205,32 @@ public class AccountService : IAccountService
     {
         var adminUser = await _userManager.FindByIdAsync(adminUserId.ToString());
         
-        if (adminUser == null || !await _userManager.IsInRoleAsync(adminUser, UserRoles.Admin)) ;
-        throw new UnauthorizedAccessException("You are not authorized to assign roles.");
+        if (adminUser == null || !await _userManager.IsInRoleAsync(adminUser, UserRoles.Admin))
+            throw new UnauthorizedAccessException("You are not authorized to assign roles.");
         
-      //  if(!UserRoles.RoleMapping.ContainsKey(newRoleId))
-        //    throw new ArgumentException("Invalid role ID provided.");
+        if(!UserRoles.RoleMapping.ContainsKey(newRoleId))
+            throw new ArgumentException("Invalid role ID provided.");
         
         var targetUser = await _userManager.FindByIdAsync(targetUserId.ToString());
+        
+        if(targetUser == null)
+            throw new KeyNotFoundException($"User with ID {targetUserId} not found.");
+        
+        var newRoleName = UserRoles.RoleMapping[newRoleId];
+        
+        var currentRoles = await _userManager.GetRolesAsync(targetUser);
+        await _userManager.RemoveFromRolesAsync(targetUser, currentRoles);
+
+        await _userManager.AddToRoleAsync(targetUser, newRoleName);
+        
+        _logger.LogInformation("Admin {AdminId} assigned role {Role} to user {UserId}", 
+            adminUserId, newRoleName, targetUserId);
     }
     
     public List<RoleDto> GetAvailableRoles()
     {
         return UserRoles.RoleMapping
-            .Where(r => r.Key != UserRoles.AdminRoleId) // Виключаємо Admin з публічного списку
+            .Where(r => r.Key != UserRoles.AdminRoleId) 
             .Select(r => new RoleDto 
             { 
                 Id = r.Key, 
@@ -318,6 +331,12 @@ public class AccountService : IAccountService
             if (!result.Succeeded)
                 throw new ExternalLoginProviderException("Google",
                     $"Unable to create user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            
+            var roleResult = await _userManager.AddToRoleAsync(newUser, UserRoles.User);
+            
+            if (!roleResult.Succeeded)
+                throw new ExternalLoginProviderException("Google",
+                    $"Unable to assign role: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
 
             user = newUser;
         }
@@ -418,8 +437,38 @@ public class AccountService : IAccountService
         _authTokenProcessor.WriteAuthTokenToHttpOnlyCookie("ACCESS_TOKEN", jwtToken, expiresAt);
         _authTokenProcessor.WriteAuthTokenToHttpOnlyCookie("REFRESH_TOKEN", newRefreshTokenString, newRefreshTokenExpirationTokenTimeAtUtc);
     }
+
+    public async Task<bool> DeleteAccountAsync(Guid userId, ClaimsPrincipal currentUser, CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        
+        if(user == null)
+            throw new AccountDeletionException("User not found.");
+        
+        var currentUserId = currentUser.FindFirstValue(ClaimTypes.NameIdentifier);
+        
+        if(currentUserId == null)
+            throw new AccountDeletionException("Unable to delete account. Current user not found.");
+        
+        var isAdmin = currentUser.IsInRole(UserRoles.Admin);
+        
+        var isOwner = user.Id.ToString() == currentUserId;
+
+        if (!isAdmin && !isOwner)
+        {
+            throw new UnauthorizedAccessException("You are not authorized to delete this account.");
+        }
+        
+        var result = await _userManager.DeleteAsync(user);
+        if(!result.Succeeded)
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            throw new AccountDeletionException($"Failed to delete account: {errors}");
+        }
+        _logger.LogInformation("User {UserId} account deleted successfully", userId);
+        return true;
+    }
 }
 
-//TODO fix roles in DB
 //TODO обіграти логіку, аби якщо користувач зареєструвався як юзер, то при записі на консультацію,
 //він повинен заповнити всі поля профілю пацієнта, а якщо як лікар, то всі поля профілю лікаря
