@@ -59,7 +59,7 @@ public class StripeService : IStripeService
         
         var user = await _userRepository.GetAsync(order.UserId);
 
-        if (order.Status == OrderStatus.Canceled)
+        if (order.Status == OrderStatus.Cancelled)
             throw new StripeException($"Cannot create checkout session, order with id {order.Id} is canceled");
         
         var options = new SessionCreateOptions
@@ -163,7 +163,7 @@ public class StripeService : IStripeService
                             break;
                         }
 
-                        if (order.Status == OrderStatus.Canceled)
+                        if (order.Status == OrderStatus.Cancelled)
                         {
                             _logger.LogWarning("User paid for already canceled order {OrderId}", orderId);
 
@@ -229,7 +229,7 @@ public class StripeService : IStripeService
 
                 case EventTypes.PaymentIntentCanceled:
                 {
-                    if (payment.Status == PaymentStatus.Canceled && order.Status == OrderStatus.Canceled)
+                    if (payment.Status == PaymentStatus.Cancelled && order.Status == OrderStatus.Cancelled)
                     {
                         _logger.LogInformation("Payment and Order already canceled");
                         break;
@@ -238,13 +238,13 @@ public class StripeService : IStripeService
                     await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
                     try
                     {
-                        payment.UpdateStatus(PaymentStatus.Canceled);
+                        payment.UpdateStatus(PaymentStatus.Cancelled);
 
                         var error = payment.ApplyStripeCancelled(paymentIntent.Id);
                         if (error != null)
                             throw new StripeException($"Error while applying payment intent info to payment : {error}");
 
-                        order.UpdateStatus(OrderStatus.Canceled);
+                        order.UpdateStatus(OrderStatus.Cancelled);
 
                         await _marketOrderRepository.UpdateAsync(order, cancellationToken);
                         await _paymentRepository.UpdateAsync(payment, cancellationToken);
@@ -267,13 +267,13 @@ public class StripeService : IStripeService
                         break;
                     }
                     
-                    if (order.Status == OrderStatus.Canceled)
+                    if (order.Status == OrderStatus.Cancelled)
                     {
                         _logger.LogInformation("Order {OrderId} already canceled by background service, ignoring payment failure", orderId);
                         return;
                     }
 
-                    if (payment.Status == PaymentStatus.Canceled)
+                    if (payment.Status == PaymentStatus.Cancelled)
                     {
                         _logger.LogInformation("Payment already canceled");
                         break;

@@ -117,4 +117,30 @@ public class AccountController : ControllerBase
         return Ok(userInfo);
     }
 
+    [HttpDelete("delete-account")]
+    [Authorize]
+    public async Task<IActionResult> DeleteAccountAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var result = await _accountService.DeleteAccountAsync(userId, User, cancellationToken);
+            if (result)
+                return NoContent();
+
+            return BadRequest("Account deletion failed.");
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Forbid(e.Message); 
+        }
+        catch (AccountDeletionException e)
+        {
+            return BadRequest(e.Message);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { error = "Internal server error", details = e.Message });
+        }
+    }
+
 }
