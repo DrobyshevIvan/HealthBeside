@@ -1,10 +1,14 @@
-﻿namespace HealthBeside.Application.Contracts.MarketPlace.MarketReviewDto;
+﻿using System.Text.Json.Serialization;
+using HealthBeside.Infrastructure;
+
+namespace HealthBeside.Application.Contracts.MarketPlace.MarketReviewDto;
 
 public class GetMarketReviewDto
 {
     public Guid Id { get; set; }
     public string Description { get; set; }
     public int Rating { get; set; }
+    [JsonConverter(typeof(DateTimeLocalJsonConverter))]
     public DateTime CreatedOn { get; set; }
     
     public Guid ProductId { get; set; }

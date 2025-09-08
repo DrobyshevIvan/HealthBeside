@@ -68,7 +68,9 @@ public class AccountController : ControllerBase
 
 
     [HttpGet("login/google/callback", Name = "GoogleLoginCallback")]
-    public async Task<IActionResult> GoogleCallbackAsync([FromQuery] string returnUrl, [FromServices] IAccountService accountService)
+    public async Task<IActionResult> GoogleCallbackAsync(
+        [FromQuery] string returnUrl, 
+        [FromServices] IAccountService accountService)
     {
         var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
 
@@ -119,7 +121,9 @@ public class AccountController : ControllerBase
 
     [HttpDelete("delete-account")]
     [Authorize]
-    public async Task<IActionResult> DeleteAccountAsync(Guid userId, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> DeleteAccountAsync(
+        Guid userId, 
+        CancellationToken cancellationToken = default)
     {
         try
         {

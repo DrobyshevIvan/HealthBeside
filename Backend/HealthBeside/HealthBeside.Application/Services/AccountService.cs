@@ -249,6 +249,8 @@ public class AccountService : IAccountService
             _logger.LogWarning("Login failed for email: {Email}", request.Email);
             throw new LoginFailedException(request.Email);
         }
+        
+        _logger.LogInformation("Login successful for email: {Email}", request.Email);
 
         var storedRefreshToken = await _refreshTokenRepository.GetRefreshTokenByUserId(user.Id);
         if (storedRefreshToken is not null)
@@ -258,7 +260,7 @@ public class AccountService : IAccountService
         }
 
         await GenerateNewTokensAsync(user);
-    }
+    } 
 
     public async Task RefreshTokenAsync(string? refreshToken, CancellationToken cancellationToken = default)
     {
