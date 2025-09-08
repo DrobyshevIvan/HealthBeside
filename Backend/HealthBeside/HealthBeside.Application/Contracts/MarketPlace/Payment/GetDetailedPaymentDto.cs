@@ -1,7 +1,9 @@
-﻿using HealthBeside.Application.Contracts.MarketPlace.MarketOrderDto;
+﻿using System.Text.Json.Serialization;
+using HealthBeside.Application.Contracts.MarketPlace.MarketOrderDto;
 using HealthBeside.Domain.Enums;
 using HealthBeside.Domain.Models.Marketplace;
 using HealthBeside.Domain.Models.Users;
+using HealthBeside.Infrastructure;
 
 namespace HealthBeside.Application.Contracts.MarketPlace.Payment;
 
@@ -10,6 +12,7 @@ public class GetDetailedPaymentDto
     public Guid Id { get; set; }
     public decimal Amount { get; set; }
     public string Status { get; set; }
+    [JsonConverter(typeof(DateTimeLocalJsonConverter))]
     public DateTime CreatedAt { get; set; }
     
     public string? StripeCheckoutSessionId { get; set; }
