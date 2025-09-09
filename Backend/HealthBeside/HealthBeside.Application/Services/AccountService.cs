@@ -68,7 +68,7 @@ public class AccountService : IAccountService
     }
 
   
-    public async Task RegisterAsync(RegisterRequest request)
+    public async Task RegisterAsync(RegisterRequestBase request)
     {
         _logger.LogInformation("Starting registration for email: {Email}", request.Email);
         var userExists = await _userManager.FindByEmailAsync(request.Email) != null;
@@ -112,34 +112,36 @@ public class AccountService : IAccountService
 
         await _userManager.AddToRoleAsync(user, roleName);
 
-        await CreateRoleSpecificProfileAsync(user.Id, request, roleName, user);
+       // await CreateRoleSpecificProfileAsync(user.Id, request, roleName, user);
 
         _logger.LogInformation("User {Email} registered successfully", request.Email);
     }
 
     private async Task CreateRoleSpecificProfileAsync(
         Guid userId,
-        RegisterRequest request,
+        RegisterRequestBase requestBase,
+        RegisterDoctorProfile requestDoctorProfile,
+        RegisterPatientProfile requestPatientProfile,
         string roleName,
         ApplicationUser user)
     {
         switch (roleName)
         {
-            case UserRoles.Patient:
-                await CreatePatientProfileAsync(userId, request, user);
+            /*case UserRoles.Patient:
+                await CreatePatientProfileAsync(userId, requestPatientProfile, user);
                 break;
             
             case UserRoles.Doctor:
-                await CreateDoctorProfileAsync(userId, request);
+                await CreateDoctorProfileAsync(userId, requestDoctorProfile);
                 break;
             
             case UserRoles.User:
-                _logger.LogInformation("User {Email} registered successfully", request.Email);
-                break;
+                _logger.LogInformation("User {Email} registered successfully", requestBase.Email);
+                break;*/
         }
     }
 
-    private async Task CreatePatientProfileAsync(Guid userId, RegisterRequest request, ApplicationUser user)
+    /*private async Task CreatePatientProfileAsync(Guid userId, RegisterRequest request, ApplicationUser user)
     {
         if (!request.DateOfBirth.HasValue)
         {
@@ -171,9 +173,9 @@ public class AccountService : IAccountService
 
         await _patientProfileRepository.AddAsync(patientProfile);
         _logger.LogInformation("User {Email} registered successfully", request.Email);
-    }
+    }*/
 
-    private async Task CreateDoctorProfileAsync(Guid userId, RegisterRequest request)
+    /*private async Task CreateDoctorProfileAsync(Guid userId, RegisterRequest request)
     {
         var (error, doctorProfile) = DoctorProfile.Create(
             userId,
@@ -199,7 +201,7 @@ public class AccountService : IAccountService
         
         await _doctorProfileRepository.AddAsync(doctorProfile);
         _logger.LogInformation("User {Email} registered successfully", request.Email);
-    }
+    }*/
 
     public async Task AssignRoleAsync(Guid adminUserId, Guid targetUserId, Guid newRoleId)
     {
