@@ -5,11 +5,11 @@ namespace HealthBeside.Application.Extensions.Mapping.User;
 
 public static class RegisterRequestExtensions
 {
-    public static (string? error, ApplicationUser user) ToApplicationUser(this RegisterRequest request)
+    public static (string? error, ApplicationUser user) ToApplicationUser(this RegisterRequestBase requestBase)
     {
         return ApplicationUser.Create(
-            request.FirstName, 
-            request.LastName, 
-            request.Email);
+            requestBase.FirstName, 
+            requestBase.LastName, 
+            requestBase.Email);
     }
 }

@@ -4,7 +4,7 @@ using HealthBeside.Application.Contracts.User;
 using HealthBeside.Domain.Models.Users;
 using Microsoft.AspNetCore.Identity.Data;
 using LoginRequest = HealthBeside.Application.Contracts.LoginRequest;
-using RegisterRequest = HealthBeside.Application.Contracts.RegisterRequest;
+using RegisterRequest = HealthBeside.Application.Contracts.RegisterRequestBase;
 
 namespace HealthBeside.Application.Interfaces;
 
