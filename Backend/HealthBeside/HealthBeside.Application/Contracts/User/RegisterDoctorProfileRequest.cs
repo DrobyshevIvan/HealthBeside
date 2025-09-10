@@ -1,6 +1,6 @@
 ﻿namespace HealthBeside.Application.Contracts.User;
 
-public class RegisterDoctorProfile : RegisterRequestBase
+public class RegisterDoctorProfileRequest : RegisterRequestBase
 {
     // Поля для DoctorProfile
     public string? Specialization { get; set; }

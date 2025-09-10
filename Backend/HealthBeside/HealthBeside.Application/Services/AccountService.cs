@@ -1,4 +1,5 @@
-﻿using HealthBeside.Application.Contracts;
+﻿using System.Reflection.Metadata.Ecma335;
+using HealthBeside.Application.Contracts;
 using HealthBeside.Application.Interfaces;
 using HealthBeside.Domain.Exceptions;
 using HealthBeside.Domain.Interfaces;
@@ -71,140 +72,109 @@ public class AccountService : IAccountService
     }
 
   
-    public async Task RegisterAsync(RegisterRequestBase request)
+    public async Task RegisterAsync(RegisterRequestBase request, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Starting registration for email: {Email}", request.Email);
-        var userExists = await _userManager.FindByEmailAsync(request.Email) != null;
-        if (userExists)
+        if(await _userManager.FindByEmailAsync(request.Email) is not null)
             throw new UserAlreadyExistsException(request.Email);
-
-        if (!UserRoles.RoleMapping.ContainsKey(request.RoleId))
-        {
-            _logger.LogWarning("Invalid role ID provided: {RoleId}", request.RoleId);
-            throw new ArgumentException($"Invalid role ID: {request.RoleId}");
-        }
-
-        if (request.RoleId == UserRoles.AdminRoleId)
-        {
-            _logger.LogWarning("Attempt to register as Admin blocked for email: {Email}", request.Email);
-            throw new UserAlreadyExistsException(request.Email);
-        }
-
-        var roleName = UserRoles.RoleMapping[request.RoleId];
-
+        
+        if(!UserRoles.RoleMapping.ContainsKey(request.RoleId))
+            throw new ArgumentException("Invalid role ID provided.");
+        
+        if(request.RoleId == UserRoles.AdminRoleId)
+            throw new UnauthorizedAccessException("Admin registration forbidden.");
+        
         var (error, user) = ApplicationUser.Create(
             request.FirstName,
             request.LastName,
-            request.Email
-        );
+            request.Email);
 
-        if (error != null)
-        {
-            _logger.LogWarning("Failed to create user from request: {Error}", error);
-            throw new UserRegistrationFailedException(new[] { error });
-        }
-
+        if (error != null || user == null) 
+            throw new UserRegistrationFailedException(new [] { error ?? "Unknown error during user registration." });
+        
         var result = await _userManager.CreateAsync(user, request.Password);
-        if (!result.Succeeded)
-        {
-            var errors = result.Errors.Select(e => e.Description).ToArray();
-            _logger.LogWarning("User creation failed for email {Email}: {Errors}",
-                request.Email, string.Join(", ", errors));
-            throw new UserRegistrationFailedException(result.Errors.Select(e => e.Description));
-        }
+        
+        if(!result.Succeeded)
+            throw new UserRegistrationFailedException(result.Errors.Select(e => e.Description).ToArray());
 
-        await _userManager.AddToRoleAsync(user, roleName);
-
-       // await CreateRoleSpecificProfileAsync(user.Id, request, roleName, user);
-
-        _logger.LogInformation("User {Email} registered successfully", request.Email);
+        await _userManager.AddToRoleAsync(user, UserRoles.RoleMapping[request.RoleId]);
+        
+        await CreateRoleSpecificProfileAsync(user, request, cancellationToken);
+        
+        await GenerateNewTokensAsync(user, cancellationToken);
     }
 
-    private async Task CreateRoleSpecificProfileAsync(
-        Guid userId,
-        RegisterRequestBase requestBase,
-        RegisterDoctorProfile requestDoctorProfile,
-        RegisterPatientProfile requestPatientProfile,
-        string roleName,
-        ApplicationUser user)
+    private async Task CreateRoleSpecificProfileAsync(ApplicationUser user,
+        RegisterRequestBase request,
+        CancellationToken cancellationToken = default)
     {
-        switch (roleName)
+        switch (request.RoleId)
         {
-            /*case UserRoles.Patient:
-                await CreatePatientProfileAsync(userId, requestPatientProfile, user);
-                break;
-            
-            case UserRoles.Doctor:
-                await CreateDoctorProfileAsync(userId, requestDoctorProfile);
-                break;
-            
-            case UserRoles.User:
-                _logger.LogInformation("User {Email} registered successfully", requestBase.Email);
-                break;*/
+           case var r when r == UserRoles.PatientRoleId:
+               await CreatePatientProfileAsync(user, (RegisterPatientProfileRequest) request, cancellationToken);
+               break;
+           case var r when r == UserRoles.DoctorRoleId:
+               await CreateDoctorProfileAsync(user, (RegisterDoctorProfileRequest) request, cancellationToken);
+               break;
+           default:
+               _logger.LogInformation($"User {request.Email} registered with role {UserRoles.RoleMapping[request.RoleId]}, " +
+                                      $"no additional profile created");
+               break;
         }
     }
 
-    /*private async Task CreatePatientProfileAsync(Guid userId, RegisterRequest request, ApplicationUser user)
+    private async Task CreatePatientProfileAsync( // todo now
+        ApplicationUser user, 
+        RegisterPatientProfileRequest request, 
+        CancellationToken cancellationToken = default)
     {
         if (!request.DateOfBirth.HasValue)
-        {
             throw new ArgumentException("Date of birth must be provided");
-        }
         
         var medicalHistory = string.IsNullOrEmpty(request.MedicalHistorySummary)
             ? "No medical history provided yet."
             : request.MedicalHistorySummary;
         
         var (error, patientProfile) = PatientProfile.Create(
-            userId,
+            user.Id,
             request.DateOfBirth.Value,
             medicalHistory,
             user
         );
 
-        if (error != null)
+        if (error != null || patientProfile == null)
         {
             _logger.LogError("Failed to create patient profile: {Error}", error);
-            throw new UserRegistrationFailedException(new [] { error });
+            throw new UserRegistrationFailedException(new [] { error ?? "Failed to create patient profile"});
         }
 
-        if (patientProfile is null)
-        {
-            _logger.LogError("Failed to create patient profile: {Error}", error);
-            throw new UserRegistrationFailedException(new [] { "Failed to create patient profile." });
-        }
-
-        await _patientProfileRepository.AddAsync(patientProfile);
+        await _patientProfileRepository.AddAsync(patientProfile, cancellationToken);
         _logger.LogInformation("User {Email} registered successfully", request.Email);
-    }*/
+    }
 
-    /*private async Task CreateDoctorProfileAsync(Guid userId, RegisterRequest request)
+    private async Task CreateDoctorProfileAsync(
+        ApplicationUser user, 
+        RegisterDoctorProfileRequest request, 
+        CancellationToken cancellationToken = default)
     {
         var (error, doctorProfile) = DoctorProfile.Create(
-            userId,
+            user.Id,
             request.Specialization,
             request.MedicalLicenseNumber,
             request.ClinicAffiliation,
             request.YearsOfExperience ?? 0,
             request.Education,
-            request.Biography,
-            request.Rating ?? 0.0);
+            request.Biography
+            ,0.0);
 
-        if (error != null)
+        if (error != null || doctorProfile == null)
         {
             _logger.LogError("Doctor profile creation returned null");
-            throw new UserRegistrationFailedException(new[] { "Failed to create doctor profile" });
+            throw new UserRegistrationFailedException(new[] { error ?? "Failed to create doctor profile" });
         }
 
-        if (doctorProfile == null)
-        {
-            _logger.LogError("Doctor profile creation returned null");
-            throw new UserRegistrationFailedException(new[] { "Failed to create doctor profile" });
-        }
-        
-        await _doctorProfileRepository.AddAsync(doctorProfile);
+        await _doctorProfileRepository.AddAsync(doctorProfile, cancellationToken);
         _logger.LogInformation("User {Email} registered successfully", request.Email);
-    }*/
+    }
 
     public async Task AssignRoleAsync(Guid adminUserId, Guid targetUserId, Guid newRoleId)
     {
@@ -244,7 +214,7 @@ public class AccountService : IAccountService
             .ToList();
     }
 
-    public async Task LoginAsync(LoginRequest request)
+    public async Task LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Login attempt for email: {Email}", request.Email);
         var user = await _userManager.FindByEmailAsync(request.Email);
@@ -257,14 +227,14 @@ public class AccountService : IAccountService
         
         _logger.LogInformation("Login successful for email: {Email}", request.Email);
 
-        var storedRefreshToken = await _refreshTokenRepository.GetRefreshTokenByUserId(user.Id);
+        var storedRefreshToken = await _refreshTokenRepository.GetRefreshTokenByUserId(user.Id, cancellationToken);
         if (storedRefreshToken is not null)
         {
-            await _refreshTokenRepository.DeleteAsync(storedRefreshToken.Id);
+            await _refreshTokenRepository.DeleteAsync(storedRefreshToken.Id, cancellationToken);
             _logger.LogDebug("Revoked existing refresh token for user: {UserId}", user.Id);
         }
 
-        await GenerateNewTokensAsync(user);
+        await GenerateNewTokensAsync(user, cancellationToken);
     } 
 
     public async Task RefreshTokenAsync(string? refreshToken, CancellationToken cancellationToken = default)

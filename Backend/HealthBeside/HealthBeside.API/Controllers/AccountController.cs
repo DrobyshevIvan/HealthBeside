@@ -26,16 +26,16 @@ public class AccountController : ControllerBase
     }
     
     [HttpPost("register")]
-    public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest request)
+    public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequestBase request, CancellationToken ct = default) //TODO
     {
-        await _accountService.RegisterAsync(request);
+        await _accountService.RegisterAsync(request, ct);
         return Ok("User registered successfully.");
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
+    public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request, CancellationToken ct = default) // TODO
     {
-        await _accountService.LoginAsync(request);
+        await _accountService.LoginAsync(request, ct);
         return Ok("User logged in successfully.");
     }
     

@@ -14,10 +14,14 @@ public interface IAccountService
         Guid currentUserId,
         Guid requestedUserId,
         CancellationToken cancellationToken = default);
-    Task RegisterAsync(RegisterRequest request);
+    Task RegisterAsync(
+        RegisterRequest request,
+        CancellationToken cancellationToken = default);
     Task AssignRoleAsync(Guid adminUserId, Guid targetUserId, Guid newRoleId);
     List<RoleDto> GetAvailableRoles();
-    Task LoginAsync(LoginRequest request);
+    Task LoginAsync(
+        LoginRequest request, 
+        CancellationToken cancellationToken = default);
     Task LoginWithGoogleAsync(ClaimsPrincipal? claimsPrincipal,
         CancellationToken cancellationToken = default);
     Task RefreshTokenAsync(string? refreshToken,
