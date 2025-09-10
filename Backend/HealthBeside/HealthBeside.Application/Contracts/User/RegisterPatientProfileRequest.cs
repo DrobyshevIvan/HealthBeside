@@ -1,6 +1,6 @@
 ﻿namespace HealthBeside.Application.Contracts.User;
 
-public class RegisterPatientProfile : RegisterRequestBase
+public class RegisterPatientProfileRequest : RegisterRequestBase
 {
     // Поля для PatientProfile
     public DateTime? DateOfBirth { get; set; }

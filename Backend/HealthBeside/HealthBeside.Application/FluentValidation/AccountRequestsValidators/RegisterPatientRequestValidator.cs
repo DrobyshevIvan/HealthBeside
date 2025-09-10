@@ -3,7 +3,7 @@ using HealthBeside.Application.Contracts.User;
 
 namespace HealthBeside.Application.FluentValidation.AccountRequestsValidators;
 
-public class RegisterPatientRequestValidator : AbstractValidator<RegisterPatientProfile>
+public class RegisterPatientRequestValidator : AbstractValidator<RegisterPatientProfileRequest>
 {
     public RegisterPatientRequestValidator()
     {
