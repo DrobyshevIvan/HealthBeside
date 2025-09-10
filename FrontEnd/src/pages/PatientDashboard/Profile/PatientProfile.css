@@ -1,0 +1,122 @@
+.patient-profile-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #F8FAFB;
+  }
+  
+  .profile-content {
+    flex: 1;
+    padding: 36px;
+    background: #F8FAFB;
+    margin-left: 20px; /* ширина sidebar */
+  }
+  
+  .profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .profile-info {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  
+  .profile-avatar {
+    background: #1677ff;
+  }
+  
+  .profile-details {
+    flex: 1;
+  }
+  
+  .profile-name {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 16px 0;
+    color: #1f2937;
+  }
+  
+  .profile-basic-info p {
+    margin: 8px 0;
+    font-size: 16px;
+    color: #4b5563;
+  }
+  
+  .profile-basic-info strong {
+    color: #1f2937;
+    font-weight: 600;
+  }
+  
+  .profile-actions {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .edit-profile-btn {
+    height: 40px;
+    padding: 0 20px;
+    border-radius: 8px;
+  }
+
+  .logout-profile-btn {
+    height: 40px;
+    padding: 0 20px;
+    border-radius: 8px;
+    background-color: #ff4d4f;
+  }
+  
+  .profile-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  
+  .profile-section {
+    background: #ffffff;
+  }
+  
+  .section-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: #1f2937;
+  }
+  
+  .medical-info {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .medical-summary {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #4b5563;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .profile-content {
+      margin-left: 0;
+    }
+    
+    .profile-header {
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .profile-info {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  }

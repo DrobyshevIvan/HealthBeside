@@ -23,7 +23,7 @@ public class MarketProductService : IMarketProductService
         _logger = logger;
     }
 
-    public async Task<IEnumerable<GetMarketProductDto>> GetAllAsync(MarketProductFilter? marketProductFilter,
+    public async Task<PagedResult> GetAllAsync(MarketProductFilter? marketProductFilter,
         SortParams? sortParams,
         PageParams? pageParams,
         CancellationToken cancellationToken = default)
@@ -38,6 +38,8 @@ public class MarketProductService : IMarketProductService
         if (sortParams != null)
             query = query.Sort(sortParams);
 
+        var total = query.Count();
+        
         if (pageParams != null)
             query = query.Page(pageParams);
 
@@ -45,17 +47,21 @@ public class MarketProductService : IMarketProductService
 
         _logger.LogInformation("Retrieved {Count} market products.", products.Count);
 
-        return products.Select(p => new GetMarketProductDto
+        return new PagedResult
         {
-            Id = p.Id,
-            Name = p.Name,
-            Description = p.Description,
-            Price = p.Price,
-            Quantity = p.Quantity,
-            SKU = p.SKU,
-            ImageUrl = p.ImageUrl,
-            CategoryId = p.CategoryId
-        });
+            Products = products.Select(p => new GetMarketProductDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price,
+                Quantity = p.Quantity,
+                SKU = p.SKU,
+                ImageUrl = p.ImageUrl,
+                CategoryId = p.CategoryId
+            }),
+            Total = total
+        };
     }
 
     public async Task<GetDetailedMarketProductDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)

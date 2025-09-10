@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HealthBeside.API.Controllers;
 
-[Route("[controller]")]
+[Route("api/[controller]")]
 [ApiController]
 public class MarketProductController : ControllerBase
 {
@@ -38,9 +38,9 @@ public class MarketProductController : ControllerBase
         _logger.LogInformation("GET /get-products called with filters: {@Filters}, sort: {@Sort}, page: {@Page}",
             marketProductFilter, sortParams, pageParams);
 
-        var products = await _marketProductService.GetAllAsync(marketProductFilter, sortParams, pageParams, cancellationToken);
-        _logger.LogInformation("Returned {Count} market products.", products.Count());
-        return Ok(products);
+        var result = await _marketProductService.GetAllAsync(marketProductFilter, sortParams, pageParams, cancellationToken);
+        _logger.LogInformation("Returned {Count} market products.", result.Products.Count());
+        return Ok(result);
     }
 
     [HttpGet("get-product/{id}")]

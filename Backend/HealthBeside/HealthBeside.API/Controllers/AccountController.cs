@@ -146,5 +146,5 @@ public class AccountController : ControllerBase
             return StatusCode(500, new { error = "Internal server error", details = e.Message });
         }
     }
-
+    // TODO: Додати ендпоінти редагування юзера
 }

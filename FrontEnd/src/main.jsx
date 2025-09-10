@@ -4,11 +4,13 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
-import Home from './pages/Home.jsx'
-import Login from './pages/Login.jsx'
+import Home from './pages/Home/Home.jsx'
 import ProtectedRoute from './routes/ProtectedRoute.jsx'
-import UserProfile from './pages/UserProfile/UserProfile.jsx'
 import Authorization from "./pages/Authorization/Authorization.jsx";
+import PatientProfile from './pages/PatientDashboard/Profile/PatientProfile.jsx'
+import Catalog from './pages/PatientDashboard/Marketplace/Catalog/Catalog.jsx'
+// import DoctorProfile from './pages/DoctorDashboard/Profile/DoctorProfile.jsx'
+import Product from './pages/PatientDashboard/Marketplace/Product/Product.jsx'
 
 const router = createBrowserRouter([
   {
@@ -21,11 +23,18 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },   // /
       { path: 'authorization', element: <Authorization /> },
-      { path: 'user-info', element: (
+      { path: 'patient/profile', element: (
         <ProtectedRoute>
-          <UserProfile />
+          <PatientProfile />
         </ProtectedRoute>
-      ) }, // /user-info (без початкового '/')
+      ) },
+      { path: 'marketplace', element: <Catalog /> },
+      { path: 'marketplace/product/:id', element: <Product /> },
+      // { path: 'doctor/profile', element: (
+      //   <ProtectedRoute>
+      //     <DoctorProfile />
+      //   </ProtectedRoute>
+      // ) },
     ],
   },
 ])

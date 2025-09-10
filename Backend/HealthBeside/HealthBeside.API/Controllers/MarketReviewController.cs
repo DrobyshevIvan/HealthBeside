@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HealthBeside.API.Controllers;
 
-[Route("[controller]")]
+[Route("api/[controller]")]
 [ApiController]
 public class MarketReviewController : ControllerBase
 {
