@@ -14,12 +14,14 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [shouldCheckSession, setShouldCheckSession] = useState(true);
 
   const isAuthenticated = !!user;
 
   const getUserInfo = useCallback(async () => {
     try {
       const data = await authService.getUserInfo();
+      console.log(data);
       setUser(data);
       setError(null);
     } catch (err) {
@@ -43,6 +45,7 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(async () => {
     setLoading(true);
+    setShouldCheckSession(false); // Не перевіряти сесію після логауту
     try {
       await authService.logout();
     } finally {
@@ -53,14 +56,18 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     // Перевірка сесії при старті застосунку
-    (async () => {
-      try {
-        await getUserInfo();
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [getUserInfo]);
+    if (shouldCheckSession) {
+      (async () => {
+        try {
+          await getUserInfo();
+        } finally {
+          setLoading(false);
+        }
+      })();
+    } else {
+      setLoading(false);
+    }
+  }, [getUserInfo, shouldCheckSession]);
 
   const value = useMemo(
     () => ({

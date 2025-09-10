@@ -7,7 +7,7 @@ namespace HealthBeside.Application.Interfaces;
 
 public interface IMarketProductService
 {
-    Task<IEnumerable<GetMarketProductDto>> GetAllAsync(
+    Task<PagedResult> GetAllAsync(
         MarketProductFilter? marketProductFilter, SortParams? sortParams, PageParams? pageParams, CancellationToken cancellationToken = default);
     Task<GetDetailedMarketProductDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<GetDetailedMarketProductDto> CreateAsync(CreateMarketProductDto createDto, CancellationToken cancellationToken = default);

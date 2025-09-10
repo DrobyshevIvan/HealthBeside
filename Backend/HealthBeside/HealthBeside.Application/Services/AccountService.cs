@@ -57,13 +57,16 @@ public class AccountService : IAccountService
             _logger.LogWarning("User with ID {UserId} was not found.", requestedUserId);
             throw new KeyNotFoundException($"User with ID {requestedUserId} not found.");
         }
+        
+        var roles = await _userManager.GetRolesAsync(user);
 
         return new GetUserInfoDto
         {
             Id = user.Id,
             Email = user.Email,
-            FullName = $"{user.FirstName} {user.LastName}",
-            Role = (await _userManager.GetRolesAsync(user)).FirstOrDefault() ?? "User"
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Roles = roles.ToList(),
         };
     }
 

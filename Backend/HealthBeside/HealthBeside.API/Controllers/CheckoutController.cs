@@ -8,7 +8,7 @@ using Stripe;
 
 namespace HealthBeside.API.Controllers;
 
-[Route("[controller]")]
+[Route("api/[controller]")]
 [ApiController]
 public class CheckoutController : ControllerBase
 {

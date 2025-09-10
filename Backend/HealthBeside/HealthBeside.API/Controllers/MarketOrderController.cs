@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HealthBeside.API.Controllers;
 
-[Microsoft.AspNetCore.Components.Route("[controller]")]
+[Microsoft.AspNetCore.Components.Route("api/[controller]")]
 [ApiController]
 public class MarketOrderController : ControllerBase
 {
