@@ -70,8 +70,7 @@ public class AccountService : IAccountService
             Roles = roles.ToList(),
         };
     }
-
-  
+    
     public async Task RegisterAsync(RegisterRequestBase request, CancellationToken cancellationToken = default)
     {
         if(await _userManager.FindByEmailAsync(request.Email) is not null)
@@ -122,7 +121,7 @@ public class AccountService : IAccountService
         }
     }
 
-    private async Task CreatePatientProfileAsync( // todo now
+    private async Task CreatePatientProfileAsync( 
         ApplicationUser user, 
         RegisterPatientProfileRequest request, 
         CancellationToken cancellationToken = default)
@@ -206,12 +205,12 @@ public class AccountService : IAccountService
     {
         return UserRoles.RoleMapping
             .Where(r => r.Key != UserRoles.AdminRoleId) 
-            .Select(r => new RoleDto 
+            .Select(r => new RoleDto  
             { 
                 Id = r.Key, 
                 Name = r.Value 
             })
-            .ToList();
+            .ToList(); 
     }
 
     public async Task LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
@@ -445,7 +444,82 @@ public class AccountService : IAccountService
         _logger.LogInformation("User {UserId} account deleted successfully", userId);
         return true;
     }
+
+    public async Task UpdateAccountAsync(
+        Guid userId, 
+        UpdateUserRequest request, 
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        
+        if(user == null)
+            throw new KeyNotFoundException("User not found.");
+        
+        var error = user.Update(
+            request.FirstName,
+            request.LastName,
+            request.Email
+            );
+        
+        if(error != null)
+            throw new InvalidOperationException(error);
+
+        var result = await _userManager.UpdateAsync(user);
+        
+        if(!result.Succeeded)
+            throw new InvalidOperationException(
+                $"Failed to update user: {string.Join(", ", result.Errors.Select(e => e.Description))}"
+            );
+    }
+
+    public async Task UpdatePatientProfileAsync(
+        Guid userId,
+        UpdatePatientProfileRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var profile = await _patientProfileRepository.GetByUserIdAsync(userId, cancellationToken);
+        
+        if(profile is null)
+            throw new KeyNotFoundException($"Patient profile for user {userId} not found.");
+
+        var error = profile.Update(request.MedicalHistorySummary);
+        if (error != null)
+        {
+            _logger.LogError("Failed to update patient profile: {Error}", error);
+            throw new InvalidOperationException(error);
+        }
+        
+        await _patientProfileRepository.UpdateAsync(profile, cancellationToken);
+        _logger.LogInformation("Patient profile updated successfully for user {UserId}", userId);
+    }
+
+    /*public async Task UpdateDoctorProfileAsync(
+        Guid userId,
+        UpdateDoctorProfileRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var profile = await _doctorProfileRepository.GetByUserIdAsync(userId, cancellationToken);
+        
+        if (profile is null)
+            throw new KeyNotFoundException($"Patient profile for user {userId} not found.");
+
+        var error = profile.Update(
+            request.Specialization,
+            request.MedicalLicenseNumber,
+            request.ClinicAffiliation,
+            request.YearsOfExperience,
+            request.Education,
+            request.Biography
+        );
+
+        if (error != null)
+        {
+            _logger.LogError("Failed to update doctor profile: {Error}", error);
+            throw new InvalidOperationException(error);
+        }
+        
+        await _doctorProfileRepository.UpdateAsync(profile, cancellationToken);
+        _logger.LogInformation("Doctor profile updated successfully for user {UserId}", userId);
+    }*/
 }
 
-//TODO обіграти логіку, аби якщо користувач зареєструвався як юзер, то при записі на консультацію,
-//він повинен заповнити всі поля профілю пацієнта, а якщо як лікар, то всі поля профілю лікаря

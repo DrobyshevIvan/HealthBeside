@@ -70,4 +70,68 @@ public class DoctorProfile
 
         return (null, doctorProfile);
     }
+    
+    public string? Update(
+        ApplicationUser applicationUser,
+        string? specialization,
+        string? medicalLicenseNumber,
+        string? clinicAffiliation,
+        int? yearsOfExperience,
+        string? education,
+        string? biography)
+    {
+        bool hasChanges = false;
+        var errors = new List<string>();
+        
+        if(!string.IsNullOrWhiteSpace(applicationUser.UserName) && applicationUser.UserName != ApplicationUser.UserName)
+        {
+            ApplicationUser.UserName = applicationUser.UserName;
+            hasChanges = true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(specialization) && specialization != Specialization)
+        {
+            Specialization = specialization;
+            hasChanges = true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(medicalLicenseNumber) && medicalLicenseNumber != MedicalLicenseNumber)
+        {
+            MedicalLicenseNumber = medicalLicenseNumber;
+            hasChanges = true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(clinicAffiliation) && clinicAffiliation != ClinicAffiliation)
+        {
+            ClinicAffiliation = clinicAffiliation;
+            hasChanges = true;
+        }
+
+        if (yearsOfExperience.HasValue && yearsOfExperience.Value >= 0 && yearsOfExperience.Value != YearsOfExperience)
+        {
+            YearsOfExperience = yearsOfExperience.Value;
+            hasChanges = true;
+        }
+        else if (yearsOfExperience.HasValue && yearsOfExperience.Value < 0)
+        {
+            errors.Add("Years of experience cannot be negative.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(education) && education != Education)
+        {
+            Education = education;
+            hasChanges = true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(biography) && biography != Biography)
+        {
+            Biography = biography;
+            hasChanges = true;
+        }
+
+        if (errors.Any())
+            return string.Join("; ", errors);
+
+        return hasChanges ? null : "No changes detected.";
+    }
 }
