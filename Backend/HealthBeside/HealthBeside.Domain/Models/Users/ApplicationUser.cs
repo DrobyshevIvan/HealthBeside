@@ -32,8 +32,6 @@ public class ApplicationUser : IdentityUser<Guid>
     public ICollection<Payment> Payments { get; private set; }
     public DateTime? RefreshTokenExpiresAtUtc { get; private set; }
     
-    
-
     public ApplicationUser() { }
 
     public override string ToString()
@@ -71,5 +69,33 @@ public class ApplicationUser : IdentityUser<Guid>
 
         return (null, applicationUser);
     }
-    
+
+    public string? Update(string? firstName, string? lastName, string? email)
+    {
+        var errors = new List<string>();
+        bool hasChanges = false;
+
+        if (!string.IsNullOrWhiteSpace(firstName) && firstName != FirstName)
+        {
+            FirstName = firstName;
+            hasChanges = true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(lastName) && lastName != LastName)
+        {
+            LastName = lastName;
+            hasChanges = true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(email) && email != Email)
+        {
+            Email = email;
+            hasChanges = true;
+        }
+
+        if (!hasChanges)
+            return "No changes detected.";
+
+        return null;
+    }
 }

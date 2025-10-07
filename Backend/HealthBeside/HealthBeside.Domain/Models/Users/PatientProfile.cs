@@ -43,4 +43,21 @@ public class PatientProfile
 
         return (null, patientProfile);
     }
+
+    public string? Update(string medicalHistorySummary)
+    {
+        var errors = new List<string>();
+        bool hasChanges = false;
+
+        if (!string.IsNullOrWhiteSpace(medicalHistorySummary) && medicalHistorySummary != MedicalHistorySummary)
+        {
+            MedicalHistorySummary = medicalHistorySummary;
+            hasChanges = true;
+        }
+
+        if (!hasChanges)
+            errors.Add("No changes detected.");
+
+        return errors.Any() ? string.Join("; ", errors) : null;
+    }
 }

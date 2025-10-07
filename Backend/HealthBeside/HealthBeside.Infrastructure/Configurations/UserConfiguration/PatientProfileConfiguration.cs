@@ -8,6 +8,10 @@ public class PatientProfileConfiguration : IEntityTypeConfiguration<PatientProfi
 {
     public void Configure(EntityTypeBuilder<PatientProfile> builder)
     {
+        builder.Property(p => p.MedicalHistorySummary)
+            .IsRequired()
+            .HasMaxLength(2000);
+        
         builder.HasOne(p => p.ApplicationUser)
             .WithOne(a => a.PatientProfile)
             .HasForeignKey<PatientProfile>(p => p.ApplicationUserId)
