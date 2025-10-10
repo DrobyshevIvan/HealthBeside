@@ -7,4 +7,5 @@ public interface IMarketProductRepository : IGenericRepository<MarketProduct>
 {
     IQueryable<MarketProduct> GetQueryable();
     Task<MarketProduct?> GetByIdWithCategoryAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<IEnumerable<MarketProduct>> GetProductsWithReviews(CancellationToken cancellationToken = default);
 }

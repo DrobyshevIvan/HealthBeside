@@ -1,4 +1,6 @@
-﻿namespace HealthBeside.Application.Contracts;
+﻿using System.Text.Json;
+
+namespace HealthBeside.Application.Contracts;
 
 public class RegisterRequestBase
 {
@@ -6,5 +8,6 @@ public class RegisterRequestBase
     public string Password { get; set; } = string.Empty;
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
-    public Guid RoleId { get; set; } 
+    public Guid RoleId { get; set; }
+    public JsonElement Profile { get; set; }
 }

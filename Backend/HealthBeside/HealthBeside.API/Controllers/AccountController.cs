@@ -26,7 +26,8 @@ public class AccountController : ControllerBase
     }
     
     [HttpPost("register")]
-    public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequestBase request, CancellationToken ct = default) //TODO
+    public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequestBase request, 
+        CancellationToken ct = default) //TODO
     {
         await _accountService.RegisterAsync(request, ct);
         return Ok("User registered successfully.");
@@ -102,21 +103,6 @@ public class AccountController : ControllerBase
         Response.Cookies.Delete("REFRESH_TOKEN");
         
         return Ok("Logged out successfully.");
-    }
-
-    [HttpGet("get-user-info")]
-    [Authorize]
-    public async Task<ActionResult<GetUserInfoDto>> GetMyProfile(CancellationToken cancellationToken)
-    {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-
-        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
-        {
-            return Unauthorized("Invalid or missing user identifier.");
-        }
-
-        var userInfo = await _accountService.GetUserInfoAsync(userId, userId, cancellationToken);
-        return Ok(userInfo);
     }
 
     [HttpDelete("delete-account")]

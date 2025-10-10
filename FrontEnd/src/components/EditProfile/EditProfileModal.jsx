@@ -20,14 +20,19 @@ export default function EditProfileModal({ open, onClose, initialValues, onSubmi
   const prev = () => setCurrent((i) => i - 1);
 
   const handleOk = async () => {
-    const values = await form.validateFields();
-    onSubmit(values);
+    await form.validateFields();
+    // ВАЖЛИВО: зібрати всі значення, включно з полями з попереднього кроку
+    const values = form.getFieldsValue(true);
+    const payload = {
+      ...values,
+    };
+    onSubmit(payload);
   };
 
   return (
     <Modal open={open} onCancel={onClose} footer={null} width={880} destroyOnClose title={`Редагувати профіль — ${steps[current].title}`}>
       <Steps current={current} items={steps.map(s => ({ title: s.title }))} style={{ marginBottom: 16 }} />
-      <Form form={form} layout="vertical" initialValues={initialValues}>
+      <Form form={form} layout="vertical" initialValues={initialValues} preserve>
         {steps[current].content}
         <div style={{ display:'flex', justifyContent:'flex-end', gap:8, marginTop:16 }}>
           {current > 0 && <Button onClick={prev}>Назад</Button>}

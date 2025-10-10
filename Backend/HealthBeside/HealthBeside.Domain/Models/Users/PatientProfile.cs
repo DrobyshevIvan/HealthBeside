@@ -37,10 +37,40 @@ public class PatientProfile
         {
             Id = Guid.NewGuid(),
             ApplicationUserId = applicationUserId,
-            DateOfBirth = dateOfBirth,
+            DateOfBirth = dateOfBirth.ToUniversalTime(),
             MedicalHistorySummary = medicalHistorySummary
         };
 
         return (null, patientProfile);
+    }
+    
+    public string Update(DateTime dateOfBirth, string medicalHistorySummary)
+    {
+        bool hasChanges = false;
+        var errors = new List<string>();
+
+        if (!string.IsNullOrWhiteSpace(MedicalHistorySummary) &&
+            medicalHistorySummary != MedicalHistorySummary)
+        {
+            MedicalHistorySummary = medicalHistorySummary;
+        }
+        else if (string.IsNullOrWhiteSpace(MedicalHistorySummary))
+        {
+            errors.Add("Medical History Summary cannot be empty.");
+        }
+
+        if (dateOfBirth != DateTime.MinValue)
+        {
+            DateOfBirth = dateOfBirth;
+        }
+        else if (dateOfBirth == DateTime.MinValue)
+        {
+            errors.Add("Date of birth is required.");
+        }
+        
+        if (errors.Any())
+            return string.Join("; ", errors);
+
+        return null;
     }
 }

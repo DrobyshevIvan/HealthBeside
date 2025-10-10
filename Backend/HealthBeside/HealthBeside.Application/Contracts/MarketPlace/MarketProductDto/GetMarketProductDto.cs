@@ -1,4 +1,6 @@
-﻿namespace HealthBeside.Application.Contracts.MarketPlace.MarketProductDto;
+﻿using HealthBeside.Application.Contracts.MarketPlace.MarketReviewDto;
+
+namespace HealthBeside.Application.Contracts.MarketPlace.MarketProductDto;
 
 public class GetMarketProductDto
 {
@@ -10,4 +12,6 @@ public class GetMarketProductDto
     public string SKU { get; set; }
     public string? ImageUrl { get; set; }
     public Guid CategoryId { get; set; }
+    public double? AverageRating { get; set; }
+    public int ReviewsCount { get; set; }
 }
