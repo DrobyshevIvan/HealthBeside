@@ -129,7 +129,7 @@ public class AccountService : IAccountService
         }
     }
 
-    private async Task CreatePatientProfileAsync( 
+    private async Task CreatePatientProfileAsync(
         ApplicationUser user, 
         RegisterPatientProfileRequest request, 
         CancellationToken cancellationToken = default)
@@ -217,12 +217,12 @@ public class AccountService : IAccountService
     {
         return UserRoles.RoleMapping
             .Where(r => r.Key != UserRoles.AdminRoleId) 
-            .Select(r => new RoleDto  
+            .Select(r => new RoleDto 
             { 
                 Id = r.Key, 
                 Name = r.Value 
             })
-            .ToList(); 
+            .ToList();
     }
 
     public async Task LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
