@@ -15,7 +15,8 @@ public class MarketProductRepository : GenericRepository<MarketProduct>, IMarket
 
     public IQueryable<MarketProduct> GetQueryable()
     {
-        return _context.MarketProducts;
+        return _context.MarketProducts
+            .Include(p => p.Reviews);
     }
     
     public async Task<MarketProduct?> GetByIdWithCategoryAsync(Guid id, CancellationToken cancellationToken = default)
@@ -24,5 +25,11 @@ public class MarketProductRepository : GenericRepository<MarketProduct>, IMarket
             .Include(p => p.Category)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken); 
     }
-    
+
+    public async Task<IEnumerable<MarketProduct>> GetProductsWithReviews(CancellationToken cancellationToken = default)
+    {
+        return await _context.MarketProducts
+            .Include(p => p.Reviews)
+            .ToListAsync(cancellationToken);
+    }
 }

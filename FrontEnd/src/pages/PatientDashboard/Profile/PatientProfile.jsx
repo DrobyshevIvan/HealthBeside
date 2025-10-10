@@ -1,22 +1,37 @@
 import React, { useState } from 'react';
-import { Button, Descriptions, Avatar } from 'antd';
+import { Button, Descriptions, Avatar, message } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { useAuth } from '../../../hooks/useAuth';
 import PatientSidebar from '../../../components/PatientSidebar/PatientSidebar';
 import './PatientProfile.css';
 import EditProfileModal from '../../../components/EditProfile/EditProfileModal';
+import { useUpdateProfile } from '../../../hooks/useUpdateProfile';
 
 export default function PatientProfile() {
-  const { user, logout } = useAuth();
+  const { user, logout, getUserInfo } = useAuth();
+  const {updateUserProfile} = useUpdateProfile();
 
   const [isEditOpen, setIsEditOpen] = useState(false);
 
-  const handleOpenEdit = () => setIsEditOpen(true);
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const handleOpenEdit = () => {
+    console.log("Opening modal form");
+    setIsEditOpen(true);
+  };
   const handleCloseEdit = () => setIsEditOpen(false);
 
   const handleSubmitEdit = async (submittedValues) => {
     // TODO: call API to update profile, then refresh user info
-
+    try {
+      await updateUserProfile(submittedValues);
+      await getUserInfo();
+      setIsEditOpen(false);
+      messageApi.success('Профіль успішно оновлено!');
+    } catch (e) {
+      messageApi.error('Помилка при оновленні профілю');
+      console.log(e);
+    }
     // await api.updateProfile(submittedValues)
     console.log('Edit submit:', submittedValues);
     setIsEditOpen(false);
@@ -36,6 +51,7 @@ export default function PatientProfile() {
 
   return (
     <div className="patient-profile-layout">
+      {contextHolder}
       <PatientSidebar />
       
       <div className="profile-content">

@@ -7,6 +7,7 @@ import {
 } from "react";
 import api from "../api/api.js";
 import { authService } from "../services/authService";
+import { profileService } from "../services/profileService.js";
 
 export const AuthContext = createContext(null);
 
@@ -20,7 +21,7 @@ export function AuthProvider({ children }) {
 
   const getUserInfo = useCallback(async () => {
     try {
-      const data = await authService.getUserInfo();
+      const data = await profileService.getUserInfo();
       console.log(data);
       setUser(data);
       setError(null);

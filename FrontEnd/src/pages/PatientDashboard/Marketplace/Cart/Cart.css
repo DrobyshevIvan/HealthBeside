@@ -1,0 +1,140 @@
+.cart-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #F8FAFB;
+}
+
+.cart-content {
+  flex: 1;
+  padding: 24px 32px;
+}
+
+.cart-title {
+  margin: 0 0 16px 0;
+}
+
+.cart-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+}
+
+.cart-list {
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+/* Align entire list row vertically */
+.cart-list .ant-list-item {
+  align-items: center;
+}
+
+.cart-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.cart-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  padding: 6px;
+}
+
+.cart-image__placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  border: 1px dashed #cbd5e1;
+  background: #f8fafc;
+}
+
+.cart-item-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.cart-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.cart-item-name {
+  font-weight: 600;
+}
+
+.cart-item-prices {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.cart-unit {
+  color: #475569;
+}
+
+.cart-total {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.qty-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qty-label {
+  color: #475569;
+}
+
+.cart-item-sub {
+  color: #475569;
+}
+
+.qty-input {
+  width: 90px;
+}
+
+.cart-summary {
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  height: fit-content;
+  position: sticky;
+  top: 24px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0;
+}
+
+.summary-row.total {
+  font-size: 18px;
+}
+
+.checkout-btn {
+  margin-top: 12px;
+  height: 40px;
+}
+
+@media (max-width: 992px) {
+  .cart-grid { grid-template-columns: 1fr; }
+  .cart-right { flex-direction: column; align-items: flex-end; gap: 8px; }
+  .cart-item-prices { align-items: flex-end; }
+}

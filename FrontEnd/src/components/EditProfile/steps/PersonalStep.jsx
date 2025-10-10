@@ -10,9 +10,6 @@ export default function PersonalStep() {
       <Form.Item name="firstName" label="Ім’я*" rules={[{ required: true }]}>
         <Input />
       </Form.Item>
-      <Form.Item name="middleName" label="По батькові">
-        <Input />
-      </Form.Item>
       <Form.Item name="dateOfBirth" label="Дата народження*" rules={[{ required: true }]}>
         <DatePicker format="DD.MM.YYYY" style={{ width: '100%' }} />
       </Form.Item>

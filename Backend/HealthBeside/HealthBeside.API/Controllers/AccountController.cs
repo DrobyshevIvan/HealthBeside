@@ -35,7 +35,9 @@ public class AccountController : ControllerBase
     }
     
     [HttpPost("register")]
-    public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequestBase request, CancellationToken ct = default) 
+
+    public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequestBase request, 
+        CancellationToken ct = default) //TODO
     {
         await _accountService.RegisterAsync(request, ct);
         return Ok("User registered successfully.");
@@ -112,13 +114,6 @@ public class AccountController : ControllerBase
         
         return Ok("Logged out successfully.");
     }
-
-    /*[HttpPut("update-profile")]
-    [Authorize]
-    public async Task<GetUserInfoDto> UpdateProfileAsync([FromBody] UpdateProfile) //todo write this endpoint
-    {
-        
-    }*/
 
     [HttpDelete("delete-account")]
     [Authorize]

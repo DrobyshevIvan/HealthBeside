@@ -6,8 +6,12 @@ using HealthBeside.Domain.Interfaces;
 using HealthBeside.Domain.Models.Users;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using System.Text.Json;
+using FluentValidation;
 using HealthBeside.Application.Contracts.User;
+using HealthBeside.Application.FluentValidation.AccountRequestsValidators;
 using HealthBeside.Domain.Models.Constants;
+using HealthBeside.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -22,6 +26,10 @@ public class AccountService : IAccountService
     private readonly ILogger<AccountService> _logger;
     private readonly IPatientProfileRepository _patientProfileRepository;
     private readonly IDoctorProfileRepository _doctorProfileRepository;
+    private readonly IValidator<RegisterRequestBase> _registerRequestValidator;
+    private readonly IValidator<RegisterPatientProfileRequest> _registerPatientProfileRequestValidator;
+    private readonly IValidator<RegisterDoctorProfileRequest> _registerDoctorProfileRequestValidator;
+    private readonly AppDbContext _context;
 
     public AccountService(IAuthTokenProcessor authTokenProcessor,
         UserManager<ApplicationUser> userManager,
@@ -29,7 +37,11 @@ public class AccountService : IAccountService
         IRefreshTokenRepository refreshTokenRepository,
         ILogger<AccountService> logger,
         IPatientProfileRepository patientProfileRepository,
-        IDoctorProfileRepository doctorProfileRepository)
+        IDoctorProfileRepository doctorProfileRepository,
+        IValidator<RegisterRequestBase> registerRequestValidator,
+        IValidator<RegisterPatientProfileRequest> registerPatientProfileRequestValidator,
+        IValidator<RegisterDoctorProfileRequest> registerDoctorProfileRequestValidator,
+        AppDbContext context)
     {
         _authTokenProcessor = authTokenProcessor;
         _userManager = userManager;
@@ -38,39 +50,12 @@ public class AccountService : IAccountService
         _logger = logger;
         _patientProfileRepository = patientProfileRepository;
         _doctorProfileRepository = doctorProfileRepository;
+        _registerRequestValidator = registerRequestValidator;
+        _registerPatientProfileRequestValidator = registerPatientProfileRequestValidator;
+        _registerDoctorProfileRequestValidator = registerDoctorProfileRequestValidator;
+        _context = context;
     }
-    
-    public async Task<GetUserInfoDto> GetUserInfoAsync(
-        Guid currentUserId, 
-        Guid requestedUserId, 
-        CancellationToken cancellationToken = default)
-    {
-        if (currentUserId != requestedUserId)
-        {
-            _logger.LogWarning("User {UserId} attempted to access profile of another user {TargetUserId}", currentUserId, requestedUserId);
-            throw new UnauthorizedAccessException("You are not authorized to access this user's information.");
-        }
-
-        var user = await _userManager.FindByIdAsync(requestedUserId.ToString());
-
-        if (user is null)
-        {
-            _logger.LogWarning("User with ID {UserId} was not found.", requestedUserId);
-            throw new KeyNotFoundException($"User with ID {requestedUserId} not found.");
-        }
-        
-        var roles = await _userManager.GetRolesAsync(user);
-
-        return new GetUserInfoDto
-        {
-            Id = user.Id,
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Roles = roles.ToList(),
-        };
-    }
-    
+  
     public async Task RegisterAsync(RegisterRequestBase request, CancellationToken cancellationToken = default)
     {
         if(await _userManager.FindByEmailAsync(request.Email) is not null)
@@ -81,6 +66,8 @@ public class AccountService : IAccountService
         
         if(request.RoleId == UserRoles.AdminRoleId)
             throw new UnauthorizedAccessException("Admin registration forbidden.");
+
+        await _registerRequestValidator.ValidateAndThrowAsync(request, cancellationToken);
         
         var (error, user) = ApplicationUser.Create(
             request.FirstName,
@@ -90,16 +77,29 @@ public class AccountService : IAccountService
         if (error != null || user == null) 
             throw new UserRegistrationFailedException(new [] { error ?? "Unknown error during user registration." });
         
-        var result = await _userManager.CreateAsync(user, request.Password);
-        
-        if(!result.Succeeded)
-            throw new UserRegistrationFailedException(result.Errors.Select(e => e.Description).ToArray());
+        using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
-        await _userManager.AddToRoleAsync(user, UserRoles.RoleMapping[request.RoleId]);
+        try
+        {
+            var result = await _userManager.CreateAsync(user, request.Password);
         
-        await CreateRoleSpecificProfileAsync(user, request, cancellationToken);
+            if(!result.Succeeded)
+                throw new UserRegistrationFailedException(result.Errors.Select(e => e.Description).ToArray());
+
+            await _userManager.AddToRoleAsync(user, UserRoles.RoleMapping[request.RoleId]);
         
-        await GenerateNewTokensAsync(user, cancellationToken);
+            await CreateRoleSpecificProfileAsync(user, request, cancellationToken);
+        
+            await GenerateNewTokensAsync(user, cancellationToken);
+            
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error register user");
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 
     private async Task CreateRoleSpecificProfileAsync(ApplicationUser user,
@@ -109,10 +109,18 @@ public class AccountService : IAccountService
         switch (request.RoleId)
         {
            case var r when r == UserRoles.PatientRoleId:
-               await CreatePatientProfileAsync(user, (RegisterPatientProfileRequest) request, cancellationToken);
+               var patientProfile = request.Profile.Deserialize<RegisterPatientProfileRequest>();
+               if (patientProfile is null)
+                   throw new UserRegistrationFailedException(new [] { "Invalid patient profile provided." });
+               await _registerPatientProfileRequestValidator.ValidateAndThrowAsync(patientProfile, cancellationToken);
+               await CreatePatientProfileAsync(user, patientProfile, cancellationToken);
                break;
            case var r when r == UserRoles.DoctorRoleId:
-               await CreateDoctorProfileAsync(user, (RegisterDoctorProfileRequest) request, cancellationToken);
+               var doctorProfile = request.Profile.Deserialize<RegisterDoctorProfileRequest>();
+               if (doctorProfile is null)
+                   throw new UserRegistrationFailedException(new [] { "Invalid doctor profile provided." });
+               await _registerDoctorProfileRequestValidator.ValidateAndThrowAsync(doctorProfile, cancellationToken);
+               await CreateDoctorProfileAsync(user, doctorProfile, cancellationToken);
                break;
            default:
                _logger.LogInformation($"User {request.Email} registered with role {UserRoles.RoleMapping[request.RoleId]}, " +
@@ -145,9 +153,13 @@ public class AccountService : IAccountService
             _logger.LogError("Failed to create patient profile: {Error}", error);
             throw new UserRegistrationFailedException(new [] { error ?? "Failed to create patient profile"});
         }
-
+        
         await _patientProfileRepository.AddAsync(patientProfile, cancellationToken);
-        _logger.LogInformation("User {Email} registered successfully", request.Email);
+        
+        user.UpdatePatientProfile(patientProfile.Id);
+        
+        await _userManager.UpdateAsync(user);
+        _logger.LogInformation("User {Email} registered successfully", user.Email);
     }
 
     private async Task CreateDoctorProfileAsync(
@@ -172,7 +184,7 @@ public class AccountService : IAccountService
         }
 
         await _doctorProfileRepository.AddAsync(doctorProfile, cancellationToken);
-        _logger.LogInformation("User {Email} registered successfully", request.Email);
+        _logger.LogInformation("User {Email} registered successfully", user.Email);
     }
 
     public async Task AssignRoleAsync(Guid adminUserId, Guid targetUserId, Guid newRoleId)
@@ -445,81 +457,8 @@ public class AccountService : IAccountService
         return true;
     }
 
-    public async Task UpdateAccountAsync(
-        Guid userId, 
-        UpdateUserRequest request, 
-        CancellationToken cancellationToken = default)
-    {
-        var user = await _userManager.FindByIdAsync(userId.ToString());
-        
-        if(user == null)
-            throw new KeyNotFoundException("User not found.");
-        
-        var error = user.Update(
-            request.FirstName,
-            request.LastName,
-            request.Email
-            );
-        
-        if(error != null)
-            throw new InvalidOperationException(error);
-
-        var result = await _userManager.UpdateAsync(user);
-        
-        if(!result.Succeeded)
-            throw new InvalidOperationException(
-                $"Failed to update user: {string.Join(", ", result.Errors.Select(e => e.Description))}"
-            );
-    }
-
-    public async Task UpdatePatientProfileAsync(
-        Guid userId,
-        UpdatePatientProfileRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        var profile = await _patientProfileRepository.GetByUserIdAsync(userId, cancellationToken);
-        
-        if(profile is null)
-            throw new KeyNotFoundException($"Patient profile for user {userId} not found.");
-
-        var error = profile.Update(request.MedicalHistorySummary);
-        if (error != null)
-        {
-            _logger.LogError("Failed to update patient profile: {Error}", error);
-            throw new InvalidOperationException(error);
-        }
-        
-        await _patientProfileRepository.UpdateAsync(profile, cancellationToken);
-        _logger.LogInformation("Patient profile updated successfully for user {UserId}", userId);
-    }
-
-    /*public async Task UpdateDoctorProfileAsync(
-        Guid userId,
-        UpdateDoctorProfileRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        var profile = await _doctorProfileRepository.GetByUserIdAsync(userId, cancellationToken);
-        
-        if (profile is null)
-            throw new KeyNotFoundException($"Patient profile for user {userId} not found.");
-
-        var error = profile.Update(
-            request.Specialization,
-            request.MedicalLicenseNumber,
-            request.ClinicAffiliation,
-            request.YearsOfExperience,
-            request.Education,
-            request.Biography
-        );
-
-        if (error != null)
-        {
-            _logger.LogError("Failed to update doctor profile: {Error}", error);
-            throw new InvalidOperationException(error);
-        }
-        
-        await _doctorProfileRepository.UpdateAsync(profile, cancellationToken);
-        _logger.LogInformation("Doctor profile updated successfully for user {UserId}", userId);
-    }*/
+    
 }
 
+//TODO обіграти логіку, аби якщо користувач зареєструвався як юзер, то при записі на консультацію,
+//він повинен заповнити всі поля профілю пацієнта, а якщо як лікар, то всі поля профілю лікаря

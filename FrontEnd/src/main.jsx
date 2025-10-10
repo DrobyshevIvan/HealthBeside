@@ -11,6 +11,7 @@ import PatientProfile from './pages/PatientDashboard/Profile/PatientProfile.jsx'
 import Catalog from './pages/PatientDashboard/Marketplace/Catalog/Catalog.jsx'
 // import DoctorProfile from './pages/DoctorDashboard/Profile/DoctorProfile.jsx'
 import Product from './pages/PatientDashboard/Marketplace/Product/Product.jsx'
+import Cart from './pages/PatientDashboard/Marketplace/Cart/Cart.jsx'
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,11 @@ const router = createBrowserRouter([
       ) },
       { path: 'marketplace', element: <Catalog /> },
       { path: 'marketplace/product/:id', element: <Product /> },
+      { path: 'marketplace/cart', element: (
+        <ProtectedRoute>
+          <Cart />
+        </ProtectedRoute>
+      ) },
       // { path: 'doctor/profile', element: (
       //   <ProtectedRoute>
       //     <DoctorProfile />

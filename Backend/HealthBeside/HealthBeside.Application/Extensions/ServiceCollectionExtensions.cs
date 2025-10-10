@@ -49,6 +49,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserDeliveryInfoService, UserDeliveryInfoService>();
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IStripeService, StripeService>();
+        services.AddScoped<IProfileService, ProfileService>();
 
         return services;
     }

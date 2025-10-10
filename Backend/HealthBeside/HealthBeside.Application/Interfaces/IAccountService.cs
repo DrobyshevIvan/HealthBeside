@@ -10,10 +10,6 @@ namespace HealthBeside.Application.Interfaces;
 
 public interface IAccountService
 {
-    Task<GetUserInfoDto> GetUserInfoAsync(
-        Guid currentUserId,
-        Guid requestedUserId,
-        CancellationToken cancellationToken = default);
     Task RegisterAsync(
         RegisterRequest request,
         CancellationToken cancellationToken = default);
