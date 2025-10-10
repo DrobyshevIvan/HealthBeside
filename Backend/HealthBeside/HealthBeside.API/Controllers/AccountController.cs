@@ -25,7 +25,17 @@ public class AccountController : ControllerBase
         _logger = logger;
     }
     
+    [HttpGet("get-user-info")]
+    [Authorize]
+    public async Task<ActionResult<GetUserInfoDto>> GetMyProfile(Guid userId, CancellationToken cancellationToken)
+    {
+        var currentUserId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var dto = await _accountService.GetUserInfoAsync(currentUserId, userId, cancellationToken);
+        return Ok(dto);
+    }
+    
     [HttpPost("register")]
+
     public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequestBase request, 
         CancellationToken ct = default) //TODO
     {
@@ -108,7 +118,7 @@ public class AccountController : ControllerBase
     [HttpDelete("delete-account")]
     [Authorize]
     public async Task<IActionResult> DeleteAccountAsync(
-        Guid userId, 
+        Guid userId,
         CancellationToken cancellationToken = default)
     {
         try
@@ -121,7 +131,7 @@ public class AccountController : ControllerBase
         }
         catch (UnauthorizedAccessException e)
         {
-            return Forbid(e.Message); 
+            return Forbid(e.Message);
         }
         catch (AccountDeletionException e)
         {
@@ -132,5 +142,4 @@ public class AccountController : ControllerBase
             return StatusCode(500, new { error = "Internal server error", details = e.Message });
         }
     }
-    // TODO: Додати ендпоінти редагування юзера
 }

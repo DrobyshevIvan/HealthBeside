@@ -35,8 +35,6 @@ public class ApplicationUser : IdentityUser<Guid>
     public ICollection<Payment> Payments { get; private set; }
     public DateTime? RefreshTokenExpiresAtUtc { get; private set; }
     
-    
-
     public ApplicationUser() { }
 
     public override string ToString()
