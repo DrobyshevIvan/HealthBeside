@@ -1,8 +1,10 @@
 using System.Globalization;
 using System.Text;
+using FluentValidation;
 using HealthBeside.API.Handlers;
 using HealthBeside.API.Middlewares;
 using HealthBeside.Application.Extensions;
+using HealthBeside.Application.FluentValidation.AccountRequestsValidators;
 using HealthBeside.Application.Services;
 using HealthBeside.Domain.Models.Users;
 using HealthBeside.Infrastructure;
@@ -136,6 +138,8 @@ public class Program
         builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
         var stripeSettings = builder.Configuration.GetSection("Stripe").Get<StripeSettings>()!;
         StripeConfiguration.ApiKey = stripeSettings.SecretKey;
+        
+        builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
         
         // StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 

@@ -30,13 +30,6 @@ export const authService = {
     return response.data;
   },
 
-  async getUserInfo() {
-    const response = await api.get(`/Account/get-user-info`, {
-      withCredentials: true,
-    });
-    return response.data;
-  },
-
   async logout() {
     const response = await api.post(`/Account/logout`, {
       withCredentials: true,

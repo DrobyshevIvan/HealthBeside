@@ -1,5 +1,6 @@
 ﻿using HealthBeside.Application.Contracts.MarketPlace.MarketProductDto;
 using HealthBeside.Application.Extensions.Mapping.Marketplace.MarketProductDto;
+using HealthBeside.Application.Extensions.Mapping.Marketplace.MarketReviewDto;
 using HealthBeside.Application.Filters;
 using HealthBeside.Application.Interfaces;
 using HealthBeside.Application.Pagination;
@@ -43,23 +44,24 @@ public class MarketProductService : IMarketProductService
         if (pageParams != null)
             query = query.Page(pageParams);
 
-        var products = await query.ToListAsync(cancellationToken);
-
-        _logger.LogInformation("Retrieved {Count} market products.", products.Count);
-
+        var products = await query.Select(p => new GetMarketProductDto
+        {
+            Id = p.Id,
+            Name = p.Name,
+            Description = p.Description,
+            Price = p.Price,
+            Quantity = p.Quantity,
+            SKU = p.SKU,
+            ImageUrl = p.ImageUrl,
+            CategoryId = p.CategoryId,
+            AverageRating = p.Reviews.Average(r => r.Rating),
+            ReviewsCount = p.Reviews.Count()
+        }).ToListAsync(cancellationToken);
+        
         return new PagedResult
         {
-            Products = products.Select(p => new GetMarketProductDto
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                Quantity = p.Quantity,
-                SKU = p.SKU,
-                ImageUrl = p.ImageUrl,
-                CategoryId = p.CategoryId
-            }),
+            
+            Products = products,
             Total = total
         };
     }

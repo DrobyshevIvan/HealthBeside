@@ -15,27 +15,54 @@ public class GlobalExceptionHandler : IExceptionHandler
 
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        var (statusCode, message) = GetExceptionDetails(exception);
+        var (statusCode, body) = GetExceptionDetails(exception);
         
         _logger.LogError(exception, exception.Message);
         
         httpContext.Response.StatusCode = (int)statusCode;
         
-        await httpContext.Response.WriteAsJsonAsync(message, cancellationToken);
+        await httpContext.Response.WriteAsJsonAsync(body, cancellationToken);
 
         return true;
     }
     
-    private (HttpStatusCode statusCode, string message) GetExceptionDetails(Exception exception)
+    private (HttpStatusCode statusCode, object body) GetExceptionDetails(Exception exception)
     {
-        return exception switch 
+        switch (exception)
         {
-            LoginFailedException => (HttpStatusCode.Unauthorized, exception.Message),
-            UserAlreadyExistsException => (HttpStatusCode.Conflict, exception.Message),
-            UserRegistrationFailedException => (HttpStatusCode.BadRequest, exception.Message),
-            RefreshTokenException => (HttpStatusCode.Unauthorized, exception.Message),
-            ForumPostCreationException => (HttpStatusCode.BadRequest, exception.Message),
-            _ => (HttpStatusCode.InternalServerError, exception.Message) 
-        };
+            case FluentValidation.ValidationException fv:
+                var errors = fv.Errors
+                    .GroupBy(e => e.PropertyName ?? string.Empty)
+                    .ToDictionary(
+                        g => g.Key,
+                        g => g.Select(e => e.ErrorMessage).Distinct().ToArray());
+
+                return (HttpStatusCode.BadRequest, new
+                {
+                    type = "https://tools.ietf.org/html/rfc9119#section-15.5.1",
+                    title = "One or more validation errors occured.",
+                    status = 400,
+                    errors
+                });
+
+            case LoginFailedException:
+                return (HttpStatusCode.Unauthorized, exception.Message);
+
+            case UserAlreadyExistsException:
+                return (HttpStatusCode.Conflict, exception.Message);
+
+            case UserRegistrationFailedException:
+                return (HttpStatusCode.BadRequest, exception.Message);
+
+            case RefreshTokenException:
+                return (HttpStatusCode.Unauthorized, exception.Message);
+
+            case ForumPostCreationException:
+                return (HttpStatusCode.BadRequest, exception.Message);
+
+            default:
+                return (HttpStatusCode.InternalServerError, exception.Message);
+
+        }
     }
 }

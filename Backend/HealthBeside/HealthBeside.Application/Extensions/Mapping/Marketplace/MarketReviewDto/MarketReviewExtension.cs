@@ -22,6 +22,15 @@ public static class MarketReviewExtension
             User = marketReview.User.ToGetUserDto(),
         };
     }
+    
+    public static GetMarketReviewRatingDto ToGetMarketReviewRating(this MarketReview marketReview)
+    {
+        return new GetMarketReviewRatingDto
+        {
+            Id = marketReview.Id,
+            Rating = marketReview.Rating,
+        };
+    }
 
     public static IQueryable<MarketReview> Filter(this IQueryable<MarketReview> query, MarketReviewFilter filter)
     {

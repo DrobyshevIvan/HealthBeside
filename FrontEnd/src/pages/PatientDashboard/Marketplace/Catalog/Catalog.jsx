@@ -1,16 +1,23 @@
 import React, { useState } from 'react';
-import { Input, Select, Pagination, Card, Button, Skeleton, Empty } from 'antd';
+import { Input, Select, Pagination, Card, Button, Skeleton, Empty, Rate } from 'antd';
 import PatientSidebar from '../../../../components/PatientSidebar/PatientSidebar';
 import './Catalog.css';
 import { useProducts } from '../../../../hooks/useProducts';
 import { useNavigate } from 'react-router-dom';
+import {useCategories} from "../../../../hooks/useCategories.js";
 
 const { Meta } = Card;
 
 export default function Catalog() {
-  const { products, loading, fetchProducts, total } = useProducts({
+  const { products, loading: productsLoading, fetchProducts, total } = useProducts({
     pageSize: 12,
   });
+  const { categories } = useCategories();
+
+  const categoryOptions = (categories ?? []).map(c => ({
+    value: c.id,
+    label: c.name,
+  }));
 
   const navigate = useNavigate();
 
@@ -127,7 +134,7 @@ export default function Catalog() {
               value={categoryId}
               onChange={(value) => handleCategoryChange(value)}
               allowClear
-              options={[]}
+              options={categoryOptions}
             />
             <Input
               className="min-price"
@@ -143,6 +150,7 @@ export default function Catalog() {
               value={maxPrice}
               onChange={(e) => handlePriceChange(minPrice, e.target.value)}
             />
+            {/* TODO: Додати щоб опції підгружалися з api */}
             <Select
               className="order-by"
               placeholder="Сортувати за"
@@ -172,7 +180,7 @@ export default function Catalog() {
           </div>
         </div>
 
-        {loading ? (
+        {productsLoading ? (
           <Skeleton active />
         ) : total === 0 ? (
           <Empty description="Нічого не знайдено" />
@@ -187,8 +195,19 @@ export default function Catalog() {
                     <div className="product-image__placeholder">Фото</div>
                   )}
                 </div>
-                <Meta title={product.name} description={`${product.price} грн`} />
-                <div>SKU: {product.sku}</div>
+                <Meta 
+                  title={product.name} 
+                  description={
+                    <div className="review-meta">
+                      <p className="product-price">{product.price} грн</p>
+                      <div className="rating-row">
+                        <Rate disabled allowHalf value={Number(product.averageRating) || 0}></Rate>
+                        <span>({product.reviewsCount})</span>
+                      </div>
+                    </div>
+                  }
+                />
+                <div className="sku-text">SKU: {product.sku}</div>
               </Card>
             ))}
           </div>

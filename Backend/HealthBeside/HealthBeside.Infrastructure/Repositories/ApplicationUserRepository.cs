@@ -25,5 +25,14 @@ public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IAp
         var user = await _context.Set<ApplicationUser>().FirstOrDefaultAsync(u => u.Id == userToken.UserId, cancellationToken);
         return user;
     }
-    
+
+    public async Task<ApplicationUser?> GetByIdWithDetailedInfo(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await _context.Users
+            .Include(u => u.PatientProfile)
+            .Include(u => u.DoctorProfile)
+            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+
+        return result;
+    }
 }
