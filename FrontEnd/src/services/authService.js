@@ -1,6 +1,17 @@
 import api from "../api/api.js";
 
 export const authService = {
+  async register({registrationData}) {
+    const response = await api.post(
+      `/Account/register`,
+      {registrationData},
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  },
+
   async login({ email, password }) {
     const response = await api.post(
       `/Account/login`,

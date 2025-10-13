@@ -457,6 +457,84 @@ public class AccountService : IAccountService
         return true;
     }
 
+    public async Task UpdateAccountAsync(
+        Guid userId, 
+        UpdateUserRequest request, 
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        
+        if(user == null)
+            throw new KeyNotFoundException("User not found.");
+        
+        var error = user.Update(
+            request.FirstName,
+            request.LastName,
+            request.Email
+            );
+        
+        if(error != null)
+            throw new InvalidOperationException(error);
+
+        var result = await _userManager.UpdateAsync(user);
+        
+        if(!result.Succeeded)
+            throw new InvalidOperationException(
+                $"Failed to update user: {string.Join(", ", result.Errors.Select(e => e.Description))}"
+            );
+    }
+
+    public async Task UpdatePatientProfileAsync(
+        Guid userId,
+        UpdatePatientProfileRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var profile = await _patientProfileRepository.GetByUserIdAsync(userId, cancellationToken);
+        
+        if(profile is null)
+            throw new KeyNotFoundException($"Patient profile for user {userId} not found.");
+
+        var error = profile.Update(request.MedicalHistorySummary);
+        if (error != null)
+        {
+            _logger.LogError("Failed to update patient profile: {Error}", error);
+            throw new InvalidOperationException(error);
+        }
+        
+        await _patientProfileRepository.UpdateAsync(profile, cancellationToken);
+        _logger.LogInformation("Patient profile updated successfully for user {UserId}", userId);
+    }
+
+    /*public async Task UpdateDoctorProfileAsync(
+        Guid userId,
+        UpdateDoctorProfileRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var profile = await _doctorProfileRepository.GetByUserIdAsync(userId, cancellationToken);
+        
+        if (profile is null)
+            throw new KeyNotFoundException($"Patient profile for user {userId} not found.");
+
+        var error = profile.Update(
+            request.Specialization,
+            request.MedicalLicenseNumber,
+            request.ClinicAffiliation,
+            request.YearsOfExperience,
+            request.Education,
+            request.Biography
+        );
+
+        if (error != null)
+        {
+            _logger.LogError("Failed to update doctor profile: {Error}", error);
+            throw new InvalidOperationException(error);
+        }
+        
+        await _doctorProfileRepository.UpdateAsync(profile, cancellationToken);
+        _logger.LogInformation("Doctor profile updated successfully for user {UserId}", userId);
+    }*/
+    
+    // C#
     
 }
 
